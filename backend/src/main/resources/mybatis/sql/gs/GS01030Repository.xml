@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.gs.repository.GS01030Repository">
+	<select id="GS01030_C01" parameterType="com.neofect.gts.services.gs.domain.GS01030" resultType="com.neofect.gts.services.gs.domain.GS01030">
+		SELECT 
+			A.FORM_SEQ,
+			A.CUST_ID,
+			A.CUST_NAME,
+			A.CUST_LEVEL_DIV,
+			A.CUST_GUBUN_DIV,
+			A.MANAGE_NO,
+			A.BIRTH_DATE,
+			A.PHONE,
+			A.ZIP_CODE,
+			A.ADDR1,
+			A.ADDR2,
+			A.DEPT_ID,
+			A.DEPT_NAME,
+			A.DEPT_DIV,
+			A.OWNER_NAME,
+			A.DEPT_PHONE,
+			A.DEPT_ADDR,
+			A.PRO_NAME,
+			A.RELATION_DIV,
+			A.PRO_BIRTH_DATE,
+			A.PRO_PHONE,
+			A.PRO_HP,
+			A.PRO_ZIP_CODE,
+			A.PRO_ADDR1,
+			A.PRO_ADDR2,
+			A.FROM_DATE,
+			A.TO_DATE,
+			A.WRITE_DAY,
+			A.CALC_DAY,
+			A.NOTI_DAY,
+			A.PAY_DAY,
+			A.PAY_METHOD,
+			A.CONTRACT_DATE,
+			A.WRITE_DATE,
+			A.MEMBER_ID,
+			A.MEMBER_NAME
+	    FROM 
+	    	FORM_CONTRACT A
+	  	WHERE 
+	  		A.DEPT_ID LIKE #{deptId}
+	    	AND A.CUST_ID = #{custId}
+		ORDER BY A.WRITE_DATE DESC, A.FORM_SEQ DESC
+	</select>
+	
+	<select id="GS01030_C02" parameterType="com.neofect.gts.services.gs.domain.GS01030" resultType="com.neofect.gts.services.gs.domain.GS01030">
+	 	SELECT 
+	 		A.FORM_SEQ,
+			A.PLAN_SEQ,
+			A.MON_YN,
+			A.TUE_YN,
+			A.WED_YN,
+			A.THU_YN,
+			A.FRI_YN,
+			A.SAT_YN,
+			A.SUN_YN,
+			A.FROM_HOUR,
+			A.FROM_MIN,
+			A.TO_HOUR,
+			A.TO_MIN,
+			A.WEEK_YN,
+			A.WEEK2_YN,
+			A.MONTH_YN
+	    FROM 
+	    	FORM_CONTRACT_PLAN A
+	 	WHERE 
+	 		A.FORM_SEQ = #{formSeq}
+		ORDER BY A.PLAN_SEQ
+	</select>
+	
+	<select id="SEQ_FORM_CONTRACT" parameterType="com.neofect.gts.services.gs.domain.GS01030" resultType="com.neofect.gts.services.gs.domain.GS01030">
+		SELECT SEQ_FORM_CONTRACT.NEXTVAL FROM DUAL
+	</select>
+
+	<select id="CODE_DEPT_R01" parameterType="com.neofect.gts.services.gs.domain.GS01030" resultType="com.neofect.gts.services.gs.domain.GS01030">
+		SELECT  
+			DEPT_NAME,
+			PHONE,
+			OWNER_NAME,
+			TRIM(
+				CASE WHEN LENGTH(ZIP_CODE) > 0 THEN '(' || (CASE WHEN LENGTH(ZIP_CODE)=6 THEN SUBSTR(ZIP_CODE,1,3) || '-' || SUBSTR(ZIP_CODE,4,3) ELSE ZIP_CODE END) || ') ' 
+				ELSE '' 
+				END || ADDR1 || ' ' || ADDR2
+			) AS ADDRESS
+		FROM
+			CODE_DEPT
+		WHERE
+			DEPT_ID	= #{deptId}
+	</select>
+	
+	<select id="CODE_CUST_R01" parameterType="com.neofect.gts.services.gs.domain.GS01030" resultType="com.neofect.gts.services.gs.domain.GS01030">
+	    SELECT
+	    	B.PRO_NAME,
+	    	B.PHONE,
+	    	B.HP,
+	    	B.ZIP_CODE,
+	    	B.ADDR1,
+	    	B.ADDR2
+	    FROM 
+	    	CODE_CUST A
+	    LEFT JOIN 
+	    	CODE_CUSTPROTECTOR B ON A.CUST_ID = B.CUST_ID AND A.PRO_SEQ = B.PRO_SEQ
+	    WHERE 
+	    	A.CUST_ID = #{custId}
+	</select>
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.ho.repository.HO02030Repository">
+
+	<!-- 직원시급 일괄변경 리스트 -->
+	<select id="getHpayList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.ho.domain.HO02030">
+	/* com.neofect.gts.services.ho.repository.HO02030Repository.getHpayList */
+	SELECT	A.MEMBER_ID,
+		    A.DEPT_ID, 
+		    B.DEPT_NAME,
+		    A.EMP_NO,
+		    A.NAME,
+		    '19'||SUBSTR(A.REG_CODE,1,6)		AS BIRTH_DT,
+		    A.GUBUN_DIV,
+		    A.IN_DATE,
+		    TRUNC((SYSDATE - A.IN_DATE) / 365,0) AS WORK_YEAR,
+		    'Y' AS SEL,
+		    A.HOURPAY,
+		    A.HOURPAY_2,
+		    A.HOURPAY_3,
+		    A.HOURPAY_4,
+		    A.HANDICAP_LEVEL,
+		    A.WORK_YN,
+		    A.RETIRE_DATE,
+		    A.HANDICAP_YN,
+		    A.PAYTYPE
+	FROM	CODE_MEMBER	A
+			INNER JOIN	CODE_DEPT B
+			ON	A.DEPT_ID = B.DEPT_ID
+	WHERE	B.USE_YN	=	'Y'
+	AND		A.DEPT_ID	LIKE	#{dept}
+	AND		A.GUBUN_DIV	=	'0205'
+	AND		A.WORK_YN	=	'Y'
+	AND		(	#{paydiv}	=	'%' 
+			OR	(	(#{paydiv} = '1' AND A.HOURPAY	 = #{hourpay})
+			OR	(#{paydiv} = '2' AND A.HOURPAY_2 = #{hourpay})
+			OR	(#{paydiv} = '3' AND A.HOURPAY_3 = #{hourpay})
+				)
+			) 
+	ORDER BY A.DEPT_ID, A.NAME ASC
+	</select>
+
+</mapper>

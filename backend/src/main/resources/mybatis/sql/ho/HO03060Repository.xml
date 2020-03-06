@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.ho.repository.HO03060Repository">
+
+	<!-- 시스템마감관리 리스트 -->
+	<select id="getScmList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.ho.domain.HO03060">
+	/* com.neofect.gts.services.ho.repository.HO03060Repository.getScmList */
+	SELECT	A.YYYYMM,
+			A.DEPT_ID,   
+			B.DEPT_NAME,
+			TO_CHAR(A.DEPT_GONGCLOSEDATE,'YY-MM-DD HH:MI:SS') AS DEPT_GONGCLOSEDATE,
+			A.DEPT_GONGCLOSEYN,
+			A.GONGCLOSEYN,
+			TO_CHAR(A.DEPT_SERVICECLOSEDATE,'YY-MM-DD HH:MI:SS') AS DEPT_SERVICECLOSEDATE,
+			A.DEPT_SERVICECLOSEYN,
+			A.SERVICECLOSEYN,
+			TO_CHAR(A.DEPT_PAYCLOSEDATE,'YY-MM-DD HH:MI:SS') AS DEPT_PAYCLOSEDATE,
+			A.DEPT_PAYCLOSEYN,
+			A.PAYCLOSEYN,
+			TO_CHAR(A.DEPT_SPECIALCLOSEDATE,'YY-MM-DD HH:MI:SS') AS DEPT_SPECIALCLOSEDATE,
+			A.DEPT_SPECIALCLOSEYN,
+			A.SPECIALCLOSEYN,
+			TO_CHAR(A.DEPT_ACNTCLOSEDATE,'YY-MM-DD HH:MI:SS') AS DEPT_ACNTCLOSEDATE,
+			A.DEPT_ACNTCLOSEYN,
+			A.ACNTCLOSEYN,
+			TO_CHAR(A.DEPT_SELLCLOSEDATE,'YY-MM-DD HH:MI:SS') AS DEPT_SELLCLOSEDATE,
+			A.DEPT_SELLCLOSEYN,
+			A.SELLCLOSEYN   
+		FROM CODE_CLOSING A
+		LEFT OUTER JOIN	CODE_DEPT B
+		ON	A.DEPT_ID = B.DEPT_ID
+		WHERE A.YYYYMM = #{yymm}
+		AND A.DEPT_ID LIKE #{dept}
+		AND	B.USE_YN = 'Y'
+		ORDER BY A.DEPT_ID ASC 
+	</select>
+
+</mapper>

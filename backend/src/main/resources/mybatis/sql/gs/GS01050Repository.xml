@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.gs.repository.GS01050Repository">
+	<select id="GS01050_C01" parameterType="com.neofect.gts.services.gs.domain.GS01050" resultType="com.neofect.gts.services.gs.domain.GS01050">
+		SELECT  
+			A.S_ID,
+			A.DEPT_ID,
+			A.MEMBER_ID,
+			A.PLAN_DATE,
+			A.START_TIME_DIV,
+			A.START_MIN_DIV,
+			A.END_TIME_DIV,
+			A.END_MIN_DIV,
+			A.SERVICE_MIN,
+			A.PRODUCT_ID,
+			A.SERVICE_AMT,
+			A.PAY_AMT,
+			A.REQ_AMT,
+			A.REMAIN_AMT,
+			A.CUST_ID,
+			A.REMARK,
+			A.SERVICE_YN,
+			A.WON_MEMBER_ID,
+			A.COMPLAIN_MEMO,
+			A.CARER_MEMO,
+			A.ENTER_ID,
+			A.ENTER_DATE,
+			A.EDIT_ID,
+			A.EDIT_DATE,
+			A.SMS_YN,
+			A.STATUS,
+			A.CARER_MEMOYN,
+			A.CARER_DATE,
+			A.DEPT_MEMOYN,
+			A.DEPT_DATE,
+			C.CUST_CODE,
+			C.CUST_NAME,
+			C.PHONE,
+			C.HP,
+			C.ADDR1,
+			C.ADDR2,
+			M.NAME AS MEMBER_NAME,
+			P.PRODUCT_NAME,
+			P.PRODUCT_CODE,
+			P.INTRO_RATE,
+			'N' AS SAVETAG,
+			A.SERVICE_COST,
+			A.SERVICE_MIN_1,
+			A.SERVICE_MIN_2,
+			A.SERVICE_MIN_3,
+			A.CONT_SEQ,
+			A.AMT_1,
+			A.AMT_2,
+			A.AMT_3,
+			A.FAMILY_YN,
+			A.FAMILY_REF,
+			A.DUPLISERVICE_YN,
+			A.DUPLISERVICE_SEQ
+		FROM 
+			SERVICE_SCHEDULE A
+		LEFT JOIN 
+			CODE_MEMBER M ON M.MEMBER_ID = A.MEMBER_ID
+		LEFT JOIN 
+			CODE_CUST C ON C.CUST_ID = A.CUST_ID
+		LEFT JOIN 
+			CODE_PRODUCT P ON P.PRODUCT_ID = A.PRODUCT_ID
+		WHERE 
+			A.DEPT_ID = #{deptId}
+			AND A.CUST_ID = #{custId}
+			AND A.PLAN_DATE BETWEEN #{yymm}||'01' AND LAST_DAY(#{yymm}||'01')
+	</select>
+
+
+	<!-- 이동, 목욕서비스 초기값 -->
+	<select id="GET_CODE_PRODUCT_INI" parameterType="com.neofect.gts.services.gs.domain.GS01050" resultType="com.neofect.gts.services.gs.domain.GS01050">
+	    SELECT  
+	    	MIN(CASE WHEN PRODUCT_CODE LIKE 'Z1%' THEN PRODUCT_CODE ELSE 'ZZZZZZZZZZ' END) AS PRODUCT_CODE_MOVE,
+	    	MIN(CASE WHEN PRODUCT_CODE LIKE 'Z2%' THEN PRODUCT_CODE ELSE 'ZZZZZZZZZZ' END) AS PRODUCT_CODE_BATH,
+	    	MAX(CASE WHEN PRODUCT_CODE LIKE 'Z3%' THEN SALE_AMT ELSE 0 END) AS AMT_MEAL
+	    FROM
+	    	CODE_PRODUCT
+	    WHERE
+	    	PRODUCT_DIV = '7'
+	    	AND PSEP_DIV = 'S'
+	    	AND USE_YN = 'Y'
+	    	AND PRODUCT_CODE LIKE 'Z%'
+
+	</select>
+
+
+	<!-- 월 일정삭제 -->
+	<delete id="SERVICE_SCHEDULE_D01" parameterType="com.neofect.gts.services.gs.domain.GS01050">
+		DELETE FROM SERVICE_SCHEDULE
+		WHERE 
+			DEPT_ID = #{deptId}
+			AND CUST_ID = #{custId}
+			AND PLAN_DATE BETWEEN #{yymm}||'01' AND LAST_DAY(#{yymm}||'01')
+	</delete>
+
+
+	<!-- 월 일정삭제 -->
+	<delete id="SERVICE_SCHEDULE_D02" parameterType="com.neofect.gts.services.gs.domain.GS01050">
+	    DELETE FROM SERVICE_SCHEDULE
+	    WHERE
+		    DEPT_ID = #{deptId}
+		    AND CUST_ID = #{custId}
+		    AND PLAN_DATE = #{date}
+	</delete>
+
+
+	<!-- 월 일정삭제(한건) -->
+	<delete id="SERVICE_SCHEDULE_D03" parameterType="com.neofect.gts.services.gs.domain.GS01050">
+		DELETE FROM SERVICE_SCHEDULE
+		WHERE
+			S_ID   = #{sId}
+	</delete>
+
+
+	<!-- 장기요양등급 -->
+	<select id="GET_CUST_LEVEL_DIV" parameterType="com.neofect.gts.services.gs.domain.GS01050" resultType="com.neofect.gts.services.gs.domain.GS01050">
+	    SELECT 
+	    	CUST_LEVEL_DIV 
+	    FROM 
+	    	CODE_CUST 
+	    WHERE 
+	    	CUST_ID = #{custId}
+	</select>
+
+
+	<select id="GET_SERVICEAMT" parameterType="com.neofect.gts.services.gs.domain.GS01050" resultType="com.neofect.gts.services.gs.domain.GS01050">
+	    SELECT
+	    	FN_GS_GET_SERVICEAMT(#{date}, #{stime}, #{smin}, #{etime}, #{emin}, #{serviceCost}, #{familyYn}, #{productId}, #{productDiv}, #{levelDiv}, #{serviceYn}) AS INFO
+	    FROM
+	    	DUAL
+	</select>
+
+
+	<select id="CODE_PRODUCT_R01" parameterType="com.neofect.gts.services.gs.domain.GS01050" resultType="com.neofect.gts.services.gs.domain.GS01050">
+	    SELECT  
+	    	PRODUCT_ID,
+	    	PRODUCT_CODE,
+	    	PRODUCT_NAME,
+	    	SALE_AMT,
+	    	SERVICE_MIN
+	    FROM 
+	    	CODE_PRODUCT
+	    WHERE 
+	    	PSEP_DIV = 'S'
+	    	AND #{date} BETWEEN START_DATE AND END_DATE
+	    	AND PRODUCT_DIV = #{productDiv}
+	    	AND PRODUCT_CODE = #{productCode}
+	</select>
+
+
+	<select id="GET_SERVICESCHEDULE" parameterType="com.neofect.gts.services.gs.domain.GS01050" resultType="com.neofect.gts.services.gs.domain.GS01050">
+	    <![CDATA[
+	
+	    SELECT
+	        NO,
+	        FN_GS_GET_SERVICESCHEDULE('CUST', #{deptId}, YYYYMMDD, #{custId}) AS INFO
+	    FROM
+	        (SELECT 
+	            TO_CHAR(ROWNUM) NO,
+	            B.MM||B.DD  YYYYMMDD
+	        FROM
+	            (SELECT
+	                #{yymm} MM,
+	                LPAD(ROWNUM,2,'0') DD
+	            FROM
+	                DICT
+	            WHERE
+	                ROWNUM <=31
+	        ) B
+	    WHERE
+	        TO_CHAR(LAST_DAY(TO_DATE(B.MM||'01','YYYYMMDD')),'DD') >= B.DD) X
+	
+	    ]]>
+	</select>
+
+
+	<!-- 달력좌측 -->
+	<select id="SERVICE_SUMMARY_SUM_R03" parameterType="com.neofect.gts.services.gs.domain.GS01050" resultType="com.neofect.gts.services.gs.domain.GS01050">
+	    SELECT  
+		    M.SERVICE_DIV,
+		    M.STIME||':'||M.SMIN||' ~ '||M.ETIME||':'||M.EMIN AS SERVICE_TIME,
+		    CASE 
+		    	WHEN 
+		    		M.PRODUCT_CODE LIKE 'Z1%' OR M.PRODUCT_CODE LIKE 'Z2%' 
+		    	THEN 
+		    		'공단' -- 이동일때, 모두 공단
+	            WHEN 
+	            	M.PRODUCT_CODE LIKE 'B%' THEN '혼합'
+	            ELSE 
+	            	'수급자'
+	            END AS SERVICE_TYPE,
+	        M.SERVICE_AMT,
+	        SUM(M.SERVICE_CNT) AS SERVICE_CNT,
+	        SUM(M.TOTAL_B_AMT) AS TOTAL_B_AMT,
+	        SUM(M.TOTAL_AMT) AS TOTAL_AMT,
+	        MAX(M.SEQ) AS SEQ
+	    FROM 
+	    	SERVICE_SUMMARY M
+	    WHERE 
+		    M.DEPT_ID = #{deptId}
+		    AND M.CUST_ID = #{custId}
+		    AND M.YYYYMM = #{yymm}
+	    GROUP BY    
+	    	M.SERVICE_DIV,
+	    	M.STIME,
+	    	M.SMIN,
+	    	M.ETIME,
+	    	M.EMIN,
+	    	M.PRODUCT_CODE,
+	    	M.SERVICE_AMT
+	    ORDER BY SEQ
+	</select>
+
+	<!-- 달력우측 -->
+	<select id="SERVICE_SUMMARY_SUM_R01" parameterType="com.neofect.gts.services.gs.domain.GS01050" resultType="com.neofect.gts.services.gs.domain.GS01050">
+	    SELECT 
+	    	M.SERVICE_DIV,
+	        M.SERVICE_AMT,
+	        M.REQ_AMT,
+	        M.PAY_AMT,
+	        M.B_AMT,
+	        M.PAY_B_AMT
+	    FROM 
+	    	SERVICE_SUMMARY_SUM M
+	    WHERE 
+	    	M.DEPT_ID = #{deptId}
+		    AND M.CUST_ID = #{custId}
+		    AND M.YYYYMM = #{yymm}
+	</select>
+
+
+	<!-- 달력우측(합계) -->
+	<select id="SERVICE_SUMMARY_SUM_R02" parameterType="com.neofect.gts.services.gs.domain.GS01050" resultType="com.neofect.gts.services.gs.domain.GS01050">
+	    SELECT  
+	    	M.SERVICE_AMT,
+	        M.REQ_AMT,
+	        M.PAY_AMT,
+	        M.B_AMT,
+	        M.PAY_B_AMT
+	    FROM 
+	    	SERVICE_SUMMARY_SUM_TOT M
+	    WHERE 
+		    M.DEPT_ID = #{deptId}
+		    AND M.CUST_ID = #{custId}
+		    AND M.YYYYMM = #{yymm}
+	</select>
+
+
+	<select id="GET_LIMIT_AMT" parameterType="com.neofect.gts.services.gs.domain.GS01050" resultType="com.neofect.gts.services.gs.domain.GS01050">
+	    SELECT  
+	    	FN_GS_GET_LIMIT_AMT(#{deptId}, #{custId}, #{yymm}),
+	    	FN_GS_GET_M_LIMIT_AMT(#{deptId}, #{custId}, #{yymm}),
+	    	FN_GS_GET_REMAIN_AMT(#{deptId}, #{custId}, #{yymm})
+	    FROM
+	    	DUAL
+	</select>
+
+
+	<select id="GET_OFFICE_AMT" parameterType="com.neofect.gts.services.gs.domain.GS01050" resultType="com.neofect.gts.services.gs.domain.GS01050">
+	    SELECT
+	    	FN_GS_GET_OFFICE_AMT(#{deptId}, #{custId}, #{yymm})
+	    FROM
+	    	DUAL
+	</select>
+
+
+	<select id="SM_CODE_CALENDAR_R01" parameterType="com.neofect.gts.services.gs.domain.GS01050" resultType="com.neofect.gts.services.gs.domain.GS01050">
+	    SELECT
+	    	SATURDAY_YN,
+	    	SUNDAY_YN,
+	    	HOLIDAY_YN,
+	    	HOLIDAY_NAME,
+	    	TO_NUMBER(SUBSTR(WORK_DATE, 7, 2)) AS DAYNUM
+	    FROM
+	    	SM_CODE_CALENDAR
+	    WHERE
+	    	WORK_DATE LIKE #{year}||LPAD(#{month},2,'0')||'%'
+	</select>
+
+
+	<!-- 중복센터 입력확인 -->
+	<select id="CHK_SERVICE_SCHEDULE_R01" parameterType="com.neofect.gts.services.gs.domain.GS01050" resultType="com.neofect.gts.services.gs.domain.GS01050">
+
+	    SELECT
+	    	COUNT(DISTINCT DEPT_ID)
+	    FROM
+	    	SERVICE_SCHEDULE    A
+	    WHERE
+		    A.CUST_ID = #{custId}
+		    AND A.PLAN_DATE BETWEEN TO_DATE(#{yymm}||'01') AND LAST_DAY(TO_DATE(#{yymm}||'01'))
+
+	</select>
+
+	<!-- 가로 출력물 MAX SEQ 가져오기 -->
+	<select id="MAX_SEQ" parameterType="com.neofect.gts.services.gs.domain.GS01050" resultType="com.neofect.gts.services.gs.domain.GS01050">
+
+		SELECT  
+			MAX(CONT_SEQ)
+		FROM    
+			SERVICE_SCHEDULE
+		WHERE   
+			DEPT_ID = #{deptId}
+			AND CUST_ID = #{custId}
+			AND PLAN_DATE BETWEEN TO_DATE(#{month} ||'01','YYYYMMDD') 
+			AND LAST_DAY(TO_DATE(#{month} ||'01','YYYYMMDD'))
+
+	</select>
+
+</mapper>

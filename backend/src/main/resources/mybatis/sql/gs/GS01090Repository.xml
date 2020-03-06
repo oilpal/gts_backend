@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.gs.repository.GS01090Repository">
+	<select id="GS01090_C01" parameterType="com.neofect.gts.services.gs.domain.GS01090" resultType="com.neofect.gts.services.gs.domain.GS01090">
+		SELECT	
+			A.S_ID,
+			A.SERVICE_YN,
+			CASE
+				WHEN C.CUST_CODE IS NULL
+				THEN NULL
+				ELSE SUBSTR(C.CUST_CODE,1,6)||'-'||SUBSTR(C.CUST_CODE,7,1)||'******'
+			END	AS CUST_CODE,
+			C.CUST_NAME,
+			A.START_TIME_DIV,
+			A.START_MIN_DIV,
+			A.END_TIME_DIV,
+			A.END_MIN_DIV,
+			A.SERVICE_MIN,
+			A.MEMBER_ID,
+			M.NAME AS MEMBER_NAME,
+			P.PRODUCT_DIV,
+			P.PRODUCT_CODE,
+			P.PRODUCT_NAME,
+			A.SERVICE_AMT,
+			A.PAY_AMT,
+			A.REQ_AMT,
+			A.REMAIN_AMT,
+			A.REMARK,
+			A.COMPLAIN_MEMO,
+			A.CARER_MEMO,
+			A.ENTER_ID,
+			A.ENTER_DATE,
+			A.EDIT_ID,
+			A.EDIT_DATE,
+			A.SMS_YN,
+			A.CARER_MEMOYN,
+			A.CARER_DATE,
+			A.DEPT_MEMOYN,
+			A.DEPT_DATE,
+			C.PHONE,
+			C.HP,
+			C.ADDR1,
+			C.ADDR2,
+			A.PRODUCT_ID,
+			A.WON_MEMBER_ID,
+			A.STATUS,
+			A.PLAN_DATE,
+			A.DEPT_ID,
+			A.CUST_ID,
+			P.INTRO_RATE,
+			A.SERVICE_COST,
+			A.SERVICE_MIN_1,
+			A.SERVICE_MIN_2,
+			A.SERVICE_MIN_3,
+			A.SERVICE_YN,
+			A.CONT_SEQ
+		FROM
+			SERVICE_SCHEDULE A
+		LEFT JOIN	
+			CODE_MEMBER	M ON M.MEMBER_ID = A.MEMBER_ID
+		LEFT JOIN	
+			CODE_CUST C ON C.CUST_ID = A.CUST_ID
+		LEFT JOIN	
+			CODE_PRODUCT P ON P.PRODUCT_ID = A.PRODUCT_ID
+		WHERE
+			A.PLAN_DATE	= #{planDate}
+			AND	A.DEPT_ID LIKE #{deptId}
+	</select>
+
+
+	<select id="GET_SERVICESCHEDULE" parameterType="com.neofect.gts.services.gs.domain.GS01090" resultType="com.neofect.gts.services.gs.domain.GS01090">
+		<![CDATA[
+
+		SELECT
+			NO,
+			DD,
+			TO_CHAR(DD,'D') AS YOILCODE,
+			DECODE(TO_CHAR(DD,'D'), '1','일','2','월','3','화','4','수','5','목','6','금','7','토') AS YOIL,
+			F_GS_GET_SERVICESCHEDULE('DEPT', #{deptId}, TO_CHAR(DD, 'YYYY-MM-DD'), '') AS INFO
+		FROM (
+			SELECT	
+				ROWNUM AS NO,
+				TO_DATE(#{date},'YYYY-MM-DD') + ROWNUM -2 AS DD
+			FROM
+				DICT
+			WHERE ROWNUM <= 7
+		) B
+		]]>
+	</select>
+
+
+	<select id="GET_SERVICESCHEDULE_R01" parameterType="com.neofect.gts.services.gs.domain.GS01090" resultType="com.neofect.gts.services.gs.domain.GS01090">
+		SELECT
+			F_GS_GET_SERVICESCHEDULE('DEPT', #{deptId}, #{date}, '') AS INFO
+		FROM
+			DUAL
+	</select>
+
+
+	<select id="SM_CODE_CALENDAR_R01" parameterType="com.neofect.gts.services.gs.domain.GS01090" resultType="com.neofect.gts.services.gs.domain.GS01090">
+		SELECT	
+			COUNT(1)
+		FROM 
+			SM_CODE_CALENDAR
+		WHERE
+			WORK_DATE = #{date}
+			AND	HOLIDAY_YN = 'Y'
+	</select>
+
+
+	<select id="GET_SERVICEAMT_EXTRA3" parameterType="com.neofect.gts.services.gs.domain.GS01090" resultType="com.neofect.gts.services.gs.domain.GS01090">
+		SELECT
+			F_GS_GET_SERVICEAMT_EXTRA3(#{date}, #{stime}, #{smin}, #{etime}, #{emin}, #{serviceCost}, #{familyYn}) AS INFO
+		FROM
+			DUAL
+	</select>
+
+
+	<select id="GET_SERVICEAMT_X" parameterType="com.neofect.gts.services.gs.domain.GS01090" resultType="com.neofect.gts.services.gs.domain.GS01090">
+
+		SELECT
+			F_GS_GET_SERVICEAMT(#{date}, #{stime}, #{smin}, #{etime}, #{emin}, #{serviceCost}, #{familyYn}, #{productId}, #{productDiv}, #{levelDiv}) AS INFO
+		FROM
+			DUAL
+
+	</select>
+
+	<select id="GET_SERVICEAMT" parameterType="com.neofect.gts.services.gs.domain.GS01090" resultType="com.neofect.gts.services.gs.domain.GS01090">
+
+		SELECT
+			FN_GS_GET_SERVICEAMT(#{date}, #{stime}, #{smin}, #{etime}, #{emin}, #{serviceCost}, #{familyYn}, #{productId}, #{productDiv}, #{levelDiv}, #{serviceYn}) AS INFO
+		FROM
+			DUAL
+
+	</select>
+
+
+
+	<select id="FAMILY_YN" parameterType="com.neofect.gts.services.gs.domain.GS01090" resultType="com.neofect.gts.services.gs.domain.GS01090">
+		SELECT
+			NVL(MAX(FAMILY_YN), 'N')
+		FROM
+			CODE_MEMBER
+		WHERE
+			MEMBER_ID = #{memberId}
+	</select>
+
+
+	<!-- 장기요양등급 -->
+	<select id="CUST_LEVEL_DIV" parameterType="com.neofect.gts.services.gs.domain.GS01090" resultType="com.neofect.gts.services.gs.domain.GS01090">
+
+		SELECT
+			CUST_LEVEL_DIV
+		FROM
+			SERVICE_CONTRACT
+		WHERE
+			CUST_ID = #{custId}
+			AND CONT_SEQ = #{contSeq}
+
+	</select>
+</mapper>

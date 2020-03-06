@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.AuthProgramRepository">
+
+	<!-- Auth_Program_E01 -->
+	<select id="AuthProgramE01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.AuthProgram">
+	/* com.neofect.gts.services.sm.repository.AuthProgramRepository.AuthProgramE01 */
+	SELECT  
+			A.SYS_ID,
+			A.PGM_CODE,
+			replace(A.PGM_NAME,',',' ') as PGM_NAME,
+			A.PGM_URL,
+			A.SHOW_TAG,
+			A.MOVE_BTN_TAG,
+			A.UPDATE_TAG,
+			A.RETRIEVE_TAG,
+			A.INSERT_TAG,
+			A.APPEND_TAG,
+			A.DUPLICATE_TAG,
+			A.DELETE_TAG,
+			A.PRINT_TAG,
+			A.EXCEL_TAG,
+			A.CLOSE_TAG,
+			A.OTHER_BTN,
+			A.WEB_TAG,
+			A.DEVELOPED_TAG,
+			A.CRITERIA,
+			A.REMARK,
+			A.SORT_CODE,
+			A.SORT_ORDER,
+			A.HELP_TAG,
+			A.PAGE_LINK
+	FROM  
+			SM_AUTH_PGMCODE A
+	WHERE  
+			A.SYS_ID LIKE #{sysId}
+	AND (
+			A.PGM_CODE LIKE #{pgmNm}
+			OR  A.PGM_NAME LIKE #{pgmNm}
+		)
+	ORDER BY A.SYS_ID, A.PGM_CODE
+	</select>
+
+	<!-- Auth_Program_S01 -->
+	<select id="AuthProgramS01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.AuthProgram">
+	/* com.neofect.gts.services.sm.repository.AuthProgramRepository.AuthProgramS01 */
+	SELECT 
+			A.PGM_CODE
+	FROM 
+			SM_AUTH_PGMCODE A
+	WHERE 
+			A.PGM_CODE = #{pgmcode}
+	</select>
+
+	<!-- MyPgmList_S01 -->
+	<select id="MyPgmListS01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.AuthProgram">
+	/* com.neofect.gts.services.sm.repository.AuthProgramRepository.MyPgmListS01 */
+	SELECT 
+			B.PGM_CODE,	
+			B.PGM_NAME,	
+			DECODE(LENGTH(B.PGM_CODE),2,1,4,2,6,3,7,3,4) as PGM_LEVEL,	
+			B.SYS_ID as SYS_DIV,	
+			B.PGM_URL as TEMP_TYPE,	
+			'' as CONN_URL,	
+			CASE WHEN LENGTH(B.PGM_CODE)>=6 THEN 'Y' ELSE 'N' END as END_MENU_YN,	
+			B.SHOW_TAG as SHOW_YN,	
+			'N' as POPUP_YN,
+			'Y' as MULTI_YN,	
+			B.RETRIEVE_TAG as QUERY_YN,	
+			B.APPEND_TAG as APPEND_YN,	
+			B.INSERT_TAG as INSERT_YN,	
+			B.DELETE_TAG as DELETE_YN,	
+			B.UPDATE_TAG as UPDATE_YN,	
+			B.PRINT_TAG as PRINT_YN,	
+			B.EXCEL_TAG as EXCEL_YN,	
+			A.AUTH_I as INSERT_AUTH,  
+			A.AUTH_D as DELETE_AUTH,  
+			A.AUTH_I as UPDATE_AUTH,  
+			A.AUTH_P as PRINT_AUTH,  
+			A.AUTH_P as EXCEL_AUTH
+	FROM 
+			SM_AUTH_USER_MENU A 
+	INNER JOIN 
+			SM_AUTH_PGMCODE B ON (A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE)
+	WHERE 
+			A.AUTH_CODE  = #{authCode}
+	AND (
+			A.AUTH_I='Y' 
+			OR A.AUTH_R='Y' 
+			OR A.AUTH_D='Y' 
+			OR A.AUTH_P='Y'
+		)
+	AND B.SHOW_TAG = 'Y'          
+	ORDER BY B.PGM_CODE
+	</select>
+
+</mapper>

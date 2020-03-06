@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.gs.repository.GS01060Repository">
+	<select id="GS01060_R01" parameterType="com.neofect.gts.services.gs.domain.GS01060" resultType="com.neofect.gts.services.gs.domain.GS01060">
+        SELECT 
+            A.DEPT_ID,
+            A.CUST_ID,
+            A.YYYYMM,
+            B.CUST_CODE,
+            E.DEPT_NAME,
+            B.CUST_NAME,
+            B.BIRTH_DATE,
+            D.COMDIV_NAME AS REDUCTION_NAME,
+            C.COMDIV_NAME AS APP_RATE,
+            SUBSTR(D.COMDIV_NAME,1,2) || ' ('||C.COMDIV_NAME||'%)' AS GRD_NAME,
+            A.REQ_AMT,       -- 공단청구금A
+            A.PAY_AMT,       -- 본인부담금B
+            A.REQ_AMT + A.PAY_AMT  AS PAY_SUM, -- 총수가A+B
+            A.B_AMT      AS BPAY_AMT,          -- 비급여D
+            A.PAY_AMT + A.B_AMT    AS PAY_TOT,   -- 총수납금액B+D
+            F.DEPT_ID AS CUSTINDEPT
+        FROM 
+            SERVICE_SUMMARY_SUM_TOT A 
+        LEFT JOIN 
+            CODE_CUST B ON ( A.CUST_ID = B.CUST_ID )
+        LEFT JOIN 
+            CODE_COMDIV C ON ( B.APP_RATE_DIV = C.COMDIV_CODE AND C.COMSEC_CODE='0111' )
+        LEFT JOIN 
+            CODE_COMDIV D ON ( B.REDUCTION_DIV = D.COMDIV_CODE AND D.COMSEC_CODE='0110' )
+        LEFT JOIN 
+            CODE_DEPT E ON A.DEPT_ID = E.DEPT_ID
+        LEFT JOIN 
+            CODE_CUSTINDEPT F ON A.DEPT_ID = F.DEPT_ID AND A.CUST_ID = F.CUST_ID
+        WHERE 
+            A.DEPT_ID like #{deptId}
+            AND A.YYYYMM like #{yyyymm}
+            AND (B.CUST_CODE like #{custCode} or b.CUST_NAME like #{custCode})
+        ORDER BY E.DEPT_NAME, B.CUST_NAME
+    </select>
+
+    <select id="GS01060_C02" parameterType="com.neofect.gts.services.gs.domain.GS01060" resultType="com.neofect.gts.services.gs.domain.GS01060">
+        SELECT  
+            A.S_ID,
+            A.DEPT_ID,
+            B.DEPT_NAME,
+            A.MEMBER_ID,
+            C.NAME as MEMBER_NAME,
+            A.CUST_ID,
+            D.CUST_CODE,
+            D.CUST_NAME,
+            A.FAMILY_YN,
+            F.APP_RATE_DIV,
+            A.PLAN_DATE,
+            TO_CHAR(A.PLAN_DATE,'DY') AS DAY_NM,
+            A.START_TIME_DIV,
+            A.START_MIN_DIV,
+            A.END_TIME_DIV,
+            A.END_MIN_DIV,
+            A.SERVICE_MIN,
+            A.PRODUCT_ID,
+            E.PRODUCT_CODE,
+            E.PRODUCT_NAME,
+            A.SERVICE_AMT * (CASE WHEN A.SERVICE_YN = 1 THEN 1 ELSE FN_GS_GET_NO_RATE() END) AS SERVICE_AMT,
+            A.PAY_AMT,
+            A.REQ_AMT,
+            A.REMAIN_AMT,
+            A.REMARK,
+            A.SERVICE_YN,
+            A.WON_MEMBER_ID,
+            A.COMPLAIN_MEMO,
+            A.CARER_MEMO,
+            A.ENTER_ID,
+            A.ENTER_DATE,
+            A.EDIT_ID,
+            A.EDIT_DATE,
+            A.SMS_YN,
+            A.STATUS,
+            A.CARER_MEMOYN,
+            A.CARER_DATE,
+            A.DEPT_MEMOYN,
+            A.DEPT_DATE,
+            A.SERVICE_YN_DIV,
+            A.SERVICE_REMARK,
+            A.DUPLISERVICE_YN,
+            A.DISCOUNT_AMT,
+            F.CUST_LEVEL_DIV,
+            F.REDUCTION_DIV,
+            G.DEPT_ID AS CUSTINDEPT
+        FROM 
+            SERVICE_SCHEDULE A
+        LEFT JOIN 
+            CODE_DEPT B ON (A.DEPT_ID = B.DEPT_ID)
+        LEFT JOIN 
+            CODE_MEMBER C ON (A.MEMBER_ID = C.MEMBER_ID)
+        LEFT JOIN 
+            CODE_CUST D ON (A.CUST_ID   = D.CUST_ID)
+        LEFT JOIN 
+            CODE_PRODUCT E ON (A.PRODUCT_ID = E.PRODUCT_ID)
+        LEFT JOIN 
+            SERVICE_CONTRACT F ON (A.CUST_ID = F.CUST_ID AND A.CONT_SEQ =  F.CONT_SEQ)
+        LEFT JOIN 
+            CODE_CUSTINDEPT G ON A.CUST_ID = G.CUST_ID AND A.DEPT_ID = G.DEPT_ID
+        WHERE 
+            A.DEPT_ID = #{deptID}
+            AND D.CUST_ID = #{custId}
+            AND PLAN_DATE between TO_DATE(#{yyyymm}||'01', 'YYYYMMDD') and LAST_DAY(TO_DATE(#{yyyymm}||'01', 'YYYYMMDD'))
+            AND A.STATUS = 'I'
+            AND A.DUPLISERVICE_SEQ = 1
+        ORDER BY D.CUST_NAME, A.CUST_ID, A.PLAN_DATE, A.START_TIME_DIV, A.START_MIN_DIV
+    </select>
+</mapper>

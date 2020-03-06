@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.ho.repository.HO03010Repository">
+
+	<!-- 임직원 관리 리스트 -->
+	<select id="getEmpManageList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.ho.domain.HO03010">
+	/* com.neofect.gts.services.ho.repository.HO03010Repository.getEmpManageList */
+	SELECT	A.MEMBER_ID,
+				A.DEPT_ID,
+				B.DEPT_NAME,
+				A.MEMBER_DIV,
+				A.EMP_NO,
+				A.NAME,
+				A.REG_CODE,
+				'19'||SUBSTR(A.REG_CODE,1,6)		AS BIRTH_DT,
+				A.GUBUN_DIV,
+				A.IN_DATE,
+				A.RETIRE_DATE,
+				TRUNC((SYSDATE - A.IN_DATE) / 365,0) AS WORK_YEAR,
+				A.HOURPAY,
+				A.HOURPAY_2,
+				A.HOURPAY_3,
+				A.HOURPAY_4,
+				A.HANDICAP_YN,
+				A.HANDICAP_LEVEL,
+				A.WORK_YN,
+				A.PAYTYPE,
+				A.PAYUPDATE_YN,
+				A.LICENSE_NO,
+				A.LICENSELEVEL_DIV,
+				A.PHONE,
+				A.HP,
+				A.ZIP_CODE,
+				A.EMAIL,
+				A.ADDR1,
+				A.ADDR2,
+				A.BANK_DIV,
+				A.DEPOSITNO,
+				A.REG_DATE,
+				A.PWD,
+				A.PWD			AS INPUT_PWD,
+				A.AMMASTER_YN,
+				A.AUTHORITY_DIV,
+				A.EMAIL2,
+				A.YEAR_VACATION	,
+				(SELECT SUM(VACATION_TOTAL_DAYS) FROM MEMBER_VACATION WHERE A.MEMBER_ID=MEMBER_ID AND OK_YN='Y' AND YEAR=TO_CHAR(SYSDATE,'YYYY'))	AS USED_VACATION,
+				A.RETIRECALCTYPE,
+				A.REPORTEDINCOMEAMT,
+				A.DEDUCT_CNT,
+				A.MANYCHILD_YN,
+				A.LIINSURANCEDATE,
+				A.LIINSURANCETYPE,
+				A.LIINSURANCEENDDATE,
+				A.DEPOSITOWNER,
+				A.SMS_QUOTA1,
+				A.SMS_QUOTA2,
+				F_GS_GET_DUP_DEPT_NM(A.MEMBER_ID,A.DEPT_ID) AS DUP_DEPT_NAME,
+				A.HEALTHINSURETAG,
+				A.NATIONALPENSIONTAG,
+				A.PIMG,
+				L.FILE_STRE_COURS || '\' || L.STRE_FILE_NM AS PIMG_PATH,     --사원이미지1경로
+				A.PDIR,
+				A.FAMILY_YN,
+				A.GOYONGTAG,
+				A.MIN_PAYAMT,
+				A.TRAINEE_YN,
+				A.TRAINEE_DATE,
+				A.FIRST_AMT,
+				A.RRN_NO,
+				X_DECRYPT(A.RRN_NO) AS INPUT_RRN_NO,
+				A.REMARK,
+				A.PAGE_TAG,
+				A.LOGIN_LOCK_YESNO
+		FROM	CODE_MEMBER		A
+				LEFT JOIN	CODE_DEPT	B
+					ON	B.DEPT_ID	=	A.DEPT_ID
+				LEFT JOIN	SM_COMM_FILE_DETAIL L
+					ON	L.ATCH_FILE_ID	=	A.PIMG
+					AND	L.FILE_SN	=	1
+		WHERE	(	(#{dept} = '%' AND NVL(A.DEPT_ID, '%') LIKE #{dept} AND B.USE_YN='Y') 
+				OR	(#{dept} != '%' AND NVL(A.DEPT_ID, '%') LIKE #{dept})
+				)
+		AND		NVL(A.GUBUN_DIV,'%')	LIKE	#{gubun_div}
+		AND		NVL(A.WORK_YN,'%')		LIKE	#{work_yn}
+		AND		(		(	A.MEMBER_ID LIKE #{find}||'%'	)
+					OR	(	A.EMP_NO		LIKE #{find}||'%'	)
+					OR	(	A.NAME			LIKE '%'||#{find}||'%'	)
+					)
+		ORDER BY A.DEPT_ID, A.NAME, A.MEMBER_ID ASC
+	</select>
+
+	<!-- 주민 번호 조회? -->
+	<select id="hO03010R03" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.ho.domain.HO03010">
+	/* com.neofect.gts.services.ho.repository.HO03010Repository.hO03010R03 */
+	 SELECT A.MEMBER_ID,
+         A.DEPT_ID,
+         B.DEPT_NAME,
+         A.NAME,
+         A.REG_CODE,
+         A.GUBUN_DIV,
+         A.LICENSE_NO,
+         A.LICENSELEVEL_DIV,
+         A.PHONE,
+         A.HP,
+         A.ZIP_CODE,
+         A.EMAIL,
+         A.ADDR1,
+         A.ADDR2,
+         A.BANK_DIV,
+         A.DEPOSITNO,
+         A.IN_DATE,
+         A.RETIRE_DATE,
+         A.WORK_YN
+    FROM CODE_MEMBER A INNER JOIN CODE_DEPT B ON A.DEPT_ID = B.DEPT_ID       
+    WHERE REG_CODE = #{reg}
+	ORDER BY IN_DATE DESC, RETIRE_DATE 
+	</select>
+
+	<!-- 사번검색? -->
+	<select id="hO03010R04" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.ho.domain.HO03010">
+	/* com.neofect.gts.services.ho.repository.HO03010Repository.hO03010R04 */
+	 SELECT A.MEMBER_ID,
+            A.SEQ,
+            A.STARTDATE,
+            A.ENDDATE,
+            A.TYPE
+     FROM CODE_LIINSURANCE A
+     WHERE A.MEMBER_ID = #{id}
+	 ORDER BY STARTDATE DESC   
+	</select>
+
+	<!-- 사번카운트? -->
+	<select id="memberDupChk" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.ho.domain.HO03010">
+	/* com.neofect.gts.services.ho.repository.HO03010Repository.memberDupChk */
+	SELECT	COUNT(*)
+	FROM		CODE_MEMBER		A
+	WHERE		A.MEMBER_ID	=	#{memberid}  
+	</select>
+
+	<!-- 멤버 아이디 업데이트 -->
+	<update id="memberIdChange" parameterType="com.neofect.gts.services.ho.domain.HO03010">
+	/* com.neofect.gts.services.ho.repository.HO03010Repository.memberIdChange */
+	UPDATE	CODE_MEMBER
+	SET		MEMBER_ID	=	#{newid},
+			EMP_NO		=	#{newid}
+	WHERE		MEMBER_ID	=	#{oldid}  
+	</update>
+
+	<!-- 주민번호 체크 -->
+	<select id="chkJumin" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.ho.domain.HO03010">
+	/* com.neofect.gts.services.ho.repository.HO03010Repository.chkJumin */
+	SELECT	A.MEMBER_ID,
+			A.NAME,
+			B.DEPT_NAME
+	FROM CODE_MEMBER A
+	LEFT OUTER JOIN	CODE_DEPT B
+	ON A.DEPT_ID = B.DEPT_ID
+	WHERE X_DECRYPT(A.RRN_NO) =	#{jumin}
+	AND	A.MEMBER_ID	!= #{memberid}
+	</select>
+
+	<!-- 주민번호 체크old -->
+	<select id="chkJuminOld" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.ho.domain.HO03010">
+	/* com.neofect.gts.services.ho.repository.HO03010Repository.chkJuminOld */
+	SELECT	A.MEMBER_ID,
+			A.NAME,
+			B.DEPT_NAME
+	FROM CODE_MEMBER A
+	LEFT OUTER JOIN	CODE_DEPT B
+	ON	A.DEPT_ID =	B.DEPT_ID
+	WHERE A.REG_CODE	= #{regcode}
+	AND	A.MEMBER_ID	!= #{memberid}
+	</select>
+
+	<!-- 배상 보험 이력 추가 -->
+	<insert id="CODELIINSURANCEC01" parameterType="com.neofect.gts.services.ho.domain.HO03010">
+	/* com.neofect.gts.services.ho.repository.HO03010Repository.CODELIINSURANCEC01 */
+	INSERT INTO	CODE_LIINSURANCE
+			( MEMBER_ID, SEQ, STARTDATE, ENDDATE, TYPE, ROW_INPUT_DATE, ROW_INPUT_IP, ROW_INPUT_EMP_NO)
+		SELECT	#{member},
+				NVL(MAX(SEQ),0)+1,
+				#{sdate},
+				#{edate},
+				#{etype},
+				SYSDATE,
+				#{ip},
+				#{userid}
+	FROM	CODE_LIINSURANCE
+	WHERE	MEMBER_ID	=	#{member}
+	</insert>
+
+</mapper>

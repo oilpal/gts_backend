@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.ho.repository.HO02010Repository">
+
+	<!-- 입퇴사자 관리 리스트 -->
+	<select id="getResList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.ho.domain.HO02010">
+	/* com.neofect.gts.services.ho.repository.HO02010Repository.getResList */
+	 SELECT		A.MEMBER_ID
+			,	A.DEPT_ID
+			,	B.DEPT_NAME
+			,	A.NAME
+			,	A.EMP_NO
+			,	A.IN_DATE
+			,	A.LIINSURANCEDATE
+			,	A.GUBUN_DIV
+			,	A.WORK_YN
+			,	A.RETIRE_DATE
+			,	A.HANDICAP_YN
+			,	A.HOURPAY
+			,	A.HOURPAY_2
+			,	A.HOURPAY_3
+		FROM	CODE_MEMBER		A
+				LEFT JOIN	CODE_DEPT	B
+				ON	B.DEPT_ID	=	A.DEPT_ID
+		WHERE	A.DEPT_ID	LIKE	#{dept}
+		AND		NVL(A.GUBUN_DIV,'%')	LIKE	#{gubunDiv}
+		AND		NVL(A.WORK_YN,'%')		LIKE	#{workYn}
+		AND		(	(A.EMP_NO IS NULL AND #{emptyChk} = '1') OR (A.EMP_NO = '' AND #{emptyChk} = '1')
+				OR	(A.EMP_NO IS NOT NULL AND #{emptyChk} = '2')
+				OR	((A.EMP_NO LIKE '%' AND #{emptyChk} = '3') OR (A.EMP_NO IS NULL AND #{emptyChk} = '3') OR (A.EMP_NO = '' AND #{emptyChk} = '3')) 
+				)
+		AND		(#{alldate} = 'Y'  OR IN_DATE BETWEEN #{from} AND #{to})
+		AND		(#{name}    = '%%' OR A.NAME LIKE #{name})
+		ORDER BY	A.DEPT_ID
+				,	A.MEMBER_ID	ASC
+	</select>
+
+	<!-- 입퇴사자 관리 관련 쿼리 -->
+	<select id="ho02010R02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.ho.domain.HO02010">
+	/* com.neofect.gts.services.ho.repository.HO02010Repository.ho02010R02 */
+	SELECT A.PLAN_DATE,
+		   B.CONT_SDATE,
+		   B.CONT_EDATE,
+		   B.CARE_SDATE,
+		   B.CARE_EDATE,
+		   B.CANCEL_DATE,
+		   A.START_TIME_DIV||':'||
+		   A.START_MIN_DIV||'-'||
+		   A.END_TIME_DIV||':'||
+		   A.END_MIN_DIV AS SVC_TIME,
+	       A.PRODUCT_ID,
+		   C.PRODUCT_NAME
+    FROM SERVICE_SCHEDULE A LEFT JOIN SERVICE_CONTRACT B ON  A.CUST_ID = B.CUST_ID AND A.CONT_SEQ = B.CONT_SEQ
+		 LEFT JOIN CODE_PRODUCT C ON A.PRODUCT_ID = C.PRODUCT_ID
+	WHERE A.DEPT_ID = #{dept}
+	AND A.PLAN_DATE BETWEEN TO_DATE(#{yymm}||'01') AND LAST_DAY(TO_DATE(#{yymm}||'01'))
+	AND A.CUST_ID = #{cust}
+	AND A.MEMBER_ID = #{member}
+	ORDER BY A.PLAN_DATE
+	</select>
+	
+
+</mapper>

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM900002Repository">
+
+	<!-- DEV_PGM_CODE -->
+	<select id="DEVPGMCODE" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900002">
+	/* com.neofect.gts.services.sm.repository.SM900002Repository.DEVPGMCODE */
+	SELECT 
+		   M.SYS_ID,
+           M.PGM_CODE,
+           M.PGM_NAME,
+           COUNT(M.GRID_ID) AS GRID_CNT
+           MAX(CASE M.GRID_RNK WHEN 1 THEN M.GRID_ID ELSE '' END)||
+           MAX(CASE M.GRID_RNK WHEN 2 THEN ','||M.GRID_ID ELSE '' END)||
+           MAX(CASE M.GRID_RNK WHEN 3 THEN ','||M.GRID_ID ELSE '' END)||
+           MAX(CASE M.GRID_RNK WHEN 4 THEN ','||M.GRID_ID ELSE '' END)||
+           MAX(CASE M.GRID_RNK WHEN 5 THEN ','||M.GRID_ID ELSE '' END)||
+           MAX(CASE M.GRID_RNK WHEN 6 THEN ','||M.GRID_ID ELSE '' END)||
+           MAX(CASE M.GRID_RNK WHEN 7 THEN ','||M.GRID_ID ELSE '' END)||
+           MAX(CASE M.GRID_RNK WHEN 8 THEN ','||M.GRID_ID ELSE '' END)||
+           MAX(CASE M.GRID_RNK WHEN 9 THEN ','||M.GRID_ID ELSE '' END)||
+           MAX(CASE M.GRID_RNK WHEN 10 THEN ','||M.GRID_ID ELSE '' END)||
+           MAX(CASE M.GRID_RNK WHEN 11 THEN ','||M.GRID_ID ELSE '' END)||
+           MAX(CASE M.GRID_RNK WHEN 12 THEN ','||M.GRID_ID ELSE '' END)||
+           MAX(CASE M.GRID_RNK WHEN 13 THEN ','||M.GRID_ID ELSE '' END)||
+           MAX(CASE M.GRID_RNK WHEN 14 THEN ','||M.GRID_ID ELSE '' END)||
+           MAX(CASE M.GRID_RNK WHEN 15 THEN ','||M.GRID_ID ELSE '' END)||
+           MAX(CASE M.GRID_RNK WHEN 16 THEN ','||M.GRID_ID ELSE '' END)||
+           MAX(CASE M.GRID_RNK WHEN 17 THEN ','||M.GRID_ID ELSE '' END)||
+           MAX(CASE M.GRID_RNK WHEN 18 THEN ','||M.GRID_ID ELSE '' END)||
+           MAX(CASE M.GRID_RNK WHEN 19 THEN ','||M.GRID_ID ELSE '' END)||
+           MAX(CASE M.GRID_RNK WHEN 20 THEN ','||M.GRID_ID ELSE '' END) AS GRID_IDS
+    FROM (
+		   SELECT 
+		   		  A.SYS_ID,
+           		  A.PGM_CODE,
+           		  A.PGM_NAME,
+                  B.GRID_ID,
+                  RANK() OVER (PARTITION BY A.SYS_ID, A.PGM_CODE ORDER BY B.GRID_ID ASC) AS GRID_RNK
+           FROM (
+				    SELECT 
+				    		A.SYS_ID,
+				            A.PGM_CODE,
+				            A.PGM_NAME
+			        FROM 
+			        		SM_AUTH_PGMCODE A
+           			WHERE 
+           					X_SEARCH(UPPER(#{pgmcode}), A.PGM_CODE, A.PGM_NAME) = 'Y'
+                    AND 
+                    		SYS_ID LIKE #{sysId}
+--             		AND NOT EXISTS (
+										SELECT 
+											1 
+										FROM 
+											SM_AUTH_PGMCODE C 
+										WHERE 
+											A.SYS_ID = C.SYS_ID AND A.SORT_CODE = C.PARENT_SORT_CODE AND C.SHOW_YESNO='Y'
+									)
+             		) A LEFT JOIN SM_DEV_GRID B ON A.SYS_ID = B.SYS_ID
+                        AND A.PGM_CODE = B.PGM_CODE
+        				GROUP BY A.SYS_ID, A.PGM_CODE, A.PGM_NAME, B.GRID_ID ) M
+						GROUP BY M.SYS_ID, M.PGM_CODE, M.PGM_NAME
+						ORDER BY M.SYS_ID, M.PGM_CODE	
+	</select>
+
+	<!-- S_GRID_COLS -->
+	<select id="SGRIDCOLS" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900002">
+	/* com.neofect.gts.services.sm.repository.SM900002Repository.SGRIDCOLS */
+	SELECT
+			 A.UPDATE_TABLE, 
+             B.TABLE_NAME,
+             B.FIELDNAME,
+             B.UPDATE_TYPE,
+             B.UPDATABLE,
+             B.UPDATE_ISKEY
+	FROM 
+			SM_DEV_GRID A INNER JOIN SM_DEV_GRID_COLS B on (A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE AND A.GRID_ID = B.GRID_ID)
+	WHERE 
+		A.SYS_ID = #{sysId}
+	AND 
+		A.PGM_CODE = #{pgmcode}
+	AND 
+		A.SQL_FILE = #{sqlfile}
+	AND 
+		A.SQL_ID = #{sqlid}
+	AND 
+		A.UPDATE_TABLE IS NOT NULL 
+    
+    ORDER BY B.FIELD_SEQ, B.SEQ
+	</select>
+
+	<!-- DEV_GRID_COLS -->
+	<select id="DEVGRIDCOLS" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900002">
+	/* com.neofect.gts.services.sm.repository.SM900002Repository.DEVGRIDCOLS */
+	SELECT 
+			UPDATE_TYPE,
+            UPDATABLE,
+            UPDATE_ISKEY,
+            SYS_ID,
+            PGM_CODE,
+            GRID_ID,
+            SEQ,
+            FIELD_SEQ,
+            FIELDNAME,
+            TABLE_NAME,
+            WIDTH,
+            MUST_INPUT,
+            VISIBLE,
+            READONLY,
+            EDITABLE,
+            SORTABLE,
+            HEADER,
+            HEADER_TEXT,
+            STYLES,
+            EDITOR,
+            FREEFORM_RATE,
+            LOOKUPDISPLAY,
+            RENDERER,
+            BUTTON,
+            ALWAYSSHOWBUTTON,
+            HEADERTOOLTIP,
+            MERGE,
+            MAXLENGTH,
+            FOOTEREXPR,
+            FOOTERALIGN,
+            FOOTERSTYLE,
+            FOOTERPRE,
+            FOOTERPOST,
+            RESIZABLE,
+            RESIZABLE
+	FROM 
+			SM_DEV_GRID_COLS
+	WHERE 
+			SYS_ID = #{sysId}
+	AND 
+			PGM_CODE = #{pgmcode}
+	AND 
+			GRID_ID = #{grid}
+    ORDER BY GRID_ID, FIELD_SEQ, SEQ
+	</select>
+
+	<!-- SM900002_GRIDSRC -->
+	<select id="SM900002GRIDSRC" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900002">
+	/* com.neofect.gts.services.sm.repository.SM900002Repository.SM900002GRIDSRC */
+	 SELECT 
+	 		M.SYS_ID,
+            M.PGM_CODE,
+            M.GRID_ID,
+            M.SEQ,
+            M.FIELD_SEQ,
+            M.FIELDNAME,
+            M.TABLE_NAME,
+            M.WIDTH,
+            M.MUST_INPUT,
+            M.VISIBLE,
+            M.READONLY,
+            M.EDITABLE,
+            M.SORTABLE,
+            M.HEADER,
+            M.HEADER_TEXT,
+            M.STYLES,
+            M.EDITOR,
+            M.LOOKUPDISPLAY,
+            M.RENDERER,
+            M.BUTTON,
+            M.ALWAYSSHOWBUTTON,
+            M.HEADERTOOLTIP,
+            M.MERGE,
+            M.MAXLENGTH,
+            M.FOOTEREXPR,
+            M.FOOTERALIGN,
+            M.FOOTERSTYLE,
+            M.FOOTERPRE,
+            M.FOOTERPOST,
+            M.RESIZABLE,
+            M.FREEFORM_RATE
+	FROM 
+			SM_DEV_GRID_COLS M INNER JOIN (
+											SELECT 
+												B.SYS_ID, B.PGM_CODE, B.GRID_ID, B.SEQ, B.FIELDNAME, B.MATCHING_POINT,
+                           					 	RANK() OVER (
+                           					 					PARTITION BY B.FIELDNAME ORDER BY B.MATCHING_POINT DESC, B.PGM_CODE DESC, B.GRID_ID ASC
+                           					 				) AS RK
+                          					FROM (
+                          							SELECT 
+                          									A.SYS_ID, A.PGM_CODE, A.GRID_ID, A.SEQ, A.FIELDNAME
+                                   							, SUM(
+                                   									CASE WHEN A.SYS_ID=#{sys} THEN 10 ELSE 1 END
+                                   								  ) -- AS POINT_SYS
+                               								+ SUM(CASE WHEN A.PGM_CODE=#{pgmcode} THEN 10 ELSE 1 END) -- AS POINT_PGM
+                               								+ SUM(CASE WHEN SUBSTR(A.PGM_CODE, 1, 4)=SUBSTR(#{pgmcode}, 1, 4) THEN 10 ELSE 1 END) -- AS POINT_DEPTH2
+                               								+ SUM(CASE WHEN SUBSTR(A.PGM_CODE, 1, 6)=SUBSTR(#{pgmcode}, 1, 6) THEN 10 ELSE 1 END) AS MATCHING_POINT -- AS POINT_DEPTH3
+                              						FROM 
+                              								SM_DEV_GRID_COLS A
+                             						WHERE INSTR(
+                             									#{cols}, '@'||A.FIELDNAME||'@') > 0
+                            						GROUP BY A.SYS_ID, A.PGM_CODE, A.GRID_ID, A.SEQ, A.FIELDNAME) B ) N ON M.SYS_ID = N.SYS_ID
+													AND M.PGM_CODE = N.PGM_CODE
+                                                    AND M.GRID_ID = N.GRID_ID
+                                                    AND M.SEQ = N.SEQ
+      WHERE N.RK = 1
+	
+	</select>
+
+	<!-- DEV_GRID -->
+	<select id="DEVGRID" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900002">
+	/* com.neofect.gts.services.sm.repository.SM900002Repository.DEVGRID */
+	SELECT 
+			SYS_ID,
+        	PGM_CODE,
+       		GRID_ID,
+       		SQL_FILE,
+       		SQL_ID,
+       		UPDATE_TABLE
+	FROM 
+			SM_DEV_GRID
+	WHERE 
+			SYS_ID = #{sys}
+	AND 
+			PGM_CODE = #{pgmcode}
+	AND 
+			GRID_ID = #{grid}
+	</select>
+
+	<!-- DEV_GRID_UPDATE -->
+	<select id="DEVGRIDUPDATE" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900002">
+	/* com.neofect.gts.services.sm.repository.SM900002Repository.DEVGRIDUPDATE */
+	MERGE INTO 
+				SM_DEV_GRID A
+    USING (
+    		SELECT 
+    				#{sys} AS SYS_ID, 
+    				#{pgmcode} AS PGM_CODE, 
+    				#{grid} AS GRID_ID, 
+    				#{sqlFile} AS SQL_FILE,
+    				#{sqlId} AS SQL_ID,
+    				#{updTbl} AS UPDATE_TABLE 
+    		FROM DUAL 
+    		) B
+     ON (
+	     		A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE 
+	     	AND A.GRID_ID = B.GRID_ID
+     	)
+     WHEN MATCHED THEN
+          UPDATE SET 
+          			A.SQL_FILE = B.SQL_FILE, 
+          			A.SQL_ID = B.SQL_ID, 
+          			A.UPDATE_TABLE = B.UPDATE_TABLE
+     WHEN NOT MATCHED THEN
+          INSERT (
+          			A.SYS_ID, 
+          			A.PGM_CODE, 
+          			A.GRID_ID, 
+          			A.SQL_FILE, 
+          			A.SQL_ID, 
+          			A.UPDATE_TABLE
+          		  ) 
+          VALUES (
+          			B.SYS_ID, 
+          			B.PGM_CODE, 
+          			B.GRID_ID, 
+          			B.SQL_FILE, 
+          			B.SQL_ID, 
+          			B.UPDATE_TABLE
+          		)
+	</select>
+
+</mapper>

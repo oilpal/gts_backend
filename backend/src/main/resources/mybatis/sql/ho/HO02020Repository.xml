@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.ho.repository.HO02020Repository">
+
+	<!-- 입퇴사자 관리 리스트 -->
+	<select id="getSimpleTaxList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.ho.domain.HO02020">
+	/* com.neofect.gts.services.ho.repository.HO02020Repository.getSimpleTaxList */
+	SELECT A.BASICDATE,
+           A.FROMAMT,
+           A.TOAMT,
+           A.TAXAMT1,
+           A.TAXAMT2,
+           A.TAXAMT3,
+           A.TAXAMT3_2,
+           A.TAXAMT4,
+           A.TAXAMT4_2,
+           A.TAXAMT5,
+           A.TAXAMT5_2,
+           A.TAXAMT6,
+           A.TAXAMT6_2,
+           A.TAXAMT7,
+           A.TAXAMT7_2,
+           A.TAXAMT8,
+           A.TAXAMT8_2,
+           A.TAXAMT9,
+           A.TAXAMT9_2,
+           A.TAXAMT10,
+           A.TAXAMT10_2,
+           A.TAXAMT11,
+           A.TAXAMT11_2     
+    FROM CODE_TAXPAY A  
+    ORDER BY A.BASICDATE ASC,
+             A.FROMAMT ASC,
+             A.TOAMT ASC  
+	</select>
+
+</mapper>

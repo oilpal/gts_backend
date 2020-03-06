@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SMCOMCODERepository">
+
+	<!-- C_SM0915_01 -->
+	<select id="CSM091501" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SMCOMCODE">
+	/* com.neofect.gts.services.sm.repository.SMCOMCODERepository.CSM091501 */
+	SELECT A.SYS_ID,
+           A.HCODE,
+           A.HNAME,
+           A.FLOAT_POS,
+           A.REMARK
+    FROM SM_COMCODE_H A
+    WHERE A.SYS_ID LIKE #{sysId}
+    AND (A.HCODE LIKE '%' ||#{keyword}|| '%'  OR A.HNAME LIKE '%' ||#{keyword}|| '%')
+    ORDER BY A.FLOAT_POS, A.SYS_ID, A.HCODE
+	</select>
+
+	<!-- C_SM0915_02 -->
+	<select id="CSM091502" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SMCOMCODE">
+	/* com.neofect.gts.services.sm.repository.SMCOMCODERepository.CSM091502 */
+	SELECT A.SYS_ID,
+           A.HCODE,
+           A.USE_YESNO,
+           A.DCODE,
+           A.DNAME,
+           A.DVALUE,
+           A.RELATE_CODE1,
+           A.RELATE_CODE2,
+           A.RELATE_CODE3,
+           A.RELATE_CODE4,
+           A.RELATE_CODE5,
+           A.DVALUE1,
+           A.DVALUE2,
+           A.DVALUE3,
+           A.DVALUE4,
+           A.DVALUE5,
+           A.DNAME1,
+           A.DNAME2,
+           A.DNAME3,
+           A.DNAME4,
+           A.DNAME5,
+           A.FIX_CODE1,
+           A.FIX_CODE2,
+           A.FIX_CODE3,
+           A.FIX_CODE4,
+           A.FIX_CODE5,
+           A.RMK
+     FROM SM_COMCODE_D A
+     WHERE A.SYS_ID = #{sysId}
+     AND A.HCODE  = #{hCode}
+     ORDER BY A.HCODE, A.DVALUE, A.DCODE
+	</select>
+
+	<!-- D_SM0915_01 -->
+	<delete id="DSM091501" parameterType="com.neofect.gts.services.sm.domain.SMCOMCODE">
+	/* com.neofect.gts.services.sm.repository.SMCOMCODERepository.DSM091501 */
+ 	DELETE
+    FROM SM_COMCODE_D
+    WHERE HCODE  = #{lsHcode}
+    AND SYS_ID = #{lsSysid}
+	</delete>
+
+	<!-- SM_AUTH_SYS_LIST -->
+	<select id="SMAUTHSYSLIST" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SMCOMCODE">
+	/* com.neofect.gts.services.sm.repository.SMCOMCODERepository.SMAUTHSYSLIST */
+	SELECT SYS_ID as code,
+           SYS_NAME as label
+    FROM SM_AUTH_SYS
+    WHERE USE_YN = 'Y'
+    ORDER BY SORT_ORDER
+	</select>
+
+	<!-- SM_COMCODE_C01 -->
+	<select id="SMCOMCODEC01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SMCOMCODE">
+	/* com.neofect.gts.services.sm.repository.SMCOMCODERepository.SMCOMCODEC01 */
+	SELECT A.SYS_ID,
+      	   B.SYS_NAME,
+           A.HCODE,
+           A.HNAME,
+           A.FLOAT_POS,
+           A.RMK
+    FROM SM_COMCODE_H A
+    INNER JOIN SM_AUTH_SYS B
+    ON A.SYS_ID = B.SYS_ID
+    WHERE A.SYS_ID LIKE #{sysId}
+    AND (A.HCODE LIKE '%' || #{keyword} || '%'
+    OR A.HNAME LIKE '%' || #{keyword} || '%')
+    AND (#{allShow} = '%' OR
+	A.HCODE IN ( 'PAPER_TYPE' , 'BASIS_WEIGHT')) /* 전체보기or평량지종보기 */
+    ORDER BY A.FLOAT_POS, A.SYS_ID, A.HCODE
+	</select>
+
+	<!-- SM_COMCODE_C02 -->
+	<select id="SMCOMCODEC02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SMCOMCODE">
+	/* com.neofect.gts.services.sm.repository.SMCOMCODERepository.SMCOMCODEC02 */
+	SELECT A.DCODE,
+           A.DNAME,
+           A.USE_YN,
+           A.DVALUE,
+           A.DVALUE2,
+           A.RELATE_CODE1,
+           A.RELATE_CODE2,
+           A.RELATE_CODE3,
+           A.RELATE_CODE4,
+           A.RELATE_CODE5,
+           A.DNAME1,
+           A.DNAME2,
+           A.FIX_CODE1,
+           A.FIX_CODE2,
+           A.FIX_CODE3,
+           A.FIX_CODE4,
+           A.FIX_CODE5,
+           A.RMK,
+           A.HCODE,
+           A.SYS_ID
+    FROM SM_COMCODE_D A
+    WHERE A.HCODE = #{hcode}
+    AND A.SYS_ID = #{sysId}
+    ORDER BY A.HCODE, A.DVALUE, A.DCODE
+	</select>
+
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.ho.repository.HO03050Repository">
+
+	<!-- 요양비용관리 리스트 -->
+	<select id="getCcmList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.ho.domain.HO03050">
+	/* com.neofect.gts.services.ho.repository.HO03050Repository.getCcmList */
+	SELECT	A.CAREFACILITY_DIV,
+			A.APPLY_DATE,
+			A.CUST_LEVEL_DIV,
+			A.LIMIT_AMT,
+			A.G_PAYAMT,
+			A.L_PAYAMT,
+			A.N_PAYAMT,
+			A.M_PAYAMT,
+			A.REMARK,
+			A.USE_YN
+	FROM CODE_CAREAMT A
+	ORDER BY A.CAREFACILITY_DIV,
+			 A.APPLY_DATE,
+			 A.CUST_LEVEL_DIV
+	</select>
+
+</mapper>

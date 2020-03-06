@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.AuthMenuRepository">
+
+	<!-- HEAD_MENU -->
+	<select id="HEADMENU" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.AuthMenu">
+	/* com.neofect.gts.services.sm.repository.AuthMenuRepository.HEADMENU */
+	 SELECT 
+	 		1 as menuLevel,
+            A.SYS_ID as pgmCode,
+            A.SYS_NAME as pgmName,
+            A.SORT_ORDER as menuOrder
+     FROM 
+     		SM_AUTH_SYS A
+     WHERE 
+     		A.COMPANY_CODE = #{tmpCompanyCode}
+	 AND 
+	 		A.SYS_ID IN (
+	 						SELECT DISTINCT 
+	 								A.SYS_ID
+                            FROM 
+                            		SM_AUTH_GROUP_MENU  A
+                            WHERE 
+                            		A.COMPANY_CODE = #{tmpCompanyCode}
+                            AND A.USER_GROUP_CODE IN (
+                            							SELECT 
+                            									B.USER_GROUP_CODE
+                                                        FROM 	
+                                                        		SM_AUTH_GROUP_USERS B
+                                                        WHERE 
+                                                        		B.COMPANY_CODE = #{tmpCompanyCode}
+                                                        AND 
+                                                        		B.USER_ID = #{tmpStdCode}
+                                                       )
+                             AND (
+                             		A.AUTH_I='Y' 
+                             		OR A.AUTH_R='Y' 
+                             		OR A.AUTH_D='Y' 
+                             		OR A.AUTH_P='Y' 
+                             		OR A.AUTH_E='Y'
+                             	)
+	  UNION
+			SELECT DISTINCT 
+					A.SYS_ID
+			FROM 
+					SM_AUTH_USER_MENU    A
+			WHERE 
+					A.COMPANY_CODE = #{tmpCompanyCode}
+			AND   
+					A.USER_ID = #{tmpStdCode}
+			AND (
+					A.AUTH_I='Y' 
+					OR A.AUTH_R='Y' 
+					OR A.AUTH_D='Y' 
+					OR A.AUTH_P='Y' 
+					OR A.AUTH_E='Y'
+				)
+       )
+      AND A.USE_YN = 'Y'
+  	  ORDER BY 4,2
+	</select>
+
+</mapper>

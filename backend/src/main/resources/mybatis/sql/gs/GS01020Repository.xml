@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.gs.repository.GS01020Repository">
+	<!-- 대상자목록 -->
+	<select id="GS01020_R01" parameterType="com.neofect.gts.services.gs.domain.GS01020" resultType="com.neofect.gts.services.gs.domain.GS01020">
+		<![CDATA[
+		SELECT 
+			A.CUST_ID,
+			SUBSTR(A.CUST_CODE,1,6) AS CUST_CODE,
+			A.CUST_NAME,
+			A.BIZ_REGNO,
+			A.START_DATE,
+			A.END_DATE,
+			A.DEPT_ID,
+			B.DEPT_NAME,
+			'2' AS ORDER_NUM,
+			A.END_DATE - TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD')) AS CARE_EDATE_DDAY,
+			A.BIRTH_DATE,
+			H.CONT_SEQ,
+			(CASE WHEN H.CANCEL_DATE IS NULL AND (A.END_DATE - TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD'))) >=0 THEN 0 ELSE 1 END) AS SORT_ORDER,
+			CASE 
+				WHEN A.END_DATE IS NULL
+				THEN  ''
+				ELSE 
+					CASE 
+						WHEN A.END_DATE - TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD')) >= 0
+						THEN A.END_DATE - TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD'))||'일 전'
+						ELSE (A.END_DATE - TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD')))*-1||'일 후'
+					END
+			END AS MANAGE_STATUS
+		FROM 
+			CODE_CUST A
+		LEFT OUTER JOIN 
+			CODE_DEPT B ON A.DEPT_ID = B.DEPT_ID
+		LEFT OUTER JOIN 
+			CODE_CUSTPROTECTOR P ON (A.CUST_ID = P.CUST_ID AND A.PRO_SEQ = P.PRO_SEQ)
+		JOIN 
+			CODE_CUSTINDEPT D ON A.CUST_ID = D.CUST_ID
+		LEFT OUTER JOIN (
+			SELECT 
+				S.CUST_ID,
+				S.DEPT_ID,
+				S.CONT_SDATE,
+				S.CONT_EDATE,
+				S.CARE_SDATE,
+				S.CARE_EDATE,
+				S.CONT_SEQ,
+				S.CANCEL_DATE
+			FROM 
+				SERVICE_CONTRACT S
+			WHERE
+				S.CONT_SEQ = (SELECT MAX(T.CONT_SEQ) FROM SERVICE_CONTRACT T WHERE T.CUST_ID = S.CUST_ID)
+		) H ON (A.CUST_ID = H.CUST_ID)
+		WHERE 
+			A.CLIENT_DIV = 'O'
+			AND D.DEPT_ID like #{deptId}
+			AND (A.CUST_ID like #{custId} or A.CUST_NAME like #{custId})
+			AND (#{custId} <> '%' OR #{alldate} = 'Y'
+			OR (
+				(H.CANCEL_DATE IS NULL OR H.CANCEL_DATE > #{startDate}) 
+				AND (NVL(A.START_DATE,TO_DATE('19000101')) <= #{endDate} 
+				AND NVL(A.END_DATE,TO_DATE('29991231')) >= #{startDate}) 
+				AND ((H.CONT_SDATE <= #{endDate} AND H.CONT_EDATE >= #{startDate}) OR (H.CUST_ID IS NULL)))
+			)
+		ORDER BY SORT_ORDER ASC, CUST_NAME
+		]]>
+	</select>
+	
+	<!-- 계약히스토리 -->
+	<select id="GS01020_C02" parameterType="com.neofect.gts.services.gs.domain.GS01020" resultType="com.neofect.gts.services.gs.domain.GS01020">
+		SELECT 
+			A.CUST_ID,
+			B.CUST_NAME,
+			B.CUST_CODE as CUST_CODE,
+			B.PHONE as PHONE,
+			B.HP as HP,
+			B.ADDR1 as ADDR1,
+			B.ADDR2 as ADDR2,
+			A.CONT_SEQ,
+			A.MANAGE_NO,
+			A.CUST_LEVEL_DIV,
+			(SELECT M_LIMIT_AMT FROM TABLE(FN_GS_GET_CARE_BASIC_AMT(A.CUST_LEVEL_DIV, A.APP_RATE_DIV))) AS M_LIMIT_AMT,
+			A.CARE_SDATE,
+			A.CARE_EDATE,
+			A.MASTER_PLAN,
+			A.CONT_SDATE,
+			A.CONT_EDATE,
+			A.PRO_SEQ,
+			A.PRO_NAME,
+			A.RELATION_DIV,
+			E.COMDIV_NAME AS RELATION_DIV_NAME,
+			P.ZIP_CODE AS PRO_ZIP_CODE,
+			P.ADDR1 AS PRO_ADDR1,
+			P.ADDR2 as PRO_ADDR2,
+			P.PHONE as PRO_PHONE,
+			P.HP as PRO_HP ,
+			P.EMAIL as PRO_EMAIL,
+			A.MEMBER_ID,
+			A.REG_DATE,
+			A.DEPT_ID,
+			D.DEPT_NAME,
+			A.CHANGE_DATE,
+			A.CHANGE_REASON,
+			A.CHANGE_ID,
+			A.CHANGE_DATETIME,
+			A.CANCEL_DATE,
+			A.CANCEL_REASON,
+			A.CANCEL_ID,
+			A.CANCEL_DATETIME,
+			A.SERVICE_CONT_DIV,
+			A.INTRO_ID,
+			A.REDUCTION_DIV,
+			A.REQ_LIMIT_AMT,
+			A.OFFICE_AMT,
+			A.APP_RATE_DIV,
+			B.ZIP_CODE,
+			A.MANAGE_NO1,
+			A.MANAGE_NO2,
+			B.BIRTH_DATE,
+			A.CONT_DEPT_DIV,
+			A.CONT_CALC_DAY,
+			A.CONT_NOTI_DAY,
+			A.CONT_PAY_DAY,
+			A.CONT_WRITE_DAY,
+			A.CONT_PAY_METHOD,
+			A.CONT_DATE,
+			A.CONT_MEMBER_NAME,
+			A.CONT_WRITE_DATE
+		FROM 
+			SERVICE_CONTRACT A,
+			CODE_CUST B,
+			CODE_DEPT D,
+			CODE_CUSTPROTECTOR P,
+			(SELECT A.COMDIV_CODE, A.COMDIV_NAME FROM CODE_COMDIV A WHERE A.COMSEC_CODE = '0116' AND A.USE_YN LIKE 'Y') E
+		WHERE 
+			A.CUST_ID = B.CUST_ID(+)
+			AND A.DEPT_ID = D.DEPT_ID(+)
+			AND A.CUST_ID = P.CUST_ID(+)
+			AND A.PRO_SEQ = P.PRO_SEQ(+)
+			AND A.RELATION_DIV = E.COMDIV_CODE(+)
+			AND A.CUST_ID = #{custId}
+	 	ORDER BY B.CUST_NAME, A.CUST_ID, A.CONT_SEQ DESC, A.CONT_SDATE
+	</select>
+	
+	<!-- 서비스일정 -->
+	<select id="GS01020_R03" parameterType="com.neofect.gts.services.gs.domain.GS01020" resultType="com.neofect.gts.services.gs.domain.GS01020">
+		SELECT  
+			A.DEPT_ID,
+			B.DEPT_NAME,
+			A.MEMBER_ID,
+			C.NAME as MEMBER_NAME,
+			A.PLAN_DATE,
+			TO_CHAR(A.PLAN_DATE,'DY') AS DAY_NM,
+			A.START_TIME_DIV||':'||A.START_MIN_DIV as START_TIME,
+			A.END_TIME_DIV||':'||A.END_MIN_DIV as END_TIME,
+			A.SERVICE_MIN,
+			A.PRODUCT_ID,
+			E.PRODUCT_CODE,
+			E.PRODUCT_NAME,
+			A.SERVICE_AMT,
+			A.PAY_AMT,
+			A.REQ_AMT,
+			A.REMAIN_AMT,
+			A.CUST_ID,
+			D.CUST_CODE as ENC_CUST_CODE,
+			D.CUST_NAME,
+			A.REMARK,
+			A.SERVICE_YN,
+			A.WON_MEMBER_ID,
+			A.COMPLAIN_MEMO,
+			A.CARER_MEMO,
+			A.ENTER_ID,
+			A.ENTER_DATE,
+			A.EDIT_ID,
+			A.EDIT_DATE,
+			A.SMS_YN,
+			A.STATUS,
+			A.CARER_MEMOYN,
+			A.CARER_DATE,
+			A.DEPT_MEMOYN,
+			A.DEPT_DATE,
+			A.SERVICE_YN_DIV,
+			A.SERVICE_REMARK,
+			A.DUPLISERVICE_YN,
+			A.S_ID,
+			A.DISCOUNT_AMT
+		FROM 
+			SERVICE_SCHEDULE A,
+			CODE_DEPT B,
+			CODE_MEMBER C,
+			CODE_CUST D,
+			CODE_PRODUCT E
+		WHERE 
+			A.DEPT_ID = B.DEPT_ID(+)
+			AND A.MEMBER_ID = C.MEMBER_ID(+)
+			AND A.CUST_ID = D.CUST_ID(+)
+			AND A.PRODUCT_ID = E.PRODUCT_ID(+)
+			AND A.DEPT_ID = #{deptId}
+			AND A.CUST_ID like #{custId}
+			AND A.PLAN_DATE between #{startDate} and #{endDate}
+		ORDER BY A.PLAN_DATE, A.START_TIME_DIV, A.START_MIN_DIV
+	</select>
+	
+	<select id="GS01020_C04" parameterType="com.neofect.gts.services.gs.domain.GS01020" resultType="com.neofect.gts.services.gs.domain.GS01020">
+		SELECT  
+			A.CUST_ID,
+			A.CONT_SEQ,
+			A.PLAN_SEQ,
+			A.MON_YN,
+			A.TUE_YN,
+			A.WED_YN,
+			A.THU_YN,
+			A.FRI_YN,
+			A.SAT_YN,
+			A.SUN_YN,
+			A.FROM_HOUR,
+			A.FROM_MIN,
+			A.TO_HOUR,
+			A.TO_MIN,
+			A.WEEK_YN,
+			A.WEEK2_YN,
+			A.MONTH_YN
+		FROM 
+			SERVICE_CONTRACT_PLAN A
+		WHERE 
+			A.CUST_ID = #{custId}
+			AND A.CONT_SEQ = #{contSeq}
+		ORDER BY A.PLAN_SEQ
+	</select>
+	
+	<update id="SERVICE_CONTRACT_U01" parameterType="com.neofect.gts.services.gs.domain.GS01020">
+		<![CDATA[
+
+		UPDATE
+			SERVICE_CONTRACT A
+		SET
+			CONT_EDATE = (SELECT MIN(B.CONT_SDATE) - 1 FROM SERVICE_CONTRACT B WHERE A.CUST_ID = B.CUST_ID AND B.CONT_SEQ > A.CONT_SEQ)
+		WHERE
+			CUST_ID = #{custId}
+			AND CONT_SEQ = (SELECT MAX(CONT_SEQ) FROM SERVICE_CONTRACT WHERE CUST_ID = #{custId} AND CONT_SEQ < #{contSeq})
+
+		]]>
+	</update>
+	
+	<select id="MAX_CONT_SEQ" parameterType="com.neofect.gts.services.gs.domain.GS01020" resultType="com.neofect.gts.services.gs.domain.GS01020">
+		SELECT
+			NVL(MAX(CONT_SEQ),0) + 1 AS NSEQ
+		FROM 
+			SERVICE_CONTRACT
+		WHERE
+			CUST_ID = #{custId}
+	</select>
+	
+	<select id="CODE_CUST_R01" parameterType="com.neofect.gts.services.gs.domain.GS01020" resultType="com.neofect.gts.services.gs.domain.GS01020">
+		SELECT
+			A.CUST_CODE,
+			A.CUST_NAME,
+			A.CUST_ID,
+			A.HP,
+			A.PHONE,
+			A.ZIP_CODE,
+			A.ADDR1,
+			A.ADDR2,
+			A.CUST_LEVEL_DIV,
+			A.APP_RATE_DIV,
+			A.REDUCTION_DIV,
+			A.MANAGE_NO,
+			A.MANAGE_NO1,
+			A.MANAGE_NO2,
+			A.START_DATE,
+			A.END_DATE,
+			B.PRO_SEQ,
+			B.PRO_NAME,
+			B.PHONE,
+			B.HP,
+			B.RELATION_DIV,
+			(SELECT	C.COMDIV_NAME FROM CODE_COMDIV C WHERE C.COMDIV_CODE = B.RELATION_DIV AND C.COMSEC_CODE = '0116') AS RELATION_DIV_NAME
+		FROM
+			CODE_CUST A
+		LEFT JOIN
+			CODE_CUSTPROTECTOR B ON	B.CUST_ID = A.CUST_ID AND B.PRO_SEQ = A.PRO_SEQ
+		WHERE
+			A.CUST_ID = #{custId}
+	</select>
+	
+	<!-- 파일다운로드 -->
+	<select id="CODE_CUST_R02" parameterType="com.neofect.gts.services.gs.domain.GS01020" resultType="com.neofect.gts.services.gs.domain.GS01020">
+		SELECT
+			A.CUST_ID,
+			'19' || SUBSTR(A.CUST_CODE, 1, 2) ||'-'||SUBSTR(A.CUST_CODE, 3, 2)||'-'||SUBSTR(A.CUST_CODE, 5, 2) AS BIRTH,
+			A.CUST_CODE,
+			A.CUST_NAME,
+			A.DEPT_ID,
+			A.ZIP_CODE ||') '|| A.ADDR1 ||' '|| A.ADDR2 AS ADDRESS,
+			A.HP,
+			A.PHONE,
+			A.MANAGE_NO,
+			(SELECT COMDIV_NAME FROM CODE_COMDIV B WHERE A.CUST_LEVEL_DIV=B.COMDIV_CODE AND B.COMSEC_CODE='0125') AS CUST_LEVEL_NAME
+		FROM
+			CODE_CUST A
+		WHERE 
+			A.CUST_ID = #{custId}
+	</select>
+</mapper>

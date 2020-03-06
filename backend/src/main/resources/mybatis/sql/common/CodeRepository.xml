@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.CodeRepository">
+
+	<!-- 공통코드 목록 -->
+	<select id="getSmCommonCodeList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Code">
+	/* com.neofect.gts.services.common.repository.CodeRepository.getSmCommonCodeList */
+	 	SELECT 
+	 		A.DCODE AS CODE,
+	        A.DNAME AS LABEL
+	    FROM 
+	    	SM_COMCODE_D A
+	    WHERE 
+	       		A.SYS_ID = #{sysId}
+	         	AND A.HCODE = #{hcode}
+	         	AND A.USE_YN = #{useYn}
+	       ORDER BY A.DVALUE, A.DCODE
+	</select>
+	
+	<!-- 공통코드 목록 By DValue2 값을 코드 값으로 -->
+	<select id="getSmCommonCodeListByDvalue2" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Code">
+	/* com.neofect.gts.services.common.repository.CodeRepository.getSmCommonCodeListByDvalue2 */
+		SELECT 
+		DVALUE2 AS CODE
+           , DNAME AS LABEL
+        FROM SM_COMCODE_D
+        WHERE SYS_ID = #{sysId}
+         AND HCODE = #{hcode}
+       ORDER BY CODE
+	</select>
+
+	<!-- 공통코드 목록 by RelateCode -->
+	<select id="getSmCommonCodeListDW" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Code">
+	/* com.neofect.gts.services.common.repository.CodeRepository.getSmCommonCodeListDW */
+		SELECT 
+			 A.DCODE AS CODE,
+             A.DNAME AS LABEL
+        FROM 
+        	SM_COMCODE_D A
+        WHERE A.SYS_ID = #{sysId}
+         AND A.HCODE = #{hcode}
+         AND A.USE_YN LIKE #{useYn}
+         AND NVL(A.RELATE_CODE1,'%') LIKE #{relateCode1}
+         AND NVL(A.RELATE_CODE2,'%') LIKE #{relateCode2}
+         AND NVL(A.RELATE_CODE3,'%') LIKE #{relateCode3}
+       ORDER BY A.DVALUE, A.DCODE
+	</select>
+	
+	<!-- 첨부파일 갯수  -->
+	<select id="getSmCommonFileCount" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+	/* com.neofect.gts.services.common.repository.CodeRepository.getSmCommonFileCount*/
+    	SELECT 
+    		TO_CHAR(COUNT(*))||' 건' AS CNT
+      	FROM 
+      		SM_COMM_FILE_DETAIL
+     	WHERE 
+     		ATCH_FILE_ID = #{fileId}
+	</select>
+</mapper>

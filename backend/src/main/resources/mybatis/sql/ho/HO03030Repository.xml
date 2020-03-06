@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.ho.repository.HO03030Repository">
+
+	<!-- 센터 관리 리스트 -->
+	<select id="getCenterCopyList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.ho.domain.HO03030">
+	/* com.neofect.gts.services.ho.repository.HO03030Repository.getCenterCopyList */
+	SELECT	A.MEMBER_ID,
+			A.DEPT_ID,
+			B.DEPT_NAME,
+			A.MEMBER_DIV,
+			A.EMP_NO,
+			A.NAME,
+			A.REG_CODE,
+			'19'||SUBSTR(A.REG_CODE,1,6)		AS BIRTH_DT,
+			A.GUBUN_DIV,
+			A.IN_DATE,
+			A.RETIRE_DATE,
+			TRUNC((SYSDATE - A.IN_DATE) / 365,0) AS WORK_YEAR,
+			A.HOURPAY,
+			A.HOURPAY_2,
+			A.HOURPAY_3,
+			A.HOURPAY_4,
+			A.HANDICAP_YN,
+			A.HANDICAP_LEVEL,
+			A.WORK_YN,
+			A.PAYTYPE,
+			F_GS_GET_DUP_DEPT_NM(A.MEMBER_ID,A.DEPT_ID) AS DUP_DEPT_NAME
+		FROM	CODE_MEMBER	A
+				LEFT JOIN	CODE_DEPT	B
+				ON	B.DEPT_ID	=	A.DEPT_ID
+		WHERE	A.DEPT_ID	=	#as_dept#
+		AND		NVL(A.GUBUN_DIV,'%')	LIKE	#{gubunDiv}
+		AND		NVL(A.WORK_YN,'%')		LIKE	#{workYn}
+		ORDER BY A.DEPT_ID, A.NAME ASC
+	</select>
+
+	<!-- HO03030R03-->
+	<select id="HO03030R03" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.ho.domain.HO03030">
+	/* com.neofect.gts.services.ho.repository.HO03030Repository.HO03030R03 */
+	SELECT	T.CUST_ID
+			,	T.BIRTH_DATE
+			,	T.CUST_CODE
+			,	T.CUST_NAME
+			,	T.CARE_EDATE_DDAY
+			,	T.SORT_ORDER
+			,	TO_CHAR(ABS(T.CARE_EDATE_DDAY)) || CASE WHEN T.CARE_EDATE_DDAY > 0 THEN ' 일 남았습니다.' WHEN T.CARE_EDATE_DDAY <![CDATA[<]]> 0 THEN ' 일 지났습니다.' END	AS DDAY_REMK
+		FROM	(	SELECT	A.CUST_ID
+						,	A.BIRTH_DATE
+						,	A.CUST_CODE
+						,	A.CUST_NAME
+						,	A.END_DATE - TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD')) AS CARE_EDATE_DDAY
+						,	(CASE WHEN H.CANCEL_DATE IS NULL AND (A.END_DATE - TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD'))) >=0 THEN 	0 ELSE 1 END) AS SORT_ORDER
+					FROM	CODE_CUST	A
+							LEFT OUTER JOIN (	SELECT	S.CUST_ID, S.DEPT_ID, S.CONT_SDATE, S.CONT_EDATE, S.CARE_SDATE, S.CARE_EDATE, S.CONT_SEQ, S.CANCEL_DATE 
+												FROM	SERVICE_CONTRACT	S
+												WHERE	S.DEPT_ID	=	#{dept}
+												AND		S.CONT_SEQ	= 	(	SELECT	MAX(T.CONT_SEQ)
+																			FROM	SERVICE_CONTRACT	T
+																			WHERE	T.CUST_ID	=	S.CUST_ID
+																			AND		T.DEPT_ID	=	S.DEPT_ID
+																		)
+											)	H
+								ON	A.CUST_ID	=	H.CUST_ID
+					WHERE	(A.CUST_ID = #{cust} OR A.CUST_CODE like #{code} or A.CUST_NAME like #{code})
+					AND		A.CLIENT_DIV = 'O'
+					AND		EXISTS (SELECT 1 FROM CODE_CUSTINDEPT D WHERE A.CUST_ID = D.CUST_ID AND D.DEPT_ID = #{dept} )
+					AND		(	#{code} != '%%'
+							OR	#{alldate} = 'Y' 
+							OR	(	(H.CANCEL_DATE IS NULL OR H.CANCEL_DATE > #{from})
+								AND	(A.START_DATE <![CDATA[<=]]> #{to} AND A.END_DATE >= #{from})
+								AND	(H.CONT_SDATE <![CDATA[<=]]> #{to} AND H.CONT_EDATE >= #{from})
+								)
+							)
+				)		T
+		ORDER BY	T.SORT_ORDER
+				,	T.CUST_NAME
+	</select>
+
+	<!-- 요보사 이동 건수-->
+	<select id="MEMBERCNTR01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.ho.domain.HO03030">
+	/* com.neofect.gts.services.ho.repository.HO03030Repository.MEMBERCNTR01 */
+	SELECT	(SELECT count(*) FROM CODE_MEMBER WHERE DEPT_ID=#{deptSrc} AND GUBUN_DIV>'0202' AND GUBUN_DIV <![CDATA[<]]> '0299' AND WORK_YN='Y') AS CNT_SRC,
+			(SELECT count(*) FROM CODE_MEMBER WHERE DEPT_ID=#{deptTgt} AND GUBUN_DIV>'0202' AND GUBUN_DIV <![CDATA[<]]> '0299' AND WORK_YN='Y') AS CNT_TGT
+	FROM DUAL
+	</select>
+
+	<!-- 요보사 이동 처리-->
+	<insert id="MEMBERMOVE" parameterType="com.neofect.gts.services.ho.domain.HO03030">
+	/* com.neofect.gts.services.ho.repository.HO03030Repository.MEMBERMOVE */
+	INSERT INTO CODE_MEMBER(MEMBER_ID, DEPT_ID, MEMBER_DIV, GUBUN_DIV, NAME, REG_CODE, LICENSE_NO, LICENSELEVEL_DIV, PHONE, HP, ZIP_CODE, EMAIL, ADDR1, ADDR2, 
+							BANK_DIV, DEPOSITNO, IN_DATE, RETIRE_DATE, WORK_YN, REG_DATE, PWD, AMMASTER_YN, AUTHORITY_DIV, EMAIL2, YEAR_VACATION, RETIRECALCTYPE, 
+							HOURPAY, REPORTEDINCOMEAMT, PAYTYPE, HANDICAP_YN, PAYUPDATE_YN, DEDUCT_CNT, MANYCHILD_YN, LIINSURANCEDATE, LIINSURANCETYPE, 
+							LIINSURANCEENDDATE, DEPOSITOWNER, SMS_QUOTA1, SMS_QUOTA2, HEALTHINSURETAG, NATIONALPENSIONTAG, ROW_INPUT_EMP_NO, ROW_INPUT_DATE, 
+							ROW_INPUT_IP, ROW_UPDATE_EMP_NO, ROW_UPDATE_DATE, ROW_UPDATE_IP, PDIR, PIMG, FAMILY_YN, OLD_PWD, GOYONGTAG, EMP_NO, HOURPAY_2, HOURPAY_3, 
+							MIN_PAYAMT, TRAINEE_YN, TRAINEE_DATE, REMARK, HOURPAY_4, HANDICAP_LEVEL, FIRST_AMT, RRN_NO)
+		SELECT	'GC'||LPAD(TO_CHAR(SEQ_MEMBER_ID.NEXTVAL),8,'0'), #{deptTgt}, MEMBER_DIV, GUBUN_DIV, NAME, REG_CODE, LICENSE_NO, LICENSELEVEL_DIV, PHONE, HP, ZIP_CODE,
+						   EMAIL, ADDR1, ADDR2, BANK_DIV, DEPOSITNO, IN_DATE, RETIRE_DATE, WORK_YN, REG_DATE, PWD, AMMASTER_YN, AUTHORITY_DIV, EMAIL2, YEAR_VACATION, 
+						   RETIRECALCTYPE, HOURPAY, REPORTEDINCOMEAMT, PAYTYPE, HANDICAP_YN, PAYUPDATE_YN, DEDUCT_CNT, MANYCHILD_YN, LIINSURANCEDATE, LIINSURANCETYPE, 
+						   LIINSURANCEENDDATE, DEPOSITOWNER, SMS_QUOTA1, SMS_QUOTA2, HEALTHINSURETAG, NATIONALPENSIONTAG, ROW_INPUT_EMP_NO, ROW_INPUT_DATE, ROW_INPUT_IP, 
+						   ROW_UPDATE_EMP_NO, ROW_UPDATE_DATE, ROW_UPDATE_IP, PDIR, PIMG, FAMILY_YN, OLD_PWD, GOYONGTAG, EMP_NO, HOURPAY_2, HOURPAY_3, MIN_PAYAMT, TRAINEE_YN, 
+						   TRAINEE_DATE, REMARK, HOURPAY_4, HANDICAP_LEVEL, FIRST_AMT, RRN_NO
+		FROM		CODE_MEMBER A
+		WHERE		A.DEPT_ID = #{deptSrc}
+		AND			A.GUBUN_DIV	!=	'0202'
+		AND			A.GUBUN_DIV	<![CDATA[<]]> 	'0299'
+		AND			A.WORK_YN		=		'Y'
+		AND			NOT EXISTS (SELECT 1 FROM CODE_MEMBER C WHERE A.NAME = C.NAME AND SUBSTR(A.REG_CODE, 1, 7)=SUBSTR(C.REG_CODE, 1, 7) 
+		AND 		C.DEPT_ID=#{deptTgt} AND C.GUBUN_DIV>'0202' AND C.GUBUN_DIV <![CDATA[<]]> '0299' AND C.WORK_YN='Y')
+	</insert>
+
+	<!-- 대상자 이동 건수-->
+	<select id="CUSTCNTR01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.ho.domain.HO03030">
+	/* com.neofect.gts.services.ho.repository.HO03030Repository.CUSTCNTR01 */
+	SELECT	(SELECT COUNT(*) FROM CODE_CUST A INNER JOIN CODE_CUSTINDEPT B ON A.CUST_ID=B.CUST_ID WHERE B.DEPT_ID=#{deptSrc}) AS CNT_SRC,
+			(SELECT COUNT(*) FROM CODE_CUST A INNER JOIN CODE_CUSTINDEPT B ON A.CUST_ID=B.CUST_ID WHERE B.DEPT_ID=#{deptTgt}) AS CNT_TGT
+	FROM		DUAL
+	</select>
+	
+	<!-- 대상자 이동 처리-->
+	<insert id="CUSTMOVE" parameterType="com.neofect.gts.services.ho.domain.HO03030">
+	/* com.neofect.gts.services.ho.repository.HO03030Repository.CUSTMOVE */
+	INSERT INTO CODE_CUSTINDEPT(SEQ, CUST_ID, DEPT_ID)
+	SELECT	SEQ_CODE_CUSTINDEPT.NEXTVAL, CUST_ID, #{deptTgt}
+	FROM		CODE_CUSTINDEPT	A
+	WHERE		A.DEPT_ID	=	#{deptSrc}
+	AND			NOT EXISTS (SELECT 1 FROM CODE_CUSTINDEPT B WHERE A.CUST_ID=B.CUST_ID AND A.DEPT_ID=B.DEPT_ID AND B.DEPT_ID=#{deptTgt})
+	</insert>
+
+</mapper>

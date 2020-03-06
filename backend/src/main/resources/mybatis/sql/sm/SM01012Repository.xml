@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM01012Repository">
+
+	<!-- CODE_COMSEC_C01 -->
+	<select id="CODECOMSECC01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01012">
+	/* com.neofect.gts.services.sm.repository.SM01012Repository.CODECOMSECC01 */
+	SELECT  COMSEC_CODE,
+            COMSEC_NAME,
+            DEPT_YN,
+            USER_CHG_YN,
+            COLUMN_NAME
+    FROM    CODE_COMSEC
+    ORDER BY comsec_code
+	</select>
+
+	<!-- COMSEC_CODE_C01 -->
+	<select id="COMSECCODEC01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01012">
+	/* com.neofect.gts.services.sm.repository.SM01012Repository.COMSECCODEC01 */
+	SELECT  COMSEC_CODE,
+            COMDIV_CODE,
+            COMDIV_NAME,
+            INPUT_YN,
+            USE_YN,
+            LMS_TAG,
+            KIND1,
+            NAME1,
+            KIND2,
+            NAME2,
+            TO_CHAR(START_DATE, 'YYYY-MM-DD') AS START_DATE,
+            TO_CHAR(END_DATE, 'YYYY-MM-DD') AS END_DATE,
+            PRINT_SEQ,
+            REMARK
+    FROM    CODE_COMDIV
+    WHERE   COMSEC_CODE = #{comsec}
+    ORDER BY COMDIV_CODE
+	</select>
+
+
+</mapper>

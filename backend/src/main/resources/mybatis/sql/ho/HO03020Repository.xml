@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.ho.repository.HO03020Repository">
+
+	<!-- 센터 관리 리스트 -->
+	<select id="getCenterList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.ho.domain.HO03020">
+	/* com.neofect.gts.services.ho.repository.HO03020Repository.getCenterList */
+	SELECT	A.DEPT_ID,
+			A.DEPT_NAME,
+			A.OPER_DIV,
+			A.SERVICE_CODE,
+			A.USE_YN,
+			A.ZIP_CODE,
+			A.ADDR1,
+			A.ADDR2,
+			A.PHONE,
+			A.FAX,
+			A.OWNER_NAME,
+			A.OWNER_HP,
+			A.MANAGER_NAME,
+			A.MANAGER_HP,
+			A.BIZ_NO,
+			A.BIZ_NAME,
+			A.BIZ_UPTAE,
+			A.BIZ_UPJONG,
+			A.BIZ_ADDR1,
+			A.BIZ_ADDR2,
+			A.RENT_BAMT,
+			A.REMT_MAMT,
+			A.OPER_AMT,
+			A.PROXY_DEPTID,
+			B.DEPT_NAME AS PROXY_DEPTNAME,
+			A.SALECENTER_YN,
+			A.UPPER_DEPTID,
+			C.DEPT_NAME AS UPPER_DEPTNAME,
+			A.SALECENTER_MAIN,
+			A.CHARGE_MAN,
+			A.CHARGE_TEL,
+			A.CHARGE_FAX,
+			A.PAY_CALC_DIV
+		FROM	CODE_DEPT	A
+		LEFT JOIN	CODE_DEPT	B
+		ON	B.DEPT_ID	=	A.PROXY_DEPTID
+		LEFT JOIN	CODE_DEPT	C
+		ON	C.DEPT_ID	=	A.UPPER_DEPTID
+		WHERE	A.DEPT_ID	LIKE	#{dept}
+		AND		A.USE_YN	LIKE	#{use}
+		ORDER BY	A.DEPT_ID
+	</select>
+
+	<!-- 계좌 리스트? -->
+	<select id="HO03020C03" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.ho.domain.HO03020">
+	/* com.neofect.gts.services.ho.repository.HO03020Repository.HO03020C03 */
+	SELECT	A.DEPT_ID,
+			A.DEPOSITNO,
+			A.BANK_DIV,
+			A.BRANCH_NAME,
+			A.DEPOSIT_DIV,
+			A.CARD_CHARGERATE,
+			A.FIRST_RAMT,
+			A.NOW_RAMT
+	FROM	CODE_DEPOSITNO	A
+	WHERE	A.DEPT_ID LIKE #{dept}
+	ORDER BY A.DEPT_ID,
+			 A.DEPOSIT_DIV,
+			 A.DEPOSITNO
+	</select>
+
+	<!-- 센터 권한 사용자 리스트? -->
+	<select id="HO03020C04" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.ho.domain.HO03020">
+	/* com.neofect.gts.services.ho.repository.HO03020Repository.HO03020C04 */
+	SELECT	B.DEPT_ID AS EMP_DEPT_ID,
+			C.DEPT_NAME,
+			A.MEMBER_ID,
+			B.NAME,
+			A.DEPT_ID,
+			A.PRINT_SEQ
+		FROM CODE_DEPT_AUTHORITY A
+		INNER JOIN	CODE_MEMBER B
+		ON	B.MEMBER_ID	= A.MEMBER_ID
+		INNER JOIN	CODE_DEPT C
+		ON C.DEPT_ID = B.DEPT_ID
+		WHERE A.DEPT_ID	= #{dept}
+		ORDER BY B.DEPT_ID, B.NAME
+	</select>
+
+
+
+</mapper>
