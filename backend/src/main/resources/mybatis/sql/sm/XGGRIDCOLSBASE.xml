@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.XGGRIDCOLSBASERepository">
+
+	<select id="GRID_COLS_BASE" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.XGGRIDCOLSBASE">
+		
+		SELECT A.SYS_ID,
+					A.FIELD_NAME,
+					A.FIELD_NAME_KOR,
+					null as BASE_APPLY,
+					A.DATA_TYPE,
+					A.WIDTH,
+					A.MUST_INPUT,
+					A.DEFAULT_VALUE,
+					A.TAG,
+					A.VISIBLE,
+					A.READONLY,
+					A.EDITABLE,
+					A.SORTABLE,
+					A.BUTTON,
+					A.IMAGE_LIST,
+					A.HEADER,
+					A.FOOTER,
+					A.STYLES,
+					A.DYNAMIC_STYLES,
+					A.EDITOR,
+					A.RENDERER,
+					A.FILTERS,
+					A.VALIDATIONS
+ 		FROM XG_GRID_COLS_BASE A 
+	 	WHERE A.SYS_ID LIKE '%' ||#{sysId}|| '%' 
+	 	  AND A.FIELD_NAME LIKE '%' ||#{fieldName}|| '%'  
+		ORDER BY  A.SYS_ID,
+						A.FIELD_NAME
+
+		<!-- <update_table>XG_GRID_COLS_BASE</update_table>
+     
+		<column name='SYS_ID' type='char' updatable='Y' iskeycol='Y' />
+		<column name='FIELD_NAME' type='char' updatable='Y' iskeycol='Y' />
+		<column name='FIELD_NAME_KOR' type='char' updatable='Y' iskeycol='N' />
+		<column name='BASE_APPLY' type='char' updatable='N' iskeycol='N' />
+		<column name='DATA_TYPE' type='char' updatable='Y' iskeycol='N' />
+		<column name='WIDTH' type='char' updatable='Y' iskeycol='N' />
+		<column name='MUST_INPUT' type='char' updatable='Y' iskeycol='N' />
+		<column name='DEFAULT_VALUE' type='char' updatable='Y' iskeycol='N' />
+		<column name='TAG' type='char' updatable='Y' iskeycol='N' />
+		<column name='VISIBLE' type='char' updatable='Y' iskeycol='N' />
+		<column name='READONLY' type='char' updatable='Y' iskeycol='N' />
+		<column name='EDITABLE' type='char' updatable='Y' iskeycol='N' />
+		<column name='SORTABLE' type='char' updatable='Y' iskeycol='N' />
+		<column name='BUTTON' type='char' updatable='Y' iskeycol='N' />
+		<column name='IMAGE_LIST' type='char' updatable='Y' iskeycol='N' />
+		<column name='HEADER' type='char' updatable='Y' iskeycol='N' />
+		<column name='FOOTER' type='char' updatable='Y' iskeycol='N' />
+		<column name='STYLES' type='char' updatable='Y' iskeycol='N' />
+		<column name='DYNAMIC_STYLES' type='char' updatable='Y' iskeycol='N' />
+		<column name='EDITOR' type='char' updatable='Y' iskeycol='N' />
+		<column name='RENDERER' type='char' updatable='Y' iskeycol='N' />
+		<column name='FILTERS' type='char' updatable='Y' iskeycol='N' />
+		<column name='VALIDATIONS' type='char' updatable='Y' iskeycol='N' /> -->
+     
+	</select>	
+
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.FindSiteCodeRepository">
+
+	<!-- FindSiteCode SM0211|사업장 찾기 -->
+	<select id="FindSiteCode" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.FindSiteCode">
+	/* com.neofect.gts.services.sm.repository.FindSiteCodeRepository.FindSiteCode*/
+		<![CDATA[
+		SELECT
+			A.SITE_CODE,		
+			dbo.FN_SM_GET_SITENAMEFULL(A.COMPANY_CODE, A.SITE_CODE) AS SITE_FULLNAME,
+			A.SITE_NAME		
+		FROM
+			SM_SITE A
+		WHERE
+			A.COMPANY_CODE = #{comp}
+		AND 
+			A.SITE_NAME LIKE '%' ||#{find}|| '%'
+		ORDER BY
+			SITE_FULLNAME
+		]]>
+	</select>
+
+</mapper>

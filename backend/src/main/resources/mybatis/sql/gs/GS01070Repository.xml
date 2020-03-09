@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.gs.repository.GS01070Repository">
+	<select id="GS01070_R01" parameterType="com.neofect.gts.services.gs.domain.GS01070" resultType="com.neofect.gts.services.gs.domain.GS01070">
+		SELECT	
+			A.DEPT_ID,
+			B.DEPT_NAME,
+			A.MEMBER_ID,
+			C.NAME AS MEMBER_NAME,
+			D.CUST_CODE,
+			D.CUST_NAME,
+			NVL(C.FAMILY_YN, 'N') AS FAMILY_YN,
+			F.CUST_LEVEL_DIV,
+			F.REDUCTION_DIV,
+			A.PLAN_DATE,
+			A.START_TIME_DIV||':'||A.START_MIN_DIV AS START_TIME,
+			A.END_TIME_DIV||':'||A.END_MIN_DIV AS END_TIME,
+			A.SERVICE_MIN,
+			A.PRODUCT_ID,
+			E.PRODUCT_CODE,
+			E.PRODUCT_NAME,
+			A.SERVICE_AMT * (CASE WHEN A.SERVICE_YN = '1' THEN 1 ELSE FN_GS_GET_NO_RATE() END) AS SERVICE_AMT,
+			A.PAY_AMT * (CASE WHEN A.SERVICE_YN = '1' THEN 1 ELSE FN_GS_GET_NO_RATE() END) AS PAY_AMT,
+			A.REQ_AMT * (CASE WHEN A.SERVICE_YN = '1' THEN 1 ELSE FN_GS_GET_NO_RATE() END) AS REQ_AMT,
+			A.SERVICE_YN
+		FROM	
+			SERVICE_SCHEDULE	A
+		LEFT JOIN
+			CODE_DEPT B ON B.DEPT_ID = A.DEPT_ID
+		LEFT JOIN
+			CODE_MEMBER C ON C.MEMBER_ID = A.MEMBER_ID
+		LEFT JOIN
+			CODE_CUST D ON D.CUST_ID = A.CUST_ID
+		LEFT JOIN
+			CODE_PRODUCT E ON E.PRODUCT_ID = A.PRODUCT_ID
+		INNER JOIN	
+			SERVICE_CONTRACT F ON F.CUST_ID = A.CUST_ID 
+			AND F.CONT_SEQ = A.CONT_SEQ
+		WHERE	
+			A.DEPT_ID LIKE #{deptId}
+			AND PLAN_DATE between #{fromDate} and #{toDate}
+			AND A.SERVICE_YN IS NOT NULL
+			AND (#{serviceYn} = '%' or A.SERVICE_YN like #{serviceYn})
+			AND (#{member} = '%' or A.MEMBER_ID like #{member} or C.NAME like #{member})
+			AND (D.CUST_CODE like #{custCode} or D.CUST_NAME like #{custCode})
+			AND (#{empName}='%' OR EXISTS (SELECT 1 FROM CODE_MEMBER F WHERE A.MEMBER_ID = F.MEMBER_ID AND F.NAME LIKE #{empName}))
+		ORDER BY 
+			D.CUST_NAME, A.CUST_ID, A.PLAN_DATE, A.START_TIME_DIV, A.START_MIN_DIV
+
+	</select>
+</mapper>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SmFindCodeRepository">
+	
+	
+      <select id="FindPgmCode" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmFindCode">
+            
+              SELECT A.SYS_ID ,
+                         A.PGM_CODE,
+                         A.SORT_CODE,
+                         A.PGM_NAME
+                FROM SM_AUTH_PGMCODE A
+               WHERE (A.PGM_CODE LIKE '%' || #{pgm} || '%'
+                        OR A.PGM_NAME LIKE '%' || #{pgm} || '%')
+                     AND NOT EXISTS(SELECT * FROM  SM_AUTH_USER_MENU WHERE PGM_CODE = A.PGM_CODE AND AUTH_CODE = #{userId})
+                  ORDER BY A.SORT_CODE
+      </select>
+
+      <select id="FindFmStdEquip" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmFindCode">
+            <![CDATA[
+
+                    SELECT A.COMPANY_CODE,
+                                           A.EQUIP_STD_CODE,
+                                           A.PART_ID,
+                                           B.DNAME AS PART_NAME,
+                                           A.SULBI,
+                                           A.EQUIP
+                          FROM FM_STD_EQUIP A
+                         INNER JOIN SM_COMCODE_D B ON A.PART_ID = B.DCODE AND B.HCODE = 'PART_ID' AND B.SYS_ID = 'SM'
+                         WHERE A.COMPANY_CODE = #{companyCode}
+                               AND A.PART_ID LIKE #{partId}|| '%'
+                               AND (B.DNAME LIKE '%' ||#{find}|| '%' OR A.SULBI LIKE '%' ||#{find}|| '%' OR A.EQUIP LIKE '%' ||#{find}|| '%')
+                               AND A.USE_YESNO = 'Y'
+                         ORDER BY A.PART_ID, A.SULBI, A.EQUIP
+
+            ]]>
+
+      </select>
+
+      <select id="FindFmEquipDiagType" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmFindCode">
+            <![CDATA[
+
+              SELECT DIAG_CODE,
+                         DIAG_NAME,
+                               UNIT,
+                             INPUT_YESNO
+                    FROM FM_EQUIP_DIAG_TYPE
+                   WHERE COMPANY_CODE = #{companyCode}
+                     AND DIAG_NAME LIKE '%' ||#{find}|| '%'
+                   ORDER BY DIAG_CODE
+
+            ]]>
+
+      </select>
+
+      <select id="FindSmAuthGroup" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmFindCode">
+            <![CDATA[
+                  SELECT      A.COMPANY_CODE,
+                              A.USER_ID,
+                              A.USER_NAME,
+                              A.USER_DESC
+               FROM SM_AUTH_USER A
+              WHERE(A.USER_ID LIKE '%' || #{find} || '%'
+                       OR A.USER_NAME LIKE '%' || #{find} || '%')
+                   AND A.COMPANY_CODE = #{companyCode}
+                   AND A.USER_ID <> #{group}
+                   AND A.USE_YN = 'Y'
+             ORDER BY 1,2
+            ]]>
+
+
+      </select>
+
+      <select id="FindUserGroupCode" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmFindCode">
+            <![CDATA[
+                  SELECT      A.COMPANY_CODE,
+                                          A.USER_GROUP_CODE,
+                                          A.USER_GROUP_NAME,
+                                          A.REMARKS
+                           FROM SM_AUTH_GROUP A
+                          WHERE(A.USER_GROUP_CODE LIKE '%' || #{find} || '%'
+                                   OR A.USER_GROUP_NAME LIKE '%' || #{find} || '%')
+                               AND A.COMPANY_CODE = #{companyCode}
+                         ORDER BY 1,2
+            ]]>
+
+      </select>
+
+      <select id="FindAuthUser" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmFindCode">
+            <![CDATA[
+
+                  SELECT USER_ID
+                        ,USER_NAME
+                        ,USER_DESC
+                        ,TEL_NO
+                        ,MOBILE_NO
+                    FROM SM_AUTH_USER
+                    WHERE (USER_ID LIKE '%' ||#{find}|| '%' OR USER_NAME LIKE '%' ||#{find}|| '%')
+                      AND COMPANY_CODE = #{companyCode}
+                        AND nvl(USE_YN,'N') = 'Y'
+                        AND USER_TAG = '1'
+                    ORDER BY USER_NAME
+
+            ]]>
+
+      </select>
+
+      <!-- [조경] 분류코드 -->
+      <select id="FindL_Code" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmFindCode">
+            <![CDATA[
+                  SELECT A.L_CODE AS L_CODE1
+                       , A.L_NAME AS L_NAME1
+                       , B.L_CODE AS L_CODE2
+                       , B.L_NAME AS L_NAME2
+                               , C.L_CODE AS L_CODE3
+                       , C.L_NAME AS L_NAME3
+                    FROM FM_CODE_LAND A
+                    LEFT OUTER JOIN FM_CODE_LAND B
+                      ON A.COMPANY_CODE = B.COMPANY_CODE
+                     AND A.L_CODE = B.UPPER_CODE
+                     AND B.L_LEVEL = '2'
+                     AND B.USE_YESNO = 'Y'
+                    LEFT OUTER JOIN FM_CODE_LAND C
+                      ON A.COMPANY_CODE = C.COMPANY_CODE
+                     AND B.L_CODE = C.UPPER_CODE
+                     AND C.L_LEVEL = '3'
+                     AND C.USE_YESNO = 'Y'
+                   WHERE A.COMPANY_CODE = #{companyCode}
+                     AND A.L_LEVEL = '1'
+                     AND A.USE_YESNO = 'Y'
+                     AND C.L_CODE IS NOT NULL
+                     AND (A.L_NAME LIKE '%' || #{search} || '%' OR
+                          B.L_NAME LIKE '%' || #{search} || '%' OR
+                          C.L_NAME LIKE '%' || #{search} || '%')
+                   ORDER BY A.SORT_ORDER, B.SORT_ORDER, C.SORT_ORDER
+            ]]>
+      </select>
+
+	
+</mapper>

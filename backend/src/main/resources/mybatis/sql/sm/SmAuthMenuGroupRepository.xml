@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SmAuthMenuGroupRepository">
+
+	<!-- SM_AUTH_MENU_GROUP_C01 -->
+	<select id="SMAUTHMENUGROUPC01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthMenuGroup">
+	/* com.neofect.gts.services.sm.repository.SmAuthMenuGroupRepository.SMAUTHMENUGROUPC01*/
+		<![CDATA[
+		 SELECT 
+		 		A.MENU_AUTH,
+				A.MENU_AUTH_NAME,
+				A.MENU_AUTH_DESC,
+				A.USE_YN
+ 		 FROM 
+ 		 		SM_AUTH_MENU_GROUP A	
+ 		 WHERE
+ 		 		(A.MENU_AUTH LIKE '%' || #{menu} || '%' 
+ 		 OR 
+ 		 		A.MENU_AUTH_NAME LIKE '%' || #{menu} || '%')
+		 ORDER BY 1,2,3
+		]]>
+	</select>
+
+	<!-- SM_AUTH_MENU_GROUP_R01 -->
+	<select id="SMAUTHMENUGROUPR01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthMenuGroup">
+	/* com.neofect.gts.services.sm.repository.SmAuthMenuGroupRepository.SMAUTHMENUGROUPR01*/
+		<![CDATA[
+		SELECT 
+				A.MENU_AUTH
+ 		FROM 
+ 				SM_AUTH_MENU_GROUP A	
+ 		WHERE
+ 				(A.MENU_AUTH =  #{menu} )
+		]]>
+	</select>
+
+	<!-- SM_AUTH_MENU_GROUP_R02 -->
+	<select id="SMAUTHMENUGROUPR02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthMenuGroup">
+	/* com.neofect.gts.services.sm.repository.SmAuthMenuGroupRepository.SMAUTHMENUGROUPR02*/
+		<![CDATA[
+		 SELECT 
+		 		A.MENU_AUTH,
+				A.MENU_AUTH_NAME,
+				A.MENU_AUTH_DESC
+ 		 FROM 
+ 		 		SM_AUTH_MENU_GROUP A	
+  	     WHERE 
+  	     		USE_YN = 'Y'
+		 ORDER BY 1,2,3
+		]]>
+	</select>
+
+	<!-- SM_AUTH_MENU_GROUP_W01 -->
+	<select id="SMAUTHMENUGROUPW01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthMenuGroup">
+	/* com.neofect.gts.services.sm.repository.SmAuthMenuGroupRepository.SMAUTHMENUGROUPW01*/
+		<![CDATA[
+		 SELECT 
+		 		MENU_AUTH AS code,
+				MENU_AUTH_NAME as label
+ 		 FROM 
+ 		 		SM_AUTH_MENU_GROUP	
+  	     WHERE
+  	     		USE_YN = 'Y'
+		 ORDER BY MENU_AUTH
+		]]>
+	</select>
+
+</mapper>

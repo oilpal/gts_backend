@@ -1,0 +1,1307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.CommonRepository">
+
+	<!-- SM_COMCODE_D -->
+	<select id="SMCOMCODED" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	/* com.neofect.gts.services.sm.repository.CommonRepository.SMCOMCODED*/
+		<![CDATA[
+				SELECT 
+						A.DCODE AS CODE,
+						A.DNAME AS LABEL
+				FROM 
+						SM_COMCODE_D A
+				WHERE 
+						A.USE_YN = 'Y'
+				AND 
+						A.HCODE = #{hcode}
+				AND 
+						A.SYS_ID = #{sysId}
+				ORDER BY A.DCODE
+		]]>
+	</select>
+
+	<!-- SM_COMCODE_D_EM -->
+	<select id="SMCOMCODEDEM" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	/* com.neofect.gts.services.sm.repository.CommonRepository.SMCOMCODEDEM*/
+		<![CDATA[
+				SELECT 
+						A.DCODE AS CODE,
+						A.DNAME AS LABEL
+				FROM 
+						SM_COMCODE_D A
+				WHERE 
+						A.USE_YESNO = 'Y'
+				AND 
+						A.HCODE = #{hcode}
+				AND 
+						A.SYS_ID = #{sysId}
+				AND 
+						A.RELATE_CODE1 = #as_rel_code#
+				ORDER BY A.DCODE
+		]]>
+	</select>
+
+	<!-- 프로그램 사용여부 조회 (년도) S_SM0709_01 -->
+	<select id="SSM070901" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070901*/
+		<![CDATA[
+				SELECT --	
+						A.VENDOR_NAME,
+						A.SITE_CODE,
+						A.SITE_NAME,
+						A.SYS_NAME,
+						'[계획]' AS PLAN_DIV,
+						nvl(B.M_CNT, 0) AS M_CNT,
+						nvl(B.M01, 0) AS MC01,
+						nvl(B.M02, 0) AS MC02,
+						nvl(B.M03, 0) AS MC03,
+						nvl(B.M04, 0) AS MC04,
+						nvl(B.M05, 0) AS MC05,
+						nvl(B.M06, 0) AS MC06,
+						nvl(B.M07, 0) AS MC07,
+						nvl(B.M08, 0) AS MC08,
+						nvl(B.M09, 0) AS MC09,
+						nvl(B.M10, 0) AS MC10,
+						nvl(B.M11, 0) AS MC11,
+						nvl(B.M12, 0) AS MC12,
+						'[실적]' AS REAL_DIV,
+						nvl(B.P_CNT, 0) AS P_CNT,
+						nvl(B.P01, 0) AS P01,
+						nvl(B.P02, 0) AS P02,
+						nvl(B.P03, 0) AS P03,
+						nvl(B.P04, 0) AS P04,
+						nvl(B.P05, 0) AS P05,
+						nvl(B.P06, 0) AS P06,
+						nvl(B.P07, 0) AS P07,
+						nvl(B.P08, 0) AS P08,
+						nvl(B.P09, 0) AS P09,
+						nvl(B.P10, 0) AS P10,
+						nvl(B.P11, 0) AS P11,
+						nvl(B.P12, 0) AS P12,
+						CASE WHEN nvl(B.M_CNT, 0) > 0 THEN 'Y' ELSE 'N' END AS USE_YESNO
+				FROM	(
+							SELECT CASE 
+										WHEN X.DVALUE = 0 THEN 999999 
+										ELSE	nvl(X.DVALUE,999999) 
+										END  PRTSEQ,
+							  		CASE 
+							  			WHEN nvl(INSPECT_CENTER,'') = '' THEN '일반' 
+							  			ELSE INSPECT_CENTER 
+							  			END GB,
+									  	C.LOCAL_DIV,
+									  	C.INSIDE_DIV,
+									  	OM_SITE_DIV,
+									  	D.VENDOR_NAME,
+									  	A.SITE_CODE,
+									  	A.SITE_NAME,
+									  	B.SYS_NAME,
+									  	B.SEQ
+							FROM		
+										FN_FM_SITE_AUTH(#{comp}, #{user}) A
+							
+							CROSS JOIN	(
+											SELECT	'시설'	AS	SYS_NAME,	1	AS	SEQ	UNION ALL
+											SELECT	'미화'	AS	SYS_NAME,	2	AS	SEQ	UNION ALL
+											SELECT	'조경'	AS	SYS_NAME,	3	AS	SEQ	UNION ALL
+											SELECT	'순찰'	AS	SYS_NAME,	4	AS	SEQ
+										) B
+							INNER JOIN SM_SITE C 
+							ON C.SITE_CODE = A.SITE_CODE
+							
+							LEFT OUTER JOIN BI_VENDOR D 
+							ON D.COMPANY_CODE = C.COMPANY_CODE 
+							AND D.VENDOR_CODE = C.VENDOR_cODE
+							
+							LEFT OUTER JOIN	SM_COMCODE_D E	
+							ON E.SYS_ID = 'BI' AND	E.HCODE = 'OMSITEDIVCD'	
+							AND	C.OM_SITE_DIV = E.DCODE
+							
+							LEFT OUTER JOIN	SM_COMCODE_D X	
+							ON	X.SYS_ID = 'SI'	
+							AND	X.HCODE	= 'CORP_RANK'	
+							AND	C.VENDOR_CODE = X.DCODE
+							
+							INNER JOIN	FM_SITE_INFO F	
+							ON	F.SITE_CODE = A.SITE_CODE
+							WHERE C.COMPANY_CODE = #{comp}
+							
+							) A
+							
+				LEFT OUTER JOIN (
+									SELECT	
+											COMPANY_CODE,
+											SITE_CODE,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '01' 
+													AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END
+												) AS P01,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '02' 
+													AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END
+												) AS P02,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '03' 
+													AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END
+												) AS P03,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '04' 
+													AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END
+												) AS P04,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '05' 
+													AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END
+												) AS P05,
+												
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '06' 
+													AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END
+												) AS P06,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '07' 
+													AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END
+												) AS P07,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '08' 
+													AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END
+												) AS P08,
+												
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '09' 
+													AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END
+												) AS P09,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '10' 
+													AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END
+												) AS P10,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '11' 
+													AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END
+												) AS P11,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '12' 
+													AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END
+												) AS P12,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(4), WORK_DATE, 112) = #{date} 
+													AND status in ('','02','03', '04','05')   THEN 1 ELSE 0 END
+												) AS P_CNT,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '01' 
+													THEN 1 ELSE 0 END
+												) AS M01,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '02' 
+													THEN 1 ELSE 0 END
+												) AS M02,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '03' 
+													THEN 1 ELSE 0 END
+												) AS M03,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '04' 
+													THEN 1 ELSE 0 END
+												) AS M04,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '05' 
+													THEN 1 ELSE 0 END
+												) AS M05,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '06' 
+													THEN 1 ELSE 0 END
+												) AS M06,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '07' 
+													THEN 1 ELSE 0 END
+												) AS M07,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '08' 
+													THEN 1 ELSE 0 END
+												) AS M08,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '09' 
+													THEN 1 ELSE 0 END
+												) AS M09,
+											
+											SUM(
+												CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '10' 
+												THEN 1 ELSE 0 END
+												) AS M10,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '11' 
+													THEN 1 ELSE 0 END
+												) AS M11,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '12' 
+													THEN 1 ELSE 0 END
+												) AS M12,
+											
+											SUM(
+												CASE 
+													WHEN CONVERT(VARCHAR(4), WORK_DATE, 112) = #{date} 
+													THEN 1 ELSE 0 END
+												) AS M_CNT,
+											1 AS SEQ
+									FROM
+											FM_WORK_RSLT
+									WHERE
+											COMPANY_CODE = #{comp}
+									AND
+											SITE_CODE LIKE #{site}
+									AND
+											WORK_DATE BETWEEN CONVERT(DATE, #{date} + '0101') 
+									AND 
+											CONVERT(DATE, #{date} + '1231')
+									GROUP BY COMPANY_CODE, SITE_CODE
+				UNION ALL
+							SELECT	
+									COMPANY_CODE,
+									SITE_CODE,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '01' 
+											AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END
+										) AS P01,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '02' 
+											AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END
+										) AS P02,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '03' 
+											AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END
+										) AS P03,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '04' 
+											AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END
+										) AS P04,
+										
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '05' 
+											AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END
+										) AS P05,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '06' 
+											AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END
+										) AS P06,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '07' 
+											AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END
+										) AS P07,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '08' 
+											AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END
+										) AS P08,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '09' 
+											AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END
+										) AS P09,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '10' 
+											AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END
+										) AS P10,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '11' 
+											AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END
+										) AS P11,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '12' 
+											AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END
+										) AS P12,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(4), WORK_DATE, 112) = #as_date# 
+											AND  CHECK_YESNO = 'Y'  THEN 1 ELSE 0 END
+										) AS P_CNT,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '01' 
+											THEN 1 ELSE 0 END
+										) AS M01,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '02' 
+											THEN 1 ELSE 0 END
+										) AS M02,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '03' 
+											THEN 1 ELSE 0 END
+										) AS M03,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '04' 
+											THEN 1 ELSE 0 END
+										) AS M04,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '05' 
+											THEN 1 ELSE 0 END
+										) AS M05,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '06' 
+											THEN 1 ELSE 0 END
+										) AS M06,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '07' 
+											THEN 1 ELSE 0 END
+										) AS M07,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '08' 
+											THEN 1 ELSE 0 END
+										) AS M08,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '09' 
+											THEN 1 ELSE 0 END
+										) AS M09,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '10' 
+											THEN 1 ELSE 0 END
+										) AS M10,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '11' 
+											THEN 1 ELSE 0 END
+										) AS M11,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '12' 
+											THEN 1 ELSE 0 END
+										) AS M12,
+									
+									SUM(
+										CASE 
+											WHEN CONVERT(VARCHAR(4), WORK_DATE, 112) = #{date} 
+											THEN 1 ELSE 0 END
+									) AS M_CNT,
+
+									2 AS SEQ
+						FROM 
+								FM_BEAUT_WORK
+						WHERE		
+								COMPANY_CODE = #{comp}
+						AND			
+								SITE_CODE LIKE #{site}
+						AND			
+								WORK_DATE BETWEEN CONVERT(DATE, #{date# + '0101') 
+						AND 
+								CONVERT(DATE, #{date} + '1231')
+						
+						GROUP BY COMPANY_CODE, SITE_CODE
+				
+				UNION ALL
+						SELECT	
+								COMPANY_CODE,
+								SITE_CODE,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '01' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P01,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '02' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P02,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '03' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P03,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '04' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P04,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '05' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P05,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '06' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P06,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '07' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P07,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '08' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P08,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '09' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P09,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '10' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P10,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '11' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P11,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '12' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P12,
+								SUM(CASE WHEN CONVERT(VARCHAR(4), WORK_DATE, 112) = #{date} AND  END_YESNO = 'Y'  THEN 1 ELSE 0 END) AS P_CNT,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '01' THEN 1 ELSE 0 END) AS M01,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '02' THEN 1 ELSE 0 END) AS M02,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '03' THEN 1 ELSE 0 END) AS M03,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '04' THEN 1 ELSE 0 END) AS M04,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '05' THEN 1 ELSE 0 END) AS M05,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '06' THEN 1 ELSE 0 END) AS M06,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '07' THEN 1 ELSE 0 END) AS M07,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '08' THEN 1 ELSE 0 END) AS M08,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '09' THEN 1 ELSE 0 END) AS M09,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '10' THEN 1 ELSE 0 END) AS M10,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '11' THEN 1 ELSE 0 END) AS M11,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 101) = '12' THEN 1 ELSE 0 END) AS M12,
+								SUM(CASE WHEN CONVERT(VARCHAR(4), WORK_DATE, 112) = #{date} THEN 1 ELSE 0 END) AS M_CNT,
+								3 AS SEQ
+						FROM		
+								FM_LAND_WORK
+						WHERE		
+								COMPANY_CODE = #{comp}
+						AND			
+								SITE_CODE LIKE #{site}
+						AND			
+								WORK_DATE BETWEEN CONVERT(DATE, #{date} + '0101') 
+								AND CONVERT(DATE, #{date} + '1231')
+						GROUP BY COMPANY_CODE, SITE_CODE
+				
+				UNION ALL
+						SELECT	
+								COMPANY_CODE,
+								SITE_CODE,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '01' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P01,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '02' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P02,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '03' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P03,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '04' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P04,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '05' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P05,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '06' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P06,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '07' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P07,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '08' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P08,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '09' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P09,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '10' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P10,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '11' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P11,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '12' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P12,
+								SUM(CASE WHEN CONVERT(VARCHAR(4), ACT_DATE, 112) = #as_date# AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N')  THEN 1 ELSE 0 END) AS P_CNT,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '01' THEN 1 ELSE 0 END) AS M01,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '02' THEN 1 ELSE 0 END) AS M02,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '03' THEN 1 ELSE 0 END) AS M03,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '04' THEN 1 ELSE 0 END) AS M04,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '05' THEN 1 ELSE 0 END) AS M05,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '06' THEN 1 ELSE 0 END) AS M06,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '07' THEN 1 ELSE 0 END) AS M07,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '08' THEN 1 ELSE 0 END) AS M08,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '09' THEN 1 ELSE 0 END) AS M09,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '10' THEN 1 ELSE 0 END) AS M10,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '11' THEN 1 ELSE 0 END) AS M11,
+								SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 101) = '12' THEN 1 ELSE 0 END) AS M12,
+								SUM(CASE WHEN CONVERT(VARCHAR(4), ACT_DATE, 112) = #as_date# THEN 1 ELSE 0 END) AS M_CNT,
+								4 AS SEQ
+						FROM		
+								SC_ACT_CHECK_DAY
+						WHERE		
+								COMPANY_CODE = #{comp}
+						AND			
+								SITE_CODE LIKE #{site}
+						AND			
+								ACT_DATE BETWEEN CONVERT(DATE, #{date} + '0101') 
+						AND 
+								CONVERT(DATE, #{date} + '1231')
+						GROUP BY COMPANY_CODE, SITE_CODE
+				) B
+				
+				ON
+					A.SITE_CODE	= B.SITE_CODE
+				AND
+					A.SEQ =	B.SEQ
+				WHERE 
+					A.SITE_CODE LIKE #{site}
+				ORDER BY A.LOCAL_DIV, A.INSIDE_DIV, A.PRTSEQ, A.OM_SITE_DIV, A.GB, A.SITE_NAME
+		]]>
+	</select>
+
+	<!-- 프로그램 사용여부 조회 (월) S_SM0709_02 -->
+	<select id="SSM070902" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070902*/
+		<![CDATA[
+		SELECT --	
+					A.VENDOR_NAME,
+		  			A.SITE_CODE,
+					A.SITE_NAME,
+					A.SYS_NAME,
+					'[계획]' AS PLAN_DIV,
+					nvl(B.D01, 0) AS DC01,
+					nvl(B.D02, 0) AS DC02,
+					nvl(B.D03, 0) AS DC03,
+					nvl(B.D04, 0) AS DC04,
+					nvl(B.D05, 0) AS DC05,
+					nvl(B.D06, 0) AS DC06,
+					nvl(B.D07, 0) AS DC07,
+					nvl(B.D08, 0) AS DC08,
+					nvl(B.D09, 0) AS DC09,
+					nvl(B.D10, 0) AS DC10,
+					nvl(B.D11, 0) AS DC11,
+					nvl(B.D12, 0) AS DC12,
+					nvl(B.D13, 0) AS DC13,
+					nvl(B.D14, 0) AS DC14,
+					nvl(B.D15, 0) AS DC15,
+					nvl(B.D16, 0) AS DC16,
+					nvl(B.D17, 0) AS DC17,
+					nvl(B.D18, 0) AS DC18,
+					nvl(B.D19, 0) AS DC19,
+					nvl(B.D20, 0) AS DC20,
+					nvl(B.D21, 0) AS DC21,
+					nvl(B.D22, 0) AS DC22,
+					nvl(B.D23, 0) AS DC23,
+					nvl(B.D24, 0) AS DC24,
+					nvl(B.D25, 0) AS DC25,
+					nvl(B.D26, 0) AS DC26,
+					nvl(B.D27, 0) AS DC27,
+					nvl(B.D28, 0) AS DC28,
+					nvl(B.D29, 0) AS DC29,
+					nvl(B.D30, 0) AS DC30,
+					nvl(B.D31, 0) AS DC31,
+					'[실적]' AS REAL_DIV,
+					nvl(B.P01, 0) AS P01,
+					nvl(B.P02, 0) AS P02,
+					nvl(B.P03, 0) AS P03,
+					nvl(B.P04, 0) AS P04,
+					nvl(B.P05, 0) AS P05,
+					nvl(B.P06, 0) AS P06,
+					nvl(B.P07, 0) AS P07,
+					nvl(B.P08, 0) AS P08,
+					nvl(B.P09, 0) AS P09,
+					nvl(B.P10, 0) AS P10,
+					nvl(B.P11, 0) AS P11,
+					nvl(B.P12, 0) AS P12,
+					nvl(B.P13, 0) AS P13,
+					nvl(B.P14, 0) AS P14,
+					nvl(B.P15, 0) AS P15,
+					nvl(B.P16, 0) AS P16,
+					nvl(B.P17, 0) AS P17,
+					nvl(B.P18, 0) AS P18,
+					nvl(B.P19, 0) AS P19,
+					nvl(B.P20, 0) AS P20,
+					nvl(B.P21, 0) AS P21,
+					nvl(B.P22, 0) AS P22,
+					nvl(B.P23, 0) AS P23,
+					nvl(B.P24, 0) AS P24,
+					nvl(B.P25, 0) AS P25,
+					nvl(B.P26, 0) AS P26,
+					nvl(B.P27, 0) AS P27,
+					nvl(B.P28, 0) AS P28,
+					nvl(B.P29, 0) AS P29,
+					nvl(B.P30, 0) AS P30,
+					nvl(B.P31, 0) AS P31,
+					CASE WHEN nvl(B.CNT, 0) > 0 THEN 'Y' ELSE 'N' END AS USE_YESNO
+			FROM	(
+							SELECT CASE WHEN X.DVALUE = 0 THEN 999999 ELSE	nvl(X.DVALUE,999999) END  PRTSEQ
+								 , CASE WHEN nvl(INSPECT_CENTER,'') = '' THEN '일반' ELSE INSPECT_CENTER END GB
+								 , C.LOCAL_DIV
+								 , C.INSIDE_DIV
+								 , OM_SITE_DIV
+								 , D.VENDOR_NAME
+								 , A.SITE_CODE
+								 , A.SITE_NAME
+								 , B.SYS_NAME
+								 , B.SEQ
+							
+							FROM FN_FM_SITE_AUTH(#{comp}, #{user}) A
+							CROSS JOIN	(
+											SELECT	'시설'	AS	SYS_NAME,	1	AS	SEQ	UNION ALL
+											SELECT	'미화'	AS	SYS_NAME,	2	AS	SEQ	UNION ALL
+											SELECT	'조경'	AS	SYS_NAME,	3	AS	SEQ	UNION ALL
+											SELECT	'순찰'	AS	SYS_NAME,	4	AS	SEQ
+										) B
+					        INNER JOIN SM_SITE C ON C.SITE_CODE = A.SITE_CODE
+							LEFT OUTER JOIN BI_VENDOR D ON D.COMPANY_CODE = C.COMPANY_CODE AND D.VENDOR_CODE = C.VENDOR_cODE
+							LEFT OUTER JOIN	SM_COMCODE_D	E	ON	E.SYS_ID	= 'BI'  AND	E.HCODE = 'OMSITEDIVCD'	AND	C.OM_SITE_DIV = E.DCODE
+							LEFT OUTER JOIN	SM_COMCODE_D X	ON	X.SYS_ID	= 'SI'	AND	X.HCODE	= 'CORP_RANK'	AND	C.VENDOR_CODE = X.DCODE
+							INNER JOIN	FM_SITE_INFO	F	ON	F.SITE_CODE = A.SITE_CODE
+							WHERE C.COMPANY_CODE = #{comp}
+						)	A
+			LEFT OUTER JOIN (
+								SELECT	COMPANY_CODE,
+										SITE_CODE,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '01' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P01,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '02' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P02,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '03' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P03,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '04' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P04,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '05' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P05,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '06' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P06,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '07' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P07,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '08' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P08,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '09' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P09,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '10' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P10,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '11' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P11,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '12' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P12,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '13' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P13,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '14' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P14,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '15' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P15,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '16' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P16,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '17' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P17,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '18' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P18,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '19' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P19,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '20' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P20,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '21' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P21,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '22' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P22,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '23' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P23,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '24' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P24,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '25' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P25,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '26' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P26,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '27' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P27,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '28' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P28,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '29' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P29,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '30' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P30,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED_DATE, 103) = '31' AND status in ('','02','03', '04','05') THEN 1 ELSE 0 END) AS P31,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '01' THEN 1 ELSE 0 END) AS D01,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '02' THEN 1 ELSE 0 END) AS D02,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '03' THEN 1 ELSE 0 END) AS D03,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '04' THEN 1 ELSE 0 END) AS D04,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '05' THEN 1 ELSE 0 END) AS D05,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '06' THEN 1 ELSE 0 END) AS D06,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '07' THEN 1 ELSE 0 END) AS D07,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '08' THEN 1 ELSE 0 END) AS D08,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '09' THEN 1 ELSE 0 END) AS D09,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '10' THEN 1 ELSE 0 END) AS D10,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '11' THEN 1 ELSE 0 END) AS D11,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '12' THEN 1 ELSE 0 END) AS D12,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '13' THEN 1 ELSE 0 END) AS D13,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '14' THEN 1 ELSE 0 END) AS D14,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '15' THEN 1 ELSE 0 END) AS D15,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '16' THEN 1 ELSE 0 END) AS D16,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '17' THEN 1 ELSE 0 END) AS D17,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '18' THEN 1 ELSE 0 END) AS D18,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '19' THEN 1 ELSE 0 END) AS D19,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '20' THEN 1 ELSE 0 END) AS D20,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '21' THEN 1 ELSE 0 END) AS D21,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '22' THEN 1 ELSE 0 END) AS D22,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '23' THEN 1 ELSE 0 END) AS D23,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '24' THEN 1 ELSE 0 END) AS D24,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '25' THEN 1 ELSE 0 END) AS D25,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '26' THEN 1 ELSE 0 END) AS D26,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '27' THEN 1 ELSE 0 END) AS D27,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '28' THEN 1 ELSE 0 END) AS D28,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '29' THEN 1 ELSE 0 END) AS D29,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '30' THEN 1 ELSE 0 END) AS D30,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '31' THEN 1 ELSE 0 END) AS D31,
+										SUM(CASE WHEN CONVERT(VARCHAR(6), WORK_DATE, 112) = #{date} THEN 1 ELSE 0 END) AS CNT,
+										1 AS SEQ
+								FROM FM_WORK_RSLT
+								
+								WHERE COMPANY_CODE = #{comp}
+								AND SITE_CODE LIKE #{site}
+								AND WORK_DATE BETWEEN CONVERT(DATE, #{date} + '01') 
+								AND DATEADD(DAY, -1, DATEADD(MONTH, 1, CONVERT(DATE, #{date} + '01')))
+								
+								GROUP BY COMPANY_CODE, SITE_CODE
+								
+								UNION ALL
+								SELECT	COMPANY_CODE,
+										SITE_CODE,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '01' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P01,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '02' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P02,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '03' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P03,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '04' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P04,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '05' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P05,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '06' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P06,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '07' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P07,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '08' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P08,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '09' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P09,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '10' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P10,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '11' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P11,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '12' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P12,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '13' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P13,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '14' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P14,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '15' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P15,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '16' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P16,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '17' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P17,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '18' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P18,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '19' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P19,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '20' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P20,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '21' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P21,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '22' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P22,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '23' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P23,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '24' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P24,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '25' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P25,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '26' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P26,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '27' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P27,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '28' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P28,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '29' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P29,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '30' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P30,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_COMPLETED, 103) = '31' AND CHECK_YESNO = 'Y' THEN 1 ELSE 0 END) AS P31,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '01' THEN 1 ELSE 0 END) AS D01,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '02' THEN 1 ELSE 0 END) AS D02,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '03' THEN 1 ELSE 0 END) AS D03,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '04' THEN 1 ELSE 0 END) AS D04,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '05' THEN 1 ELSE 0 END) AS D05,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '06' THEN 1 ELSE 0 END) AS D06,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '07' THEN 1 ELSE 0 END) AS D07,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '08' THEN 1 ELSE 0 END) AS D08,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '09' THEN 1 ELSE 0 END) AS D09,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '10' THEN 1 ELSE 0 END) AS D10,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '11' THEN 1 ELSE 0 END) AS D11,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '12' THEN 1 ELSE 0 END) AS D12,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '13' THEN 1 ELSE 0 END) AS D13,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '14' THEN 1 ELSE 0 END) AS D14,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '15' THEN 1 ELSE 0 END) AS D15,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '16' THEN 1 ELSE 0 END) AS D16,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '17' THEN 1 ELSE 0 END) AS D17,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '18' THEN 1 ELSE 0 END) AS D18,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '19' THEN 1 ELSE 0 END) AS D19,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '20' THEN 1 ELSE 0 END) AS D20,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '21' THEN 1 ELSE 0 END) AS D21,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '22' THEN 1 ELSE 0 END) AS D22,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '23' THEN 1 ELSE 0 END) AS D23,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '24' THEN 1 ELSE 0 END) AS D24,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '25' THEN 1 ELSE 0 END) AS D25,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '26' THEN 1 ELSE 0 END) AS D26,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '27' THEN 1 ELSE 0 END) AS D27,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '28' THEN 1 ELSE 0 END) AS D28,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '29' THEN 1 ELSE 0 END) AS D29,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '30' THEN 1 ELSE 0 END) AS D30,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '31' THEN 1 ELSE 0 END) AS D31,
+										SUM(CASE WHEN CONVERT(VARCHAR(6), WORK_DATE, 112) = #{date} THEN 1 ELSE 0 END) AS CNT,
+										2 AS SEQ
+								FROM FM_BEAUT_WORK
+								
+								WHERE COMPANY_CODE = #{comp}
+								AND SITE_CODE LIKE #{site}
+								AND	WORK_DATE BETWEEN CONVERT(DATE, #{date} + '01') 
+								AND DATEADD(DAY, -1, DATEADD(MONTH, 1, CONVERT(DATE, #{date} + '01')))
+								GROUP BY COMPANY_CODE, SITE_CODE
+								
+								UNION ALL
+								SELECT	COMPANY_CODE,
+										SITE_CODE,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '01' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P01,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '02' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P02,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '03' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P03,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '04' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P04,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '05' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P05,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '06' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P06,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '07' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P07,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '08' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P08,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '09' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P09,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '10' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P10,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '11' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P11,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '12' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P12,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '13' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P13,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '14' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P14,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '15' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P15,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '16' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P16,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '17' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P17,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '18' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P18,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '19' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P19,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '20' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P20,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '21' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P21,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '22' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P22,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '23' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P23,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '24' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P24,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '25' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P25,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '26' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P26,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '27' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P27,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '28' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P28,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '29' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P29,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '30' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P30,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), END_DATE, 103) = '31' AND END_YESNO = 'Y' THEN 1 ELSE 0 END) AS P31,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '01' THEN 1 ELSE 0 END) AS D01,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '02' THEN 1 ELSE 0 END) AS D02,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '03' THEN 1 ELSE 0 END) AS D03,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '04' THEN 1 ELSE 0 END) AS D04,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '05' THEN 1 ELSE 0 END) AS D05,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '06' THEN 1 ELSE 0 END) AS D06,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '07' THEN 1 ELSE 0 END) AS D07,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '08' THEN 1 ELSE 0 END) AS D08,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '09' THEN 1 ELSE 0 END) AS D09,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '10' THEN 1 ELSE 0 END) AS D10,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '11' THEN 1 ELSE 0 END) AS D11,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '12' THEN 1 ELSE 0 END) AS D12,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '13' THEN 1 ELSE 0 END) AS D13,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '14' THEN 1 ELSE 0 END) AS D14,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '15' THEN 1 ELSE 0 END) AS D15,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '16' THEN 1 ELSE 0 END) AS D16,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '17' THEN 1 ELSE 0 END) AS D17,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '18' THEN 1 ELSE 0 END) AS D18,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '19' THEN 1 ELSE 0 END) AS D19,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '20' THEN 1 ELSE 0 END) AS D20,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '21' THEN 1 ELSE 0 END) AS D21,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '22' THEN 1 ELSE 0 END) AS D22,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '23' THEN 1 ELSE 0 END) AS D23,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '24' THEN 1 ELSE 0 END) AS D24,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '25' THEN 1 ELSE 0 END) AS D25,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '26' THEN 1 ELSE 0 END) AS D26,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '27' THEN 1 ELSE 0 END) AS D27,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '28' THEN 1 ELSE 0 END) AS D28,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '29' THEN 1 ELSE 0 END) AS D29,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '30' THEN 1 ELSE 0 END) AS D30,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), WORK_DATE, 103) = '31' THEN 1 ELSE 0 END) AS D31,
+										SUM(CASE WHEN CONVERT(VARCHAR(6), WORK_DATE, 112) = #{date} THEN 1 ELSE 0 END) AS CNT,
+										3 AS SEQ
+								FROM FM_LAND_WORK
+								WHERE COMPANY_CODE = #{comp}
+								AND SITE_CODE LIKE #{site}
+								AND	WORK_DATE BETWEEN CONVERT(DATE, #{date} + '01') 
+								AND DATEADD(DAY, -1, DATEADD(MONTH, 1, CONVERT(DATE, #{date} + '01')))
+								GROUP BY COMPANY_CODE, SITE_CODE
+								
+								UNION ALL
+								SELECT	COMPANY_CODE,
+										SITE_CODE,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '01' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P01,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '02' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P02,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '03' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P03,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '04' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P04,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '05' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P05,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '06' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P06,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '07' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P07,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '08' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P08,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '09' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P09,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '10' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P10,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '11' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P11,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '12' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P12,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '13' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P13,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '14' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P14,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '15' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P15,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '16' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P16,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '17' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P17,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '18' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P18,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '19' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P19,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '20' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P20,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '21' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P21,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '22' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P22,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '23' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P23,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '24' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P24,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '25' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P25,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '26' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P26,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '27' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P27,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '28' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P28,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '29' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P29,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '30' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P30,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), CHECK_DATE, 103) = '31' AND CHECK_DATE IS NOT NULL AND CHECK_YESNO in ('Y','N') THEN 1 ELSE 0 END) AS P31,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '01' THEN 1 ELSE 0 END) AS D01,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '02' THEN 1 ELSE 0 END) AS D02,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '03' THEN 1 ELSE 0 END) AS D03,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '04' THEN 1 ELSE 0 END) AS D04,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '05' THEN 1 ELSE 0 END) AS D05,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '06' THEN 1 ELSE 0 END) AS D06,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '07' THEN 1 ELSE 0 END) AS D07,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '08' THEN 1 ELSE 0 END) AS D08,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '09' THEN 1 ELSE 0 END) AS D09,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '10' THEN 1 ELSE 0 END) AS D10,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '11' THEN 1 ELSE 0 END) AS D11,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '12' THEN 1 ELSE 0 END) AS D12,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '13' THEN 1 ELSE 0 END) AS D13,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '14' THEN 1 ELSE 0 END) AS D14,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '15' THEN 1 ELSE 0 END) AS D15,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '16' THEN 1 ELSE 0 END) AS D16,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '17' THEN 1 ELSE 0 END) AS D17,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '18' THEN 1 ELSE 0 END) AS D18,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '19' THEN 1 ELSE 0 END) AS D19,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '20' THEN 1 ELSE 0 END) AS D20,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '21' THEN 1 ELSE 0 END) AS D21,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '22' THEN 1 ELSE 0 END) AS D22,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '23' THEN 1 ELSE 0 END) AS D23,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '24' THEN 1 ELSE 0 END) AS D24,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '25' THEN 1 ELSE 0 END) AS D25,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '26' THEN 1 ELSE 0 END) AS D26,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '27' THEN 1 ELSE 0 END) AS D27,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '28' THEN 1 ELSE 0 END) AS D28,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '29' THEN 1 ELSE 0 END) AS D29,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '30' THEN 1 ELSE 0 END) AS D30,
+										SUM(CASE WHEN CONVERT(VARCHAR(2), ACT_DATE, 103) = '31' THEN 1 ELSE 0 END) AS D31,
+										SUM(CASE WHEN CONVERT(VARCHAR(6), ACT_DATE, 112) = #{date} THEN 1 ELSE 0 END) AS CNT,
+										4 AS SEQ
+								FROM SC_ACT_CHECK_DAY
+								WHERE COMPANY_CODE = #{comp}
+								AND SITE_CODE LIKE #{site}
+								AND	ACT_DATE BETWEEN CONVERT(DATE, #{date} + '01') 
+								AND DATEADD(DAY, -1, DATEADD(MONTH, 1, CONVERT(DATE, #{date} + '01')))
+								GROUP BY COMPANY_CODE, SITE_CODE
+							) B
+			ON A.SITE_CODE = B.SITE_CODE
+			AND A.SEQ =	B.SEQ
+			WHERE A.SITE_CODE LIKE #{site}
+			ORDER BY A.LOCAL_DIV, A.INSIDE_DIV, A.PRTSEQ, A.OM_SITE_DIV, A.GB, A.SITE_NAME
+		]]>
+	</select>
+
+	<!-- TEXTAREA 변환 C_SM0708_01 -->
+	<select id="CSM070801" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	/* com.neofect.gts.services.sm.repository.CommonRepository.CSM070801 */
+		<![CDATA[
+			PROC_FM_TEXTAREA_CHANGE_TEMP
+		]]>
+	</select>
+
+	<!-- S_SM0709_03 -->
+	<select id="SSM070903" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070903 */
+		<![CDATA[
+			EXEC PROC_WORK_RSLT_ALL #{date}
+		]]>
+	</select>
+
+	<!-- 일별 집계 S_SM0709_04 -->
+	<select id="SSM070904" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070904 */
+		<![CDATA[
+			SELECT 
+				CASE 
+					WHEN	
+						X.DVALUE = 0 THEN 999999 ELSE	nvl(X.DVALUE,999999) 
+					END PRTSEQ,
+				CASE
+					WHEN nvl(INSPECT_CENTER,'') = '' 
+					THEN '일반' 
+					ELSE INSPECT_CENTER 
+					END GB,
+					B.VENDOR_NAME, <!-- 고객명 -->
+					A.SITE_CODE + ':' + B.ABBR_NAME + '>>' + C.DNAME + '>>' + A.SITE_NAME,	<!-- 사업장명 -->
+					B.ABBR_NAME + '>>' + C.DNAME + '>>' + A.SITE_NAME,	<!-- 사업장명 -->
+					시설계획,시설실적	,시설작업율,미화계획,미화실적,미화작업율,보안계획,보안실적,보안작업율,조경계획,조경실적, 조경작업율
+				 FROM
+				 	SM_SITE A
+	        LEFT OUTER JOIN	SM_COMCODE_D X	
+	        ON	X.SYS_ID = 'SI'	
+	        AND	X.HCODE	= 'CORP_RANK'	
+	        AND	A.VENDOR_CODE = X.DCODE
+	        
+	        LEFT JOIN BI_VENDOR B	
+	        ON B.VENDOR_CODE = A.VENDOR_CODE
+	        
+	        LEFT JOIN SM_COMCODE_D C 
+	        ON C.SYS_ID	= 'BI' 
+	        AND	C.HCODE = 'OMSITEDIVCD'	
+	        AND	A.OM_SITE_DIV = C.DCODE
+	        
+	        INNER JOIN FM_SITE_INFO	D
+			ON D.SITE_CODE = A.SITE_CODE
+	        
+	        LEFT JOIN (
+	        			SELECT 
+	        					SITE_CODE, 
+			        			SUM(X.시설계획) 시설계획,
+			        			SUM(X.시설실적) 시설실적, 
+			        			case when 
+			        			SUM(X.시설계획) = 0 then 0.00 else  CONVERT(DECIMAL(5,2),SUM(X.시설실적*1.00) / SUM(X.시설계획*1.00) * 100.00) end 시설작업율,
+								SUM(X.미화계획) 미화계획,SUM(X.미화실적) 미화실적, case  when SUM(X.미화계획) = 0 then 0.00 else  CONVERT(DECIMAL(5,2),SUM(X.미화실적*1.00) / SUM(X.미화계획*1.00) * 100.00) end 미화작업율,
+								SUM(X.보안계획) 보안계획,SUM(X.보안실적) 보안실적, case  when SUM(X.보안계획) = 0 then 0.00 else  CONVERT(DECIMAL(5,2),SUM(X.보안실적*1.00) / SUM(X.보안계획*1.00) * 100.00) end 보안작업율,
+				  			    SUM(X.조경계획) 조경계획,SUM(X.조경실적) 조경실적, case  when SUM(X.조경계획) = 0 then 0.00 else  CONVERT(DECIMAL(5,2),SUM(X.조경실적*1.00) / SUM(X.조경계획*1.00) * 100.00) end 조경작업율
+						 FROM	(
+									SELECT	
+											SITE_CODE, 
+											COUNT(STATUS) 시설계획,0 시설실적	, 0 미화계획, 0 미화실적, 0 보안계획, 0 보안실적, 0 조경계획, 0 조경실적
+									FROM FM_WORK_RSLT 
+									WHERE CONVERT(VARCHAR, WORK_DATE,112) =	#{date}
+									GROUP BY site_code, STATUS		--	시설계획
+									
+									union all
+										SELECT	SITE_CODE, 0 시설계획, COUNT(STATUS) 시설실적	, 0 미화계획, 0 미화실적, 0 보안계획, 0 보안실적, 0 조경계획, 0 조경실적
+										FROM FM_WORK_RSLT WHERE	status in ('','02','03', '04','05')	and CONVERT(VARCHAR, WORK_COMPLETED_DATE,112) = #as_date#
+										GROUP BY SITE_CODE, STATUS	--	시설실적
+									
+									union all
+										SELECT	SITE_CODE, 0 시설계획,0 시설실적	, COUNT(*) 미화계획, 0 미화실적, 0 보안계획, 0 보안실적, 0 조경계획, 0 조경실적
+										FROM FM_BEAUT_WORK WHERE	CONVERT(VARCHAR, WORK_DATE,112) =	#as_date# 	GROUP BY site_code		--	미화계획
+									
+									union all
+										SELECT	SITE_CODE, 0 시설계획, 0 시설실적	, 0 미화계획, COUNT(CHECK_YESNO) 미화실적, 0 보안계획, 0 보안실적, 0 조경계획, 0 조경실적
+										FROM FM_BEAUT_WORK WHERE	CHECK_YESNO = 'Y'	and CONVERT(VARCHAR, WORK_COMPLETED,112) = #as_date# GROUP BY SITE_CODE	--	미화실적
+									
+									union all
+										--SELECT * FROM	SC_ACT_CHECK_DAY
+										SELECT	SITE_CODE, 0 시설계획,0 시설실적	, 0 미화계획, 0 미화실적, COUNT(*)  보안계획, 0 보안실적, 0 조경계획, 0 조경실적
+										FROM SC_ACT_CHECK_DAY WHERE	CONVERT(VARCHAR, ACT_DATE,112) =	#as_date#	GROUP BY site_code		--	보안계획
+									
+									union all
+										SELECT	SITE_CODE, 0 시설계획, 0 시설실적	, 0 미화계획, 0 미화실적, 0 보안계획, COUNT(CHECK_YESNO) 보안실적, 0 조경계획, 0 조경실적
+										--FROM SC_ACT_CHECK_DAY WHERE	CHECK_YESNO in ('Y')	and CONVERT(VARCHAR, CHECK_DATE,112) = '20150522' GROUP BY SITE_CODE	--	보안실적
+										FROM SC_ACT_CHECK_DAY WHERE	CHECK_YESNO in ('Y','N') and CONVERT(VARCHAR, CHECK_DATE,112) = #as_date# GROUP BY SITE_CODE	--	보안실적
+									
+									UNION ALL
+										--SELECT	*	FROM	FM_LAND_WORK
+										SELECT	SITE_CODE, 0 시설계획,0 시설실적	, 0 미화계획, 0 미화실적, 0 보안계획, 0 보안실적, COUNT(*) 조경계획, 0 조경실적
+										FROM FM_LAND_WORK WHERE	CONVERT(VARCHAR, WORK_DATE,112) =	#as_date#	GROUP BY site_code		--	조경계획
+									
+									union all
+										SELECT	SITE_CODE, 0 시설계획, 0 시설실적	, 0 미화계획, 0 미화실적, 0 보안계획, 0 보안실적, 0 조경계획, COUNT(END_YESNO) 조경실적
+										FROM FM_LAND_WORK WHERE	END_YESNO = 'Y'	and CONVERT(VARCHAR, END_DATE,112) = #as_date# GROUP BY SITE_CODE	--	조경실적
+								) X GROUP BY SITE_CODE
+							) Z	ON A.SITE_CODE = Z.SITE_CODE
+			WHERE A.LEV = 1	AND A.USE_YESNO  = 'Y'
+				AND A.COMPANY_CODE = #as_comp#
+				AND A.SITE_CODE LIKE #as_site# || '%'
+				AND	(	nvl(시설계획,0) != 0
+				 OR	nvl(시설실적,0) != 0
+				 OR	nvl(미화계획,0) != 0
+				 OR	nvl(미화실적,0) != 0
+				 OR	nvl(보안계획,0) != 0
+				 OR	nvl(보안실적,0) != 0
+				 OR	nvl(조경계획,0) != 0
+				 OR	nvl(조경실적,0) != 0 )
+	 ORDER BY	A.LOCAL_DIV, A.INSIDE_DIV, PRTSEQ,OM_SITE_DIV, GB, 사업장명 ---- 148
+		]]>
+	</select>
+
+	<!-- 월별 집계 S_SM0709_05 -->
+	<select id="SSM070905" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070905 */
+		<![CDATA[
+					SELECT CASE WHEN	
+									X.DVALUE = 0 THEN 999999 ELSE	nvl(X.DVALUE,999999) END  PRTSEQ
+									,	CASE WHEN nvl(INSPECT_CENTER,'') = '' THEN '일반' ELSE INSPECT_CENTER END GB
+									,	B.VENDOR_NAME 	고객명
+									--,	A.SITE_CODE + ':' + B.ABBR_NAME + '>>' + C.DNAME + '>>' + A.SITE_NAME	사업장명
+									,	B.ABBR_NAME + '>>' + C.DNAME + '>>' + A.SITE_NAME	사업장명
+									,	시설계획,시설실적	,시설작업율,미화계획,미화실적,미화작업율,보안계획,보안실적,보안작업율,조경계획,조경실적, 조경작업율
+					FROM	SM_SITE		A
+			        LEFT OUTER JOIN	SM_COMCODE_D X	ON	X.SYS_ID = 'SI'	AND	X.HCODE	= 'CORP_RANK' AND	A.VENDOR_CODE = X.DCODE
+				    LEFT JOIN	BI_VENDOR B	ON  B.VENDOR_CODE =	A.VENDOR_CODE
+				    LEFT JOIN	SM_COMCODE_D C	ON	C.SYS_ID = 'BI'  AND	C.HCODE = 'OMSITEDIVCD'	AND	A.OM_SITE_DIV = C.DCODE
+				    INNER JOIN	FM_SITE_INFO D	ON	D.SITE_CODE = A.SITE_CODE
+				    LEFT JOIN	(
+				    				SELECT SITE_CODE, SUM(X.시설계획) 시설계획,SUM(X.시설실적) 시설실적, case  when SUM(X.시설계획) = 0 then 0.00 else  CONVERT(DECIMAL(5,2),SUM(X.시설실적*1.00) / SUM(X.시설계획*1.00) * 100.00) end 시설작업율,
+													  SUM(X.미화계획) 미화계획,SUM(X.미화실적) 미화실적, case  when SUM(X.미화계획) = 0 then 0.00 else  CONVERT(DECIMAL(5,2),SUM(X.미화실적*1.00) / SUM(X.미화계획*1.00) * 100.00) end 미화작업율,
+													  SUM(X.보안계획) 보안계획,SUM(X.보안실적) 보안실적, case  when SUM(X.보안계획) = 0 then 0.00 else  CONVERT(DECIMAL(5,2),SUM(X.보안실적*1.00) / SUM(X.보안계획*1.00) * 100.00) end 보안작업율,
+													  SUM(X.조경계획) 조경계획,SUM(X.조경실적) 조경실적, case  when SUM(X.조경계획) = 0 then 0.00 else  CONVERT(DECIMAL(5,2),SUM(X.조경실적*1.00) / SUM(X.조경계획*1.00) * 100.00) end 조경작업율
+									FROM	(
+												SELECT	
+														SITE_CODE, COUNT(STATUS) 시설계획,0 시설실적	, 0 미화계획, 0 미화실적, 0 보안계획, 0 보안실적, 0 조경계획, 0 조경실적
+												
+												FROM 
+														FM_WORK_RSLT WHERE	CONVERT(VARCHAR(6), WORK_DATE,112) = #{date}
+												GROUP BY site_code, STATUS		--	시설계획
+												
+												union all
+												SELECT	SITE_CODE, 0 시설계획, COUNT(STATUS) 시설실적	, 0 미화계획, 0 미화실적, 0 보안계획, 0 보안실적, 0 조경계획, 0 조경실적
+												FROM FM_WORK_RSLT WHERE	status in ('','02','03', '04','05')	and CONVERT(VARCHAR(6), WORK_COMPLETED_DATE,112) = #{date}
+												GROUP BY SITE_CODE, STATUS	--	시설실적
+												
+												union all
+												SELECT	SITE_CODE, 0 시설계획,0 시설실적	, COUNT(*) 미화계획, 0 미화실적, 0 보안계획, 0 보안실적, 0 조경계획, 0 조경실적
+												FROM FM_BEAUT_WORK WHERE	CONVERT(VARCHAR(6), WORK_DATE,112) = #{date}	 	
+												GROUP BY site_code		--	미화계획
+												
+												union all
+												SELECT	SITE_CODE, 0 시설계획, 0 시설실적	, 0 미화계획, COUNT(CHECK_YESNO) 미화실적, 0 보안계획, 0 보안실적, 0 조경계획, 0 조경실적
+												FROM FM_BEAUT_WORK WHERE	CHECK_YESNO = 'Y'	and CONVERT(VARCHAR(6), WORK_COMPLETED,112) = #{date}	 
+												GROUP BY SITE_CODE	--	미화실적
+												
+												union all
+												--SELECT	*	FROM	SC_ACT_CHECK_DAY
+												SELECT	SITE_CODE, 0 시설계획,0 시설실적	, 0 미화계획, 0 미화실적, COUNT(*)  보안계획, 0 보안실적, 0 조경계획, 0 조경실적
+												FROM SC_ACT_CHECK_DAY WHERE	CONVERT(VARCHAR(6), ACT_DATE,112) =	#{date}		
+												GROUP BY site_code		--	보안계획
+												
+												union all
+												SELECT	SITE_CODE, 0 시설계획, 0 시설실적	, 0 미화계획, 0 미화실적, 0 보안계획, COUNT(CHECK_YESNO) 보안실적, 0 조경계획, 0 조경실적
+												--FROM SC_ACT_CHECK_DAY WHERE	CHECK_YESNO in ('Y')	and CONVERT(VARCHAR(6), CHECK_DATE,112) = '201505' GROUP BY SITE_CODE	--	보안실적
+												FROM SC_ACT_CHECK_DAY WHERE	CHECK_YESNO in ('Y','N') and CONVERT(VARCHAR(6), CHECK_DATE,112) = #{date} 
+												GROUP BY SITE_CODE	--	보안실적
+												
+												UNION ALL
+												--SELECT * FROM	FM_LAND_WORK
+												SELECT	SITE_CODE, 0 시설계획,0 시설실적	, 0 미화계획, 0 미화실적, 0 보안계획, 0 보안실적, COUNT(*) 조경계획, 0 조경실적
+												FROM FM_LAND_WORK WHERE	CONVERT(VARCHAR(6), WORK_DATE,112) = #{date}	
+												GROUP BY site_code		--	조경계획
+												
+												union all
+												SELECT	SITE_CODE, 0 시설계획, 0 시설실적	, 0 미화계획, 0 미화실적, 0 보안계획, 0 보안실적, 0 조경계획, COUNT(END_YESNO) 조경실적
+												FROM FM_LAND_WORK WHERE	END_YESNO = 'Y'	and CONVERT(VARCHAR(6), END_DATE,112) = #{date} 
+												GROUP BY SITE_CODE	--	조경실적
+											)	X  GROUP BY SITE_CODE
+										)	Z	ON	A.SITE_CODE  = Z.SITE_CODE
+						WHERE	A.LEV  = 1	AND A.USE_YESNO  = 'Y'
+							AND A.COMPANY_CODE = #{comp}
+							AND A.SITE_CODE LIKE #{site} || '%'
+							AND	(	nvl(시설계획,0) <> 0
+							 OR	nvl(시설실적,0) != 0
+							 OR	nvl(미화계획,0) != 0
+							 OR	nvl(미화실적,0) != 0
+							 OR	nvl(보안계획,0) != 0
+							 OR	nvl(보안실적,0) != 0
+							 OR	nvl(조경계획,0) != 0
+							 OR	nvl(조경실적,0) != 0 )
+				 ORDER BY	A.LOCAL_DIV, A.INSIDE_DIV, PRTSEQ,OM_SITE_DIV, GB, 사업장명		----	148
+		]]>
+	</select>
+
+	<!-- NFC 매핑 수 조회 -> 전체 COUNT S_SM0706_01 -->
+	<select id="SSM070601" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070601 */
+		<![CDATA[
+			SELECT (
+						SELECT	COUNT(EQUIP_CODE)
+						FROM	FM_SITE_EQUIP
+						WHERE	nvl(ID_CODE, '') != ''
+					) AS 'COLS1',
+					(
+						SELECT	COUNT(EQUIP_CODE)
+						FROM	MM_EQUIP_MASTER
+						WHERE	nvl(ID_CODE, '') != ''
+					) AS 'COLS2',
+					(
+						SELECT	COUNT(ENGEQ_CODE)
+						FROM	EM_METER_LOC
+						WHERE	nvl(ID_CODE, '') != ''
+					) AS 'COLS3',
+					(
+						SELECT	COUNT(POS_CODE)
+						FROM	SC_CODE_POS
+						WHERE	nvl(ID_CODE, '') != ''
+					) AS 'COLS4'
+		]]>
+	</select>
+
+	<!-- NFC 매핑 수 조회 -> 설비 매핑 수 S_SM0706_02 -->
+	<select id="SSM070602" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070602 */
+		<![CDATA[
+					SELECT	
+						A.SITE_CODE,
+						B.SITE_NAME,
+						COUNT(A.EQUIP_CODE) AS CNT
+					FROM		
+						FM_SITE_EQUIP AS A
+					LEFT OUTER JOIN FM_SITE_INFO AS B
+					ON A.COMPANY_CODE = B.COMPANY_CODE
+					AND A.SITE_CODE = B.SITE_CODE
+					
+					WHERE nvl(A.ID_CODE, '')  != ''
+					GROUP BY A.SITE_CODE, B.SITE_NAME
+		]]>
+	</select>
+
+	<!-- NFC 매핑 수 조회 -> 장비 매핑 수 S_SM0706_03 -->
+	<select id="SSM070603" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070603 */
+		<![CDATA[
+					SELECT	
+							A.SITE_CODE,
+							B.SITE_NAME,
+							COUNT(EQUIP_CODE) AS CNT
+					FROM		
+							MM_EQUIP_MASTER AS A
+					LEFT OUTER JOIN FM_SITE_INFO AS B
+					ON A.COMPANY_CODE = B.COMPANY_CODE
+					AND A.SITE_CODE = B.SITE_CODE
+					
+					WHERE nvl(A.ID_CODE, '')  != ''
+					GROUP 	BY A.SITE_CODE, B.SITE_NAME
+		]]>
+	</select>
+
+	<!-- NFC 매핑 수 조회 -> 검침기 매핑 수 S_SM0706_04 -->
+	<select id="SSM070604" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070604 */
+		<![CDATA[
+					SELECT	
+							A.SITE_CODE,
+							B.SITE_NAME,
+							COUNT(ENGEQ_CODE) AS CNT
+					FROM
+							EM_METER_LOC AS A
+					LEFT OUTER JOIN FM_SITE_INFO AS B
+					ON A.COMPANY_CODE = B.COMPANY_CODE
+					AND A.SITE_CODE = B.SITE_CODE
+					
+					WHERE nvl(A.ID_CODE, '')  != ''
+					GROUP BY A.SITE_CODE, B.SITE_NAME
+		]]>
+	</select>
+
+	<!-- NFC 매핑 수 조회 -> 점검위치 매핑 수 S_SM0706_05 -->
+	<select id="SSM070605" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070605 */
+		<![CDATA[
+					SELECT	
+							A.SITE_CODE,
+							B.SITE_NAME,
+							COUNT(POS_CODE) AS CNT
+					FROM		
+							SC_CODE_POS AS A
+					LEFT OUTER JOIN FM_SITE_INFO AS B
+					ON A.COMPANY_CODE = B.COMPANY_CODE
+					AND A.SITE_CODE = B.SITE_CODE
+					
+					WHERE nvl(A.ID_CODE, '')  != ''
+					GROUP BY A.SITE_CODE, B.SITE_NAME
+		]]>
+	</select>
+
+	<!-- 마감일 설정 GET_CLOSE_CONFIG -->
+	<select id="GETCLOSECONFIG" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	/* com.neofect.gts.services.sm.repository.CommonRepository.GETCLOSECONFIG */
+		<![CDATA[
+			SELECT 
+					A.COMPANY_CODE,
+			        A.SYS_ID,
+			        A.CLOSE_CODE,
+			        A.CLOSE_NAME,
+			        A.FROM_DIV,
+			        trim(to_char(A.FROM_DD,'00')) as FROM_DD,
+			        A.TO_DIV,
+			        trim(to_char(A.TO_DD,'00')) as TO_DD,
+		        	A.REMARK
+		   
+		    FROM SM_CLOSE_CONFIG A
+		    
+		    WHERE A.COMPANY_CODE = #{compCode}
+		    AND A.SYS_ID LIKE #{sysId}
+		    AND A.CLOSE_CODE LIKE #{closeCode}
+		  	
+		  	ORDER BY A.COMPANY_CODE, A.SYS_ID, A.CLOSE_CODE
+		]]>
+	</select>
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SapWbsReqContamtRepository">
+
+	<!-- SM020901 SM020901|프로젝트계약관리 -->
+	<select id="SM020901" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SapWbsReqContamt">
+	/* com.neofect.gts.services.sm.repository.SapWbsReqContamtRepository.SM020901*/
+		<![CDATA[
+		SELECT
+			BUSSNO,
+			ZVERN,
+			WAERS,
+			ZCGUBUN,
+			PRART,
+			ZCONT,
+			ZCOND,
+			ZCONS,
+			ZCONE,
+			SUBSTR(ZCOND,1,4)+'-'+SUBSTR(ZCOND,5,2)+'-'+SUBSTR(ZCOND,7,2) AS ZCOND2,
+			SUBSTR(ZCONS,1,4)+'-'+SUBSTR(ZCONS,5,2)+'-'+SUBSTR(ZCONS,7,2) AS ZCONS2,
+			SUBSTR(ZCONE,1,4)+'-'+SUBSTR(ZCONE,5,2)+'-'+SUBSTR(ZCONE,7,2) AS ZCONE2,
+			(CASE WHEN EAI_STAT = 'S' THEN '등록' WHEN EAI_STAT = 'F' THEN '등록실패' ELSE '' END) AS SAPDIV,
+			(CASE WHEN RTNFLAG = 'F' THEN '승인실패' WHEN RTNFLAG = 'S' THEN '승인' ELSE '' END) AS REQDIV,
+			RTNFLAG,
+			RTNMSG,
+			EAI_STAT,
+			EAI_MSG
+		FROM IF_WBS_REQ_CONTAMT
+		WHERE
+			BUSSNO = #{bussno}
+		ORDER BY ZVERN
+		]]>
+	</select>
+
+	<!-- SM020901_02 SM020901|프로젝트계약관리 -->
+	<select id="SM02090102" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SapWbsReqContamt">
+	/* com.neofect.gts.services.sm.repository.SapWbsReqContamtRepository.SM02090102*/
+		<![CDATA[
+		SELECT
+			MAX(ZVERN) + 1
+		FROM
+			IF_WBS_REQ_CONTAMT
+		WHERE
+			BUSSNO = #{bussno}
+		]]>
+	</select>
+
+</mapper>

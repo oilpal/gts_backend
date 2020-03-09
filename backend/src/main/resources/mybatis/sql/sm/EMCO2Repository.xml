@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.EMCO2Repository">
+
+	<!-- EM_CO2_C01 -->
+	<select id="EMCO2C01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.EMCO2">
+	/* com.neofect.gts.services.sm.repository.EMCO2Repository.EMCO2C01*/
+		<![CDATA[
+		  SELECT 
+		  			A.APPLY_DATE, 
+					A.EM_DIV1, 
+					A.EM_DIV2, 
+					A.EM_DIV1_NAME,
+					A.EM_DIV2_NAME, 
+					A.EM_DIV, 
+					A.CH_UNIT, 
+					A.CH_VALUE, 
+					A.OIL_UNIT, 
+					A.OIL_VALUE, 
+					A.COKG_VALUE, 
+					A.COTON_VALUE 
+			FROM 
+					EM_CO2 A 
+			WHERE 
+					(A.APPLY_DATE, A.EM_DIV1, A.EM_DIV2) IN ( 
+																SELECT MAX(APPLY_DATE), EM_DIV1, EM_DIV2 
+			                                                  	FROM EM_CO2 
+			                                                 	WHERE APPLY_DATE <= TO_DATE(#{date}, 'YYYYMMDD') 
+			GROUP BY EM_DIV1, EM_DIV2) 
+			ORDER BY A.EM_DIV1, A.EM_DIV2 ASC
+		]]>
+	</select>
+
+</mapper>

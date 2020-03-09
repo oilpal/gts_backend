@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.gs.repository.GS02010Repository">
+	<select id="GS02010_C01" parameterType="com.neofect.gts.services.gs.domain.GS02010" resultType="com.neofect.gts.services.gs.domain.GS02010">
+
+		SELECT	A.MEMBER_ID
+		,	A.DEPT_ID
+		,	B.DEPT_NAME
+		,	A.EMP_NO
+		,	A.NAME
+		,	A.MEMBER_DIV
+		,	CASE	SUBSTR(A.REG_CODE,7,1)
+		WHEN	'1'	THEN	'19'
+		WHEN	'2'	THEN	'19'
+		WHEN	'3'	THEN	'20'
+		WHEN	'4'	THEN	'20'
+		WHEN	'5'	THEN	'19'
+		WHEN	'6'	THEN	'19'
+		WHEN	'7'	THEN	'20'
+		WHEN	'8'	THEN	'20'
+		ELSE	'19'
+		END||SUBSTR(A.REG_CODE,1,6)	AS BIRTH_DATE
+		,	A.REG_CODE
+		,	A.GUBUN_DIV
+		,	A.IN_DATE
+		,	A.RETIRE_DATE
+		,	TRUNC(MONTHS_BETWEEN(SYSDATE,A.IN_DATE)/12)	AS CAREER_YY
+		,	A.HOURPAY
+		,	A.HOURPAY_2
+		,	A.HOURPAY_3
+		,	A.HOURPAY_4
+		,	A.HANDICAP_YN
+		,	A.HANDICAP_LEVEL
+		,	A.WORK_YN
+		,	A.LICENSE_NO
+		,	A.LICENSELEVEL_DIV
+		,	A.PHONE
+		,	A.HP
+		,	A.ZIP_CODE
+		,	A.EMAIL
+		,	A.ADDR1
+		,	A.ADDR2
+		,	A.BANK_DIV
+		,	A.DEPOSITNO
+		,	A.REG_DATE
+		,	A.PWD
+		,	A.AMMASTER_YN
+		,	A.AUTHORITY_DIV
+		,	A.EMAIL2
+		,	A.YEAR_VACATION
+		,	0 USED_VACATION
+		,	A.RETIRECALCTYPE
+		,	A.REPORTEDINCOMEAMT
+		,	A.PAYTYPE
+		,	A.PAYUPDATE_YN
+		,	A.DEDUCT_CNT
+		,	A.MANYCHILD_YN
+		,	A.LIINSURANCEDATE
+		,	A.LIINSURANCETYPE
+		,	A.LIINSURANCEENDDATE
+		,	A.DEPOSITOWNER
+		,	A.SMS_QUOTA1
+		,	A.SMS_QUOTA2
+		,	F_GS_GET_DUP_DEPT_NM(A.MEMBER_ID,A.DEPT_ID) AS DUP_DEPT_NAME
+		,	A.HEALTHINSURETAG
+		,	A.NATIONALPENSIONTAG
+		,	A.PIMG
+		,	A.PDIR
+		,	A.FAMILY_YN
+		,	A.GOYONGTAG
+		,	A.MIN_PAYAMT
+		,	A.TRAINEE_YN
+		,	A.TRAINEE_DATE
+		,	A.REMARK
+		,	A.FIRST_AMT
+		,	X_DECRYPT(A.RRN_NO) AS INPUT_RRN_NO
+		,	A.RRN_NO
+		FROM	CODE_MEMBER	A
+		LEFT JOIN	CODE_DEPT	B
+		ON	B.DEPT_ID	=	A.DEPT_ID
+		WHERE	NVL(A.DEPT_ID,'%')		LIKE #{deptId}
+		AND		NVL(A.GUBUN_DIV,'%')	LIKE #{gubunDiv}
+		AND		NVL(A.WORK_YN,'%')		LIKE #{workYn}
+		ORDER BY A.DEPT_ID, A.NAME ASC
+	</select>
+
+
+	<select id="GET_ENC_RRN" parameterType="com.neofect.gts.services.gs.domain.GS02010" resultType="com.neofect.gts.services.gs.domain.GS02010">
+		SELECT X_ENCRYPT(#encRrnNo#) AS ENC_RRN_NO FROM DUAL
+	</select>
+
+
+	<select id="SEQ_MEMBER_ID" parameterType="com.neofect.gts.services.gs.domain.GS02010" resultType="com.neofect.gts.services.gs.domain.GS02010">
+
+		SELECT 'GC'||LPAD(TO_CHAR(SEQ_MEMBER_ID.NEXTVAL), 8, '0') AS NEW_ID FROM DUAL
+
+	</select>
+
+	<!-- 주민번호 체크 -->
+	<select id="CHK_JUMIN" parameterType="com.neofect.gts.services.gs.domain.GS02010" resultType="com.neofect.gts.services.gs.domain.GS02010">
+		<![CDATA[
+
+		SELECT	A.MEMBER_ID
+		, A.NAME
+		, B.DEPT_NAME
+		FROM		CODE_MEMBER	A
+		LEFT JOIN	CODE_DEPT	B
+		ON	A.DEPT_ID	=	B.DEPT_ID
+		WHERE		A.RRN_NO		=		X_ENCRYPT(#{rrnNo})
+		AND			(	#{memYn} = 'N' OR (	#{memYn} = 'Y' AND A.MEMBER_ID	<>	#{memberId}	)	)
+
+		]]>
+	</select>
+
+
+
+	<!-- 서비스 스케줄 체크 -->
+	<select id="CHK_SERVICE_SCHEDULE" parameterType="com.neofect.gts.services.gs.domain.GS02010" resultType="com.neofect.gts.services.gs.domain.GS02010">
+		<![CDATA[
+
+		SELECT	COUNT(*) AS RCNT
+		FROM		SERVICE_SCHEDULE
+		WHERE		MEMBER_ID	=	#{memberId}
+		AND			DEPT_ID		=	#{deptId}
+		AND			PLAN_DATE	>	#{planDate}
+		AND			STATUS		=	'I'
+
+		]]>
+	</select>
+
+
+
+	<!-- 다운로드용 -->
+	<select id="CODE_MEMBER_R02" parameterType="com.neofect.gts.services.gs.domain.GS02010" resultType="com.neofect.gts.services.gs.domain.GS02010">
+
+		SELECT	A.MEMBER_ID,
+		A.NAME,
+		CASE WHEN A.HP IS NULL THEN A.PHONE ELSE A.HP END AS TEL, 
+		(CASE WHEN SUBSTR(A.REG_CODE, 7, 1)='3' OR SUBSTR(A.REG_CODE, 7, 1)='4' THEN '20' ELSE '19' END)||SUBSTR(A.REG_CODE, 1, 2)||'.'||SUBSTR(A.REG_CODE, 3, 2)||'.'||SUBSTR(A.REG_CODE, 5, 2) AS BIRTH,
+		TRIM(TO_CHAR(NVL(A.HOURPAY - FN_GS_GET_HOURPAY('total',TO_CHAR(SYSDATE,'YYYYMM')), '0'), '999,999')) AS HPAY1,
+		TRIM(TO_CHAR(NVL(A.HOURPAY_2 - FN_GS_GET_HOURPAY('total',TO_CHAR(SYSDATE,'YYYYMM')), '0'), '999,999')) AS HPAY2,
+		TRIM(TO_CHAR(NVL(A.HOURPAY_3 - FN_GS_GET_HOURPAY('total',TO_CHAR(SYSDATE,'YYYYMM')), '0'), '999,999')) AS HPAY3,
+		TRIM(TO_CHAR(FN_GS_GET_HOURPAY('hourpay',TO_CHAR(SYSDATE,'YYYYMM')), '999,999')) AS HOURPAY,
+		TRIM(TO_CHAR(FN_GS_GET_HOURPAY('weekpay',TO_CHAR(SYSDATE,'YYYYMM')), '999,999')) AS WEEKPAY,
+		TRIM(TO_CHAR(FN_GS_GET_HOURPAY('vacpay',TO_CHAR(SYSDATE,'YYYYMM')), '999,999')) AS VACPAY,
+		TRIM(TO_CHAR(A.HOURPAY, '999,999')) AS TOTALPAY1,
+		TRIM(TO_CHAR(A.HOURPAY_2, '999,999')) AS TOTALPAY2,
+		TRIM(TO_CHAR(A.HOURPAY_3, '999,999')) AS TOTALPAY3,
+		(SELECT DEPT_NAME||', '||ADDR1 ||' '|| ADDR2 FROM CODE_DEPT WHERE DEPT_ID=#{dept_Id}) AS DEPT_ADDR
+		FROM 		CODE_MEMBER	A
+		WHERE		A.MEMBER_ID	=	#{memberId}
+
+	</select>
+</mapper>

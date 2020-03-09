@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.DWCODERepository">
+
+	<!-- DW_CODE_C01 -->
+	<select id="DWCODEC01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.DWCODE">
+	/* com.neofect.gts.services.sm.repository.DWCODERepository.DWCODEC01*/
+		<![CDATA[
+		 SELECT COD,
+	           COD_NM,
+	           KIND,
+	           KIND_NM,
+	           KIND2,
+	           KIND_NM2
+	  		FROM DW_CODE
+		]]>
+	</select>
+
+	<!-- SM0109 | [시설]도면코드관리[임시입니다(박종현)] -->
+	<select id="DWCODEC02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.DWCODE">
+	/* com.neofect.gts.services.sm.repository.DWCODERepository.DWCODEC02*/
+		<![CDATA[
+		  SELECT  
+		  			A.COD,
+					A.COD_NM,
+					A.KIND,
+					A.KIND_NM,
+					A.KIND2,
+				  A.KIND_NM2
+			 FROM (	
+				SELECT 
+						'A01' COD,
+					    '건축도면' COD_NM,
+					    'A01' KIND,
+					    '평면도' KIND_NM,
+					    'A01' KIND2,
+					    '평면도' KIND_NM2
+				 UNION ALL
+				 SELECT 
+				 		  'A01' COD,
+					      '건축도면' COD_NM,
+					      'A02' KIND,
+					      '단면도' KIND_NM,
+					      'A02' KIND2,
+					      '단면도' KIND_NM2
+				 UNION ALL
+				 SELECT 
+				 		  'A01' COD,
+					      '건축도면' COD_NM,
+					      'A03' KIND,
+					      '창호도' KIND_NM,
+					      'A03' KIND2,
+					      '창호도' KIND_NM2) A
+		]]>
+	</select>
+
+</mapper>

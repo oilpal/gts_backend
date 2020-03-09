@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SmAuthSiteRepository">
+
+	<!-- C_SM0906_01 -->
+	<select id="CSM090601" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthSite">
+	/* com.neofect.gts.services.sm.repository.SmAuthSiteRepository.CSM090601*/
+		<![CDATA[
+			SELECT 
+					A.COMPANY_CODE,
+					A.USER_ID,
+					A.SITE_CODE,
+					dbo.FN_SM_GET_SITENAMEFULL(A.COMPANY_CODE, A.SITE_CODE) AS FULL_NAME,
+					A.USE_YESNO
+			FROM 
+					SM_AUTH_SITE A
+			WHERE 
+					A.COMPANY_CODE = #{comp}
+			AND 
+					A.USER_ID = #{user}
+     		ORDER BY SITE_CODE
+		]]>
+		<!-- <update_table>SM_AUTH_SITE</update_table>
+
+		<column name='COMPANY_CODE' type='char' updatable='Y' iskeycol='Y' />
+		<column name='USER_ID' 			type='char' updatable='Y' iskeycol='Y' />
+		<column name='SITE_CODE' 		type='char' updatable='Y' iskeycol='Y' />
+		<column name='FULL_NAME' 		type='char' updatable='N' iskeycol='N' />
+		<column name='USE_YESNO' 		type='char' updatable='Y' iskeycol='N' /> -->
+	</select>
+
+	<!-- S_SM0906_01 -->
+	<select id="SSM090601" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthSite">
+	/* com.neofect.gts.services.sm.repository.SmAuthSiteRepository.SSM090601*/
+		<![CDATA[
+		  SELECT COUNT(*) AS CNT
+		  FROM SM_AUTH_PARTID 
+		  WHERE COMPANY_CODE = #{comp} 
+		  AND USER_ID = #{user}
+		  AND SITE_CODE = #{site}	
+		]]>
+	</select>
+
+	<!-- S_SM0906_02 -->
+	<select id="SSM090602" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthSite">
+	/* com.neofect.gts.services.sm.repository.SmAuthSiteRepository.SSM090602 */
+		<![CDATA[
+		  SELECT 
+		  		A.SITE_CODE
+		  FROM 
+		  		SM_AUTH_SITE A
+		  WHERE 
+		  		A.COMPANY_CODE = #{comp}
+		  AND 
+		  		A.USER_ID = #{user}
+		  ORDER BY SITE_CODE	
+		]]>
+	</select>
+
+</mapper>

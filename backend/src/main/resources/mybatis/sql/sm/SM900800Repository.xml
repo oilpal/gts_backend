@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM900800Repository">
+
+	<select id="SYS_LIST" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900800">
+	 	SELECT  A.COMPANY_CODE,
+	          A.SYS_ID,
+	          A.SYS_NAME,
+	          A.USE_YESNO,
+	          A.SORT_ORDER             
+	    FROM  SM_AUTH_SYS A
+	 	ORDER BY A.SORT_ORDER, A.SYS_ID
+
+		<!-- <update_table>SM_AUTH_SYS</update_table>
+
+		<column name='COMPANY_CODE' type='char' updatable='Y' iskeycol='Y' />
+		<column name='SYS_ID' type='char' updatable='Y' iskeycol='Y' />
+		<column name='SYS_NAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='USE_YESNO' type='char' updatable='Y' iskeycol='N' />
+		<column name='SORT_ORDER' type='char' updatable='Y' iskeycol='N' /> -->
+	</select>
+
+	<select id="CHART_1" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900800">
+		SELECT 
+		  B.SYS_NAME AS label, 
+		  COUNT(A.PGM_CODE) AS value
+		FROM SM_AUTH_PGMCODE A 
+		  LEFT JOIN SM_AUTH_SYS B ON (A.SYS_ID = B.SYS_ID)
+		GROUP BY B.SYS_NAME ORDER BY 1
+	</select>
+
+	<select id="CHART_2" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900800">
+		SELECT 
+		  B.SYS_NAME AS SYS_NAME,
+		  SUM(CASE SHOW_YESNO WHEN 'Y' THEN 1 ELSE 0 END) AS SHOW_CNT,
+		  SUM(CASE RETRIEVE_YESNO WHEN 'Y' THEN 1 ELSE 0 END) AS RETRIEVE_CNT,
+		  SUM(CASE INSERT_YESNO WHEN 'Y' THEN 1 ELSE 0 END) AS INSERT_CNT,
+		  SUM(CASE DELETE_YESNO WHEN 'Y' THEN 1 ELSE 0 END) AS DELETE_CNT,
+		  SUM(CASE EXCEL_YESNO WHEN 'Y' THEN 1 ELSE 0 END) AS EXCEL_CNT
+		FROM SM_AUTH_PGMCODE A 
+		  LEFT JOIN SM_AUTH_SYS B ON (A.SYS_ID = B.SYS_ID)
+		GROUP BY B.SYS_NAME ORDER BY 1
+	</select>
+</mapper>

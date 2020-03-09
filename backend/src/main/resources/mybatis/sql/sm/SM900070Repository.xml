@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM900070Repository">
+  
+  <select id="GET_RETR_LIST" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900070">
+      SELECT SYS_ID
+           , CODE
+           , NAME
+           , HTML_STRING
+           , HTML_STRING_VIEW
+           , USE_YN
+           , REMK
+           , SCRIPT_STRING
+       FROM SM_DEV_RETR_T1
+      WHERE SYS_ID LIKE #{sysId}
+        AND (NAME LIKE #{search}
+          OR HTML_STRING LIKE #{search})
+   ORDER BY SYS_ID, NAME
+  </select>
+</mapper>

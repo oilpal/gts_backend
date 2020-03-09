@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM900700Repository">
+
+		<select id="SM900700" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900700">
+	  SELECT 'id_0'  AS ID, '1' AS LEV, '' 	 	 AS PARENT, 'A사장' 	AS NAME, '이씨' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+	  	SELECT 'id_1'  AS ID, '2' AS LEV, 'id_0' AS PARENT, 'A상무' 	AS NAME, '잇씨' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+	  		SELECT 'id_2'  AS ID, '3' AS LEV, 'id_1' AS PARENT, 'A이사' 	AS NAME, '앗씨' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+	  			SELECT 'id_3'  AS ID, '4' AS LEV, 'id_2' AS PARENT, 'A부장' 	AS NAME, '았씨' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+	  				SELECT 'id_4'  AS ID, '5' AS LEV, 'id_3' AS PARENT, 'A차장_1' AS NAME, '김씨' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+	  					SELECT 'id_7'  AS ID, '6' AS LEV, 'id_4' AS PARENT, 'A대리'   AS NAME, '감씨' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+	  						SELECT 'id_11' AS ID, '7' AS LEV, 'id_7' AS PARENT, 'A사원_1' AS NAME, '깜씨' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+					  		SELECT 'id_14' AS ID, '7' AS LEV, 'id_7' AS PARENT, 'A사원_1_2' AS NAME, '캄씨' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+					  		SELECT 'id_13' AS ID, '7' AS LEV, 'id_7' AS PARENT, 'A사원_1_1' AS NAME, '캄씨' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+					  	SELECT 'id_8'  AS ID, '6' AS LEV, 'id_4' AS PARENT, 'A주임_1' AS NAME, '아씨' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+					  		SELECT 'id_12' AS ID, '7' AS LEV, 'id_8' AS PARENT, 'A사원_2' AS NAME, '야씨' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+					  			SELECT 'id_32' AS ID, '8' AS LEV, 'id_12' AS PARENT, 'A사원_22' AS NAME, '야씨' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+					  SELECT 'id_5'  AS ID, '5' AS LEV, 'id_3' AS PARENT, 'A차장_2' AS NAME, '얏씨' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+					  	SELECT 'id_9'  AS ID, '6' AS LEV, 'id_5' AS PARENT, 'A주임_2' AS NAME, '김이씨' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+					  SELECT 'id_6'  AS ID, '5' AS LEV, 'id_3' AS PARENT, 'A차장_3' AS NAME, '캄키씨' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+					  	SELECT 'id_10' AS ID, '6' AS LEV, 'id_6' AS PARENT, 'A주임_3' AS NAME, '이아씨' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+					  		
+	  	SELECT 'id_20'  AS ID, '1' AS LEV, '' 	 	 AS PARENT, 'B사장' 	AS NAME, 'ㅁㅁㅁ' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+	  		SELECT 'id_21'  AS ID, '2' AS LEV, 'id_20' AS PARENT, 'B부장' 	AS NAME, 'ㄴㄴㄴ' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+		  		SELECT 'id_24'  AS ID, '3' AS LEV, 'id_21' AS PARENT, 'B차장_1' AS NAME, 'ㅂㅂㅂ' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+			  		SELECT 'id_27'  AS ID, '4' AS LEV, 'id_24' AS PARENT, 'B대리'   AS NAME, 'ㅈㅈㅈ' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+					  	SELECT 'id_211' AS ID, '5' AS LEV, 'id_27' AS PARENT, 'B사원_1' AS NAME, 'ㄷㄷㄷ' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+					  	SELECT 'id_213' AS ID, '5' AS LEV, 'id_27' AS PARENT, 'B사원_1_1' AS NAME, 'ㄱㄱㄱ' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+					  SELECT 'id_28'  AS ID, '4' AS LEV, 'id_24' AS PARENT, 'B주임_1' AS NAME, 'ㅋㅋㅋ' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+					  	SELECT 'id_212' AS ID, '5' AS LEV, 'id_28' AS PARENT, 'B사원_2' AS NAME, 'ㅌㅌㅌ' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+					SELECT 'id_25'  AS ID, '3' AS LEV, 'id_21' AS PARENT, 'B차장_2' AS NAME, 'ㅊㅊㅊ' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL		
+					  SELECT 'id_29'  AS ID, '4' AS LEV, 'id_25' AS PARENT, 'B주임_2' AS NAME, 'ㅍㅍㅍ' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL
+					SELECT 'id_26'  AS ID, '3' AS LEV, 'id_21' AS PARENT, 'B차장_3' AS NAME, 'ㅎㅎㅎ' AS P_NAME, 1 AS NUM FROM DUAL UNION ALL		
+					  SELECT 'id_210' AS ID, '4' AS LEV, 'id_26' AS PARENT, 'B주임_3' AS NAME, 'ㅃㅃㅃ' AS P_NAME, 1 AS NUM FROM DUAL
+	</select>
+</mapper>

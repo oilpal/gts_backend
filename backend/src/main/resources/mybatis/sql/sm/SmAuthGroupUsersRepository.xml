@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SmAuthGroupUsersRepository">
+
+	<!-- C_SM0909_01 -->
+	<select id="CSM090901" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthGroupUsers">
+	/* com.neofect.gts.services.sm.repository.SmAuthGroupUsersRepository.CSM090901*/
+		<![CDATA[
+		  SELECT 
+		  		A.COMPANY_CODE,
+				A.USER_GROUP_CODE,
+				A.USER_ID,
+				B.USER_NAME,
+				<!-- --CASE B.USER_TAG  WHEN '1' THEN C.DEPT_NAME ELSE D.VENDOR_NAME END AS REMARKS -->
+				B.USER_TAG,
+				'' AS REMARKS
+ 		  FROM 
+ 		  		SM_AUTH_GROUP_USERS A LEFT OUTER JOIN SM_AUTH_USER B ON A.COMPANY_CODE = B.COMPANY_CODE AND A.USER_ID = B.USER_ID
+				<!-- LEFT OUTER JOIN IF_CODE_DEPT C  ON B.COMPANY_CODE = C.COMPANY_CODE AND B.DEPT_CODE = C.DEPT_CODE -->
+				<!-- LEFT OUTER JOIN BI_VENDOR D  ON B.COMPANY_CODE = D.COMPANY_CODE AND B.VENDOR_CODE = D.VENDOR_CODE -->
+		  WHERE (A.COMPANY_CODE =  #{comp} )
+ 		  AND (A.USER_GROUP_CODE =  #{group} )
+    	  ORDER BY 4,3
+		]]>
+	</select>
+
+	<!-- R_SM0909_01 -->
+	<select id="RSM090901" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthGroupUsers">
+	/* com.neofect.gts.services.sm.repository.SmAuthGroupUsersRepository.RSM090901*/
+		<![CDATA[
+		  SELECT 
+		  		A.USER_ID
+ 		  FROM 
+ 		  		SM_AUTH_GROUP_USERS A	
+		  WHERE 
+		  		(A.COMPANY_CODE =  #{comp} )
+ 		  AND 
+ 		  		(A.USER_GROUP_CODE =  #{group} )
+ 		  AND 
+ 		  		(A.USER_ID =  #{user} )
+		]]>
+	</select>
+
+	<!-- C_SM0910_01 -->
+	<select id="CSM091001" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthGroupUsers">
+	/* com.neofect.gts.services.sm.repository.SmAuthGroupUsersRepository.CSM091001*/
+		<![CDATA[
+		  SELECT 
+		  		A.COMPANY_CODE,
+				A.USER_ID,
+				A.USER_GROUP_CODE,
+				B.USER_GROUP_NAME
+ 		  FROM 
+ 		  		SM_AUTH_GROUP_USERS A	LEFT OUTER JOIN SM_AUTH_GROUP B ON A.COMPANY_CODE = B.COMPANY_CODE AND A.USER_GROUP_CODE = B.USER_GROUP_CODE
+		  WHERE 
+		  		(A.COMPANY_CODE = #{comp} )
+ 		  AND 
+ 		  		(A.USER_ID =  #{user} )
+    	  ORDER BY 4,3
+		]]>
+	</select>
+
+	<!-- S_MAIN_01 -->
+	<select id="SMAIN01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthGroupUsers">
+	/* com.neofect.gts.services.sm.repository.SmAuthGroupUsersRepository.SMAIN01*/
+		<![CDATA[
+		  SELECT SUM(CASE WHEN USER_GROUP_CODE ='MST02' OR USER_GROUP_CODE ='MST04' THEN 1 ELSE 0 END)
+		  FROM SM_AUTH_GROUP_USERS 
+		  WHERE COMPANY_CODE = #{comp}
+		  AND USER_ID = #{user}
+		]]>
+	</select>
+
+</mapper>

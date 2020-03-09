@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.CodeCommonRepository">
+
+	<!-- CODE_COM_LIST -->
+	<select id="CODECOMLIST" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.CodeCommon">
+	/* com.neofect.gts.services.sm.repository.CodeCommonRepository.CODECOMLIST*/
+		<![CDATA[
+		SELECT 
+				A.DCODE AS CODE,
+				A.DNAME AS LABEL
+		FROM 
+				SM_COMCODE_D A
+		WHERE 
+				A.SYS_ID = #{sysId}
+		AND 
+				A.HCODE = #{hcode}
+		AND 
+				NVL(A.USE_YN,'N') = 'Y'
+		UNION
+			SELECT 
+					' ' AS CODE,
+					' '  AS LABEL
+			FROM 
+					DUAL
+			ORDER BY CODE
+		]]>
+	</select>
+
+	<!-- CODE_COM_LIST2 -->
+	<select id="CODECOMLIST2" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.CodeCommon">
+	/* com.neofect.gts.services.sm.repository.CodeCommonRepository.CODECOMLIST2*/
+		<![CDATA[
+		SELECT 
+				A.DCODE AS CODE,
+				A.DNAME AS LABEL
+		FROM 
+				SM_COMCODE_D A
+		WHERE 
+				A.SYS_ID = #{sysId}
+		AND 
+				A.HCODE = #{hcode}
+		AND 
+				NVL(A.USE_YN,'N') = 'Y'
+		UNION
+				SELECT 
+						' ' AS CODE,
+						' '  AS LABEL
+				FROM 
+						DUAL
+				ORDER BY CODE
+		]]>
+	</select>
+
+
+</mapper>

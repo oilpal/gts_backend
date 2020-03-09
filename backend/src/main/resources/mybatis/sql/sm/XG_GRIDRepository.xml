@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.XG_GRIDRepository">
+
+	<select id="GRID_INFO" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.XG_GRID">
+		SELECT A.SYS_ID,
+					A.PGM_CODE,
+					A.GRID_ID,
+					A.SQL_ID,
+					A.PANEL_VISIBLE,
+					A.FOOTER_VISIBLE,
+					A.CHECKBAR_VISIBLE,
+					A.STATESBAR_VISIBLE,
+					A.SELECT_STYLE,
+					A.INSERTABLE,
+					A.APPENDABLE,
+					A.UPDATABLE,
+					A.DELETABLE,
+					A.DELETE_ROWS_CONFIRM,
+					A.BASE_APPLY_YN,
+					null as BASE_APPLY
+ 		  FROM XG_GRID_INFO A 
+ 	WHERE A.SYS_ID LIKE '%' ||UPPER(#{sysId})|| '%' 
+ 	  AND A.PGM_CODE LIKE '%' ||#{pgmCode}|| '%'  
+	ORDER BY A.SYS_ID , 
+				 A.PGM_CODE ,
+				 A.GRID_ID
+
+		
+		<!-- <update_table>XG_GRID_INFO</update_table>
+     
+		<column name='SYS_ID' type='char' updatable='Y' iskeycol='Y' />
+		<column name='PGM_CODE' type='char' updatable='Y' iskeycol='Y' />
+		<column name='GRID_ID' type='char' updatable='Y' iskeycol='Y' />
+		<column name='SQL_ID' type='char' updatable='Y' iskeycol='N' />
+		<column name='PANEL_VISIBLE' type='char' updatable='Y' iskeycol='N' />
+		<column name='FOOTER_VISIBLE' type='char' updatable='Y' iskeycol='N' />
+		<column name='CHECKBAR_VISIBLE' type='char' updatable='Y' iskeycol='N' />
+		<column name='STATESBAR_VISIBLE' type='char' updatable='Y' iskeycol='N' />
+		<column name='SELECT_STYLE' type='char' updatable='Y' iskeycol='N' />
+		<column name='INSERTABLE' type='char' updatable='Y' iskeycol='N' />
+		<column name='APPENDABLE' type='char' updatable='Y' iskeycol='N' />
+		<column name='UPDATABLE' type='char' updatable='Y' iskeycol='N' />
+		<column name='DELETABLE' type='char' updatable='Y' iskeycol='N' />
+		<column name='DELETE_ROWS_CONFIRM' type='char' updatable='Y' iskeycol='N' />
+		<column name='BASE_APPLY_YN' type='char' updatable='Y' iskeycol='N' />		
+		<column name='BASE_APPLY' type='char' updatable='N' iskeycol='N' /> -->
+		     
+	</select>
+	
+	<select id="GRID_COLS" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.XG_GRID">
+		SELECT A.SYS_ID,
+					A.PGM_CODE,
+					A.GRID_ID,
+					A.FIELD_SEQ,
+					A.FIELD_NAME,
+					A.FIELD_NAME_KOR,
+					A.DATA_TYPE,
+					A.WIDTH,
+					A.MUST_INPUT,
+					A.DEFAULT_VALUE,
+					A.TAG,
+					A.VISIBLE,
+					A.READONLY,
+					A.EDITABLE,
+					A.SORTABLE,
+					A.BUTTON,
+					A.IMAGE_LIST,
+					A.HEADER,
+					A.FOOTER,
+					A.STYLES,
+					A.DYNAMIC_STYLES,
+					A.EDITOR,
+					A.LOOKUPDISPLAY,
+					A.RENDERER,
+					A.FILTERS,
+					A.VALIDATIONS,
+					null as BASE_APPLY
+ 		  FROM XG_GRID_COLS A 
+ 	WHERE A.SYS_ID = UPPER(#{sysId})
+ 	  AND A.PGM_CODE = #{pgmCode}
+ 	  AND A.GRID_ID = #{gridId}
+	ORDER BY  A.SYS_ID,
+					A.PGM_CODE,
+					A.GRID_ID,
+					A.FIELD_SEQ,
+					A.FIELD_NAME
+		
+		<!-- <update_table>XG_GRID_COLS</update_table>
+     
+		<column name='SYS_ID' type='char' updatable='Y' iskeycol='Y' />
+		<column name='PGM_CODE' type='char' updatable='Y' iskeycol='Y' />
+		<column name='GRID_ID' type='char' updatable='Y' iskeycol='Y' />
+		<column name='FIELD_SEQ' type='char' updatable='Y' iskeycol='N' />
+		<column name='FIELD_NAME' type='char' updatable='Y' iskeycol='Y' />
+		<column name='FIELD_NAME_KOR' type='char' updatable='Y' iskeycol='N' />
+		<column name='DATA_TYPE' type='char' updatable='Y' iskeycol='N' />
+		<column name='WIDTH' type='char' updatable='Y' iskeycol='N' />
+		<column name='MUST_INPUT' type='char' updatable='Y' iskeycol='N' />
+		<column name='DEFAULT_VALUE' type='char' updatable='Y' iskeycol='N' />
+		<column name='TAG' type='char' updatable='Y' iskeycol='N' />
+		<column name='VISIBLE' type='char' updatable='Y' iskeycol='N' />
+		<column name='READONLY' type='char' updatable='Y' iskeycol='N' />
+		<column name='EDITABLE' type='char' updatable='Y' iskeycol='N' />
+		<column name='SORTABLE' type='char' updatable='Y' iskeycol='N' />
+		<column name='BUTTON' type='char' updatable='Y' iskeycol='N' />
+		<column name='IMAGE_LIST' type='char' updatable='Y' iskeycol='N' />
+		<column name='HEADER' type='char' updatable='Y' iskeycol='N' />
+		<column name='FOOTER' type='char' updatable='Y' iskeycol='N' />
+		<column name='STYLES' type='char' updatable='Y' iskeycol='N' />
+		<column name='DYNAMIC_STYLES' type='char' updatable='Y' iskeycol='N' />
+		<column name='EDITOR' type='char' updatable='Y' iskeycol='N' />
+		<column name='LOOKUPDISPLAY' type='char' updatable='Y' iskeycol='N' />
+		<column name='RENDERER' type='char' updatable='Y' iskeycol='N' />
+		<column name='FILTERS' type='char' updatable='Y' iskeycol='N' />
+		<column name='VALIDATIONS' type='char' updatable='Y' iskeycol='N' />
+		<column name='BASE_APPLY' type='char' updatable='N' iskeycol='N' /> -->
+     
+	</select>	
+
+	<select id="PARAM_NUM" resultType="java.lang.Integer">
+		SELECT SEQ_PARAM_NUM.NEXTVAL 
+		FROM DUAL			
+	</select>
+</mapper>

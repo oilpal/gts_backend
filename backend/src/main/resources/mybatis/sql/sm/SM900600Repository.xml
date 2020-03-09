@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM900600Repository">
+  <insert id="I_GRID" parameterType="java.util.HashMap">
+
+    INSERT INTO TEST
+    VALUES (test)
+
+  </insert>
+
+  <select id="R_GRID" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900600">
+
+    SELECT COMPANY_CODE, USER_ID, USER_NAME FROM SM_AUTH_USER 
+
+    <!-- <update_table>SM_AUTH_USER</update_table>
+    <column name='USER_NAME'   type='char' updatable='Y' iskeycol='Y' /> -->
+
+  </select>
+</mapper>

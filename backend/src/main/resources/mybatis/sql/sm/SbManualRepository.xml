@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SbManualRepository">
+
+	<!-- GET_MANUAL_STATUS -->
+	<select id="GETMANUALSTATUS" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SbManual">
+	/* com.neofect.gts.services.sm.repository.SbManualRepository.GETMANUALSTATUS*/
+		<![CDATA[
+		 SELECT CASE
+         WHEN (SELECT MAX(HELP_YESNO) FROM SM_AUTH_PGMCODE WHERE COMPANY_CODE = #{comp} AND PGM_CODE = #{pgmcode}) = 'Y'
+         AND (SELECT COUNT(*) FROM SM_MANUAL_DETAIL WHERE COMPANY_CODE = #{comp} AND PGM_CODE = #{pgmcode}) > 0 THEN 'Y'
+               ELSE 'N'
+         END AS MANUAL_YN
+		]]>
+	</select>
+
+</mapper>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM900601Repository">
+
+	<select id="SM900601_GRID" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900601">
+      SELECT SYS_ID
+           , PGM_CODE
+           , GRID_ID
+           , FIELDNAME
+           , SEQ
+           , TABLE_NAME
+           , WIDTH
+           , MUST_INPUT
+           , VISIBLE
+           , READONLY
+           , EDITABLE
+           , SORTABLE
+           , HEADER
+           , HEADER_TEXT
+           , STYLES
+           , EDITOR
+           , LOOKUPDISPLAY
+           , RENDERER
+           , BUTTON
+           , ALWAYSSHOWBUTTON
+        FROM SM_DEV_GRID_COLS
+       WHERE SYS_ID = #{sysId}
+         AND PGM_CODE = #{pgmCode}
+         AND GRID_ID = #{gridId}
+    ORDER BY SEQ ASC
+
+    <!-- <update_table>SM_DEV_GRID_COLS</update_table>
+
+    <column name='SYS_ID'           type='char' updatable='Y' iskeycol='Y' />
+    <column name='PGM_CODE'         type='char' updatable='Y' iskeycol='Y' />
+    <column name='GRID_ID'          type='char' updatable='Y' iskeycol='Y' />
+    <column name='FIELDNAME'        type='char' updatable='Y' iskeycol='Y' />
+    <column name='SEQ'              type='char' updatable='Y' iskeycol='N' />
+    <column name='TABLE_NAME'       type='char' updatable='Y' iskeycol='N' />
+    <column name='WIDTH'            type='char' updatable='Y' iskeycol='N' />
+    <column name='MUST_INPUT'       type='char' updatable='Y' iskeycol='N' />
+    <column name='VISIBLE'          type='char' updatable='Y' iskeycol='N' />
+    <column name='READONLY'         type='char' updatable='Y' iskeycol='N' />
+    <column name='EDITABLE'         type='char' updatable='Y' iskeycol='N' />
+    <column name='SORTABLE'         type='char' updatable='Y' iskeycol='N' />
+    <column name='HEADER'           type='char' updatable='Y' iskeycol='N' />
+    <column name='HEADER_TEXT'      type='char' updatable='Y' iskeycol='N' />
+    <column name='STYLES'           type='char' updatable='Y' iskeycol='N' />
+    <column name='EDITOR'           type='char' updatable='Y' iskeycol='N' />
+    <column name='LOOKUPDISPLAY'    type='char' updatable='Y' iskeycol='N' />
+    <column name='RENDERER'         type='char' updatable='Y' iskeycol='N' />
+    <column name='BUTTON'           type='char' updatable='Y' iskeycol='N' />
+    <column name='ALWAYSSHOWBUTTON' type='char' updatable='Y' iskeycol='N' /> -->
+
+  </select>
+
+  <delete id="SM900601_GRID_DELETE" parameterType="java.util.HashMap">
+    DELETE FROM SM_DEV_GRID_COLS
+     WHERE SYS_ID = #{sysId}
+       AND PGM_CODE = #{pgmCode}
+       AND GRID_ID = #{gridId}
+  </delete>
+
+
+  <select id="SM900601_GRIDSRC" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900601">
+    <![CDATA[
+    
+      SELECT M.SYS_ID
+           , M.PGM_CODE
+           , M.GRID_ID
+           , M.FIELDNAME
+           , M.SEQ
+           , M.TABLE_NAME
+           , M.WIDTH
+           , M.MUST_INPUT
+           , M.VISIBLE
+           , M.READONLY
+           , M.EDITABLE
+           , M.SORTABLE
+           , M.HEADER
+           , M.HEADER_TEXT
+           , M.STYLES
+           , M.EDITOR
+           , M.LOOKUPDISPLAY
+           , M.RENDERER
+           , M.BUTTON
+           , M.ALWAYSSHOWBUTTON
+        FROM SM_DEV_GRID_COLS M INNER JOIN (SELECT B.SYS_ID, B.PGM_CODE, B.GRID_ID, B.SEQ, B.FIELDNAME, B.MATCHING_POINT
+                           , RANK() OVER (PARTITION BY B.FIELDNAME ORDER BY B.MATCHING_POINT DESC, B.PGM_CODE DESC, B.GRID_ID ASC) AS RK
+                          FROM (SELECT A.SYS_ID, A.PGM_CODE, A.GRID_ID, A.SEQ, A.FIELDNAME
+                                   , SUM(CASE WHEN A.SYS_ID=#{sysId} THEN 10 ELSE 1 END) -- AS POINT_SYS
+                               + SUM(CASE WHEN A.PGM_CODE=#{pgmCode} THEN 10 ELSE 1 END) -- AS POINT_PGM
+                               + SUM(CASE WHEN SUBSTR(A.PGM_CODE, 1, 4)=SUBSTR(#{pgmCode}, 1, 4) THEN 10 ELSE 1 END) -- AS POINT_DEPTH2
+                               + SUM(CASE WHEN SUBSTR(A.PGM_CODE, 1, 6)=SUBSTR(#{pgmCode}, 1, 6) THEN 10 ELSE 1 END) AS MATCHING_POINT -- AS POINT_DEPTH3 
+                              FROM SM_DEV_GRID_COLS A
+                             WHERE INSTR(#as_cols#, '@'||A.FIELDNAME||'@') > 0
+                            GROUP BY A.SYS_ID, A.PGM_CODE, A.GRID_ID, A.SEQ, A.FIELDNAME) B ) N ON M.SYS_ID = N.SYS_ID
+                                                                                               AND M.PGM_CODE = N.PGM_CODE
+                                                             AND M.GRID_ID = N.GRID_ID
+                                                             AND M.SEQ = N.SEQ 
+      WHERE N.RK = 1 
+
+    ]]>
+
+  </select>
+</mapper>

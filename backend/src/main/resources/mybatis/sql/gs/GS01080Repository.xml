@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.gs.repository.GS01080Repository">
+	<!-- 미수금현황 -->
+	<select id="GS01080_R01" parameterType="com.neofect.gts.services.gs.domain.GS01080" resultType="com.neofect.gts.services.gs.domain.GS01080">
+		<![CDATA[
+
+		SELECT	
+			A.DEPT_ID,
+			A.CUST_ID,
+			B.CUST_CODE,
+			B.CUST_NAME,
+			B.BIRTH_DAT,
+			SUM(A.PAY_AMT) AS PAY_AM,
+			SUM(A.PAY_AMT) - F_GS_GET_SERVICE_PAID_AMT2(A.DEPT_ID,A.CUST_ID) AS MISU_AM,
+			SUM(CASE WHEN A.YYYYMM=#{yymm} THEN A.PAY_AMT + A.BPAY_AMT ELSE 0 END) AS THIS_PAY_AM,
+			SUM(A.REQ_AMT) AS REQ_AM,
+			F_GS_GET_SERVICE_PAID_AMT2(A.DEPT_ID,A.CUST_ID)	AS PAIDAMT 
+		FROM
+			SERVICE_PAY_SUM		A
+		LEFT JOIN
+			CODE_CUST B ON B.CUST_ID = A.CUST_ID
+		WHERE	
+			A.DEPT_ID LIKE #{deptId}
+			AND A.YYYYMM <= #{yymm}
+			AND (B.CUST_CODE LIKE #{custCode} OR B.CUST_NAME LIKE #{custCode})
+			AND (
+				#{reductionDiv} = '%'
+				OR (#{reductionDiv} = 'G' AND (B.REDUCTION_DIV IS NULL OR B.REDUCTION_DIV='G'))
+				OR (#{reductionDiv} != 'G' AND	B.REDUCTION_DIV = #{reductionDiv})
+			)
+		GROUP BY	
+			A.DEPT_ID, A.CUST_ID, B.CUST_CODE, B.CUST_NAME, B.BIRTH_DATE 
+		HAVING
+			SUM(CASE WHEN A.YYYYMM=#{yymm} THEN A.PAY_AMT ELSE 0 END) > 0 
+			OR (SUM(A.PAY_AMT) > F_GS_GET_SERVICE_PAID_AMT2(A.DEPT_ID,A.CUST_ID))
+			OR SUM(CASE WHEN A.YYYYMM=#{yymm} THEN A.REQ_AMT ELSE 0 END) > 0
+		ORDER BY
+			A.DEPT_ID, B.CUST_NAME 
+
+		]]>
+	</select>
+
+
+	<!-- 월별정산내역 -->
+	<select id="GS01080_R02" parameterType="com.neofect.gts.services.gs.domain.GS01080" resultType="com.neofect.gts.services.gs.domain.GS01080">
+		<![CDATA[
+
+		SELECT 
+			A.DEPT_ID, 
+			A.YYYYMM,
+			A.PAY_AMT, 
+			NVL(SUM(C.PAY_AMT), 0) AS PAIDAMT,
+			A.PAY_AMT - NVL(SUM(C.PAY_AMT), 0) AS MISU_AMT,
+			A.REQ_AMT,
+			MAX(C.PAY_DATE) AS PAY_DATE
+		FROM (
+			SELECT
+				A.DEPT_ID,
+				A.CUST_ID,   
+				TO_CHAR(A.PLAN_DATE,'YYYYMM') as YYYYMM,
+				SUM(A.PAY_AMT) as PAY_AMT,
+				SUM(A.REQ_AMT) AS REQ_AMT
+			FROM 
+				SERVICE_SCHEDULE A
+			WHERE 
+				A.DEPT_ID = #{deptId}
+				AND A.CUST_ID = #{custId}
+			GROUP BY 
+				A.DEPT_ID, A.CUST_ID, TO_CHAR(A.PLAN_DATE,'YYYYMM')
+			) A 
+		LEFT OUTER JOIN 
+			SERVICE_PAY_RECEIPT C ON A.DEPT_ID = C.DEPT_ID AND A.CUST_ID = C.CUST_ID AND A.YYYYMM = C.REQ_YYMM
+		WHERE 
+			A.YYYYMM <= #{yymm}
+		GROUP BY 
+			A.DEPT_ID, A.YYYYMM, A.PAY_AMT, A.REQ_AMT 
+		ORDER BY 
+			A.YYYYMM
+
+		]]>
+	</select>
+
+
+	<!-- 입급내역 -->
+	<select id="GS01080_C03" parameterType="com.neofect.gts.services.gs.domain.GS01080" resultType="com.neofect.gts.services.gs.domain.GS01080">
+		SELECT	
+			A.DEPT_ID,
+			A.CUST_ID,
+			A.CHECK_Y,
+			A.REQ_YYM,
+			A.PAY_DATE,
+			A.CARD_AM,
+			A.BANK_AM,
+			A.VBANK_AM,
+			A.JIRO_AM,
+			A.DEPOSITNO,
+			A.DEPOSIT_NAM,
+			A.VBANK_DEPOSI,
+			A.REMAR,
+			A.PAY_AMT,
+			A.CASH_AM,
+			A.REQ_AM,
+			A.ENTER_ID,
+			A.ENTER_DATE,
+			A.EDIT_I,
+			A.EDIT_DATE 
+		FROM 
+			SERVICE_PAY_RECEIPT A 
+		WHERE 
+			A.DEPT_ID = #{deptId}
+		AND 
+			A.CUST_ID = #{custId}
+		ORDER BY
+			A.PAY_DATE
+	</select>
+
+
+
+	<!-- 급여비용명세서엑셀 -->
+	<select id="GUBYEBIYONGXLS_R01" parameterType="com.neofect.gts.services.gs.domain.GS01080" resultType="com.neofect.gts.services.gs.domain.GS01080">
+		SELECT 
+			FN_GS_GET_PRINT_DEPTNAME(B.DEPT_NAME) AS DEPT_NAME,
+			B.SERVICE_CODE,
+			B.ADDR1 ||' '|| B.ADDR2 AS ADDR,
+			CASE LENGTH(B.BIZ_NO) 
+				WHEN 10 THEN SUBSTR(B.BIZ_NO, 1, 3)||'-'||SUBSTR(B.BIZ_NO, 4,2)||'-'||SUBSTR(B.BIZ_NO, 6,5)
+				ELSE B.BIZ_NO
+			END AS BIZ_NO,
+			B.OWNER_NAME,
+			M.CUST_ID,
+			A.CUST_NAME,
+			'L'||A.MANAGE_NO1||'-'||A.MANAGE_NO2 AS MANAGENO,
+			M.DEPT_ID,
+			M.YYYYMM,
+			TO_CHAR(TO_DATE(M.YYYYMM||'01', 'YYYYMMDD'), 'YYYY.MM.DD') AS FROMDATE,
+			TO_CHAR(LAST_DAY(TO_DATE(M.YYYYMM||'01', 'YYYYMMDD')), 'YYYY.MM.DD') AS TODATE,
+			SUM(M.SERVICE_AMT) AS SERVICE_AMT,
+			SUM(M.REQ_AMT) AS REQ_AMT,
+			SUM(M.PAY_AMT) AS PAY_AMT,
+			SUM(M.B_AMT) AS B_AMT,
+			SUM(M.SERVICE_AMT) + SUM(M.B_AMT) AS TOTAL_AMT,
+			SUM(M.PAY_B_AMT) AS PAY_B_AMT
+		FROM 
+			SERVICE_SUMMARY_SUM M
+		LEFT JOIN 
+			CODE_CUST A ON M.CUST_ID = A.CUST_ID
+		LEFT JOIN 
+			CODE_DEPT B ON M.DEPT_ID = B.DEPT_ID
+		WHERE
+			M.DEPT_ID = #{deptId}
+			AND M.CUST_ID = #{custId}
+			AND M.YYYYMM = #{yymm}
+		GROUP BY 
+			B.DEPT_NAME, B.SERVICE_CODE, B.ADDR1, B.ADDR2, B.BIZ_NO, B.OWNER_NAME, M.CUST_ID, A.CUST_NAME, A.MANAGE_NO1, A.MANAGE_NO2, M.DEPT_ID, M.YYYYMM
+	</select>
+</mapper>

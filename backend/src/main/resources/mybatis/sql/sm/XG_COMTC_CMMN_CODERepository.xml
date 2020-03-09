@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.XG_COMTC_CMMN_CODERepository">
+	
+	
+      <select id="C_XG_COMTC_CMMN_CODE_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.XG_COMTC_CMMN_CODE">
+            
+            SELECT CODE_ID
+                  ,CODE_ID_NM
+                  ,CODE_ID_DC
+                  ,USE_AT
+                  ,CL_CODE
+              FROM XG_COMTC_CMMN_CODE
+             WHERE (CODE_ID LIKE #{find} || '%' OR
+                        CODE_ID_NM LIKE '%' || #{find} || '%')
+            ORDER BY 1
+            
+            <!-- <update_table>XG_COMTC_CMMN_CODE</update_table>
+            
+            <column name='CODE_ID' type='char' updatable='Y' iskeycol='Y' />
+            <column name='CODE_ID_NM' type='char' updatable='Y' iskeycol='N' />
+            <column name='CODE_ID_DC' type='char' updatable='Y' iskeycol='N' />
+            <column name='USE_AT' type='char' updatable='Y' iskeycol='N' />
+            <column name='CL_CODE' type='char' updatable='Y' iskeycol='N' /> -->
+            
+      </select>
+
+      <select id="C_XG_COMTC_CMMN_CODE_02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.XG_COMTC_CMMN_CODE">
+            
+            SELECT CODE_ID
+                  ,CODE
+                  ,CODE_NM
+                  ,CODE_DC
+                  ,USE_AT
+              FROM XG_COMTC_CMMN_DETAILCODE
+             WHERE CODE_ID = #{codeId}
+            ORDER BY CODE
+            
+			<!-- <update_table>XG_COMTC_CMMN_DETAILCODE</update_table>
+            
+            <column name='CODE_ID' type='char' updatable='Y' iskeycol='Y' />
+            <column name='CODE' type='char' updatable='Y' iskeycol='Y' />
+            <column name='CODE_NM' type='char' updatable='Y' iskeycol='N' />
+            <column name='CODE_DC' type='char' updatable='Y' iskeycol='N' />
+            <column name='USE_AT' type='char' updatable='Y' iskeycol='N' /> -->
+      </select>         
+	
+
+</mapper>

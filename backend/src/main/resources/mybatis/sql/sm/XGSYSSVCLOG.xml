@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.XGSYSSVCLOGRepository">
+
+	<select id="R_SM0913_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.XGSYSSVCLOG">
+		
+		SELECT  b.RQESTER_ID
+					, c.USER_NAME
+					,	COUNT(*) as ACC_COUNT
+		  FROM XG_SYS_SVCLOG_SUMMARY b LEFT OUTER JOIN SM_AUTH_USER C ON b.COMPANY_CODE = c.COMPANY_CODE AND b.RQESTER_ID = c.USER_ID
+		  														 INNER JOIN SM_AUTH_PGMCODE D ON b.COMPANY_CODE = d.COMPANY_CODE AND b.TRGET_MENU_NM = d.PGM_CODE
+		 WHERE ( b.COMPANY_CODE = #{companyCode} )
+ 				 AND ( b.TRGET_MENU_NM <![CDATA[<>]]> 'unkwown' )
+		 	 AND ( b.OCCRRNC_DE between #{fromDate} AND #{toDate} )
+ 				 AND ( b.RQESTER_ID LIKE #{user} || '%' OR  c.USER_NAME LIKE '%' || #{user} || '%')
+		 GROUP BY b.RQESTER_ID
+					, c.USER_NAME
+		 ORDER BY b.RQESTER_ID
+			
+	</select>
+
+	<select id="R_SM0913_02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.XGSYSSVCLOG">
+		SELECT  E.SYS_NAME
+					, E.SORT_ORDER
+					, d.PGM_NAME
+					, b.TRGET_MENU_NM 
+					, b.OCCRRNC_DE
+		     	, b.METHOD_NM
+		     	, SUM(CREAT_CO) as CREAT_CO
+		     	, SUM(UPDT_CO) as UPDT_CO
+		     	, SUM(RDCNT) as RDCNT
+		     	, SUM(DELETE_CO) as DELETE_CO
+		  FROM XG_SYS_SVCLOG_SUMMARY b  INNER JOIN SM_AUTH_PGMCODE D ON b.COMPANY_CODE = d.COMPANY_CODE AND b.TRGET_MENU_NM = d.PGM_CODE
+		  															INNER JOIN SM_AUTH_SYS E ON d.COMPANY_CODE = e.COMPANY_CODE AND d.SYS_ID = e.SYS_ID
+		 WHERE b.COMPANY_CODE = #as_comp#
+		 	 AND b.RQESTER_ID = #as_user#
+		 	 AND b.OCCRRNC_DE between #as_fromdate# AND #as_todate#
+		 GROUP BY E.SORT_ORDER
+					, E.SYS_NAME
+					, d.PGM_NAME
+					, b.TRGET_MENU_NM 
+					, b.OCCRRNC_DE
+		     	, b.METHOD_NM
+		 ORDER BY E.SORT_ORDER
+					, b.TRGET_MENU_NM
+		 			, b.OCCRRNC_DE
+		
+	</select>
+
+</mapper>

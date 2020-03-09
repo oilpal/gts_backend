@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.EMCO2RATERepository">
+
+	<!-- C_SM0133_01 -->
+	<select id="CSM013301" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.EMCO2RATE">
+	/* com.neofect.gts.services.sm.repository.EMCO2RATERepository.CSM013301*/
+		<![CDATA[
+		WITH CTE_MAX (STD_DATE, CO2CONV_CODE) 
+			  AS(SELECT MAX(STD_DATE) STD_DATE, CO2CONV_CODE 
+						 FROM EM_CO2_RATE 
+						WHERE COMPANY_CODE = #{comp}
+						  AND STD_DATE <= CONVERT(DATE, #{date}, 112)   
+				 GROUP BY CO2CONV_CODE
+						),
+					 CTE_A  
+				AS(SELECT A.* 
+				     FROM EM_CO2_RATE A, CTE_MAX 
+				    WHERE A.COMPANY_CODE = #{comp}
+				      AND A.STD_DATE = CTE_MAX.STD_DATE 
+				      AND A.CO2CONV_CODE = CTE_MAX.CO2CONV_CODE
+			      )  
+		 SELECT A.COMPANY_CODE 
+					, A.ENERGY_PWR 
+					, A.CO2CONV_CODE 
+					, A.CO2CONV_NAME 
+					, A.STD_DATE 
+					, A.CONV_UNIT 
+					, A.CONV_CAL 
+					, A.OIL_UNIT 
+					, A.OIL_FACTOR  
+					, A.CO2_EMIT_KG 
+					, A.CO2_EMIT_TON 
+			 FROM CTE_A A 
+		 ORDER BY A.ENERGY_PWR, A.CO2CONV_CODE ASC
+		]]>
+	</select>
+
+	<!-- C_SM0133_02  SM0133| 에너지원별 최대코드 가져오기-->
+	<select id="CSM013302" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.EMCO2RATE">
+	/* com.neofect.gts.services.sm.repository.EMCO2RATERepository.CSM013302 */
+		<![CDATA[
+		SELECT A.ENERGY_PWR 
+				  , nvl(MAX(SUBSTR(A.CO2CONV_CODE,3,2)),'00') CO2CONV_CODE
+			 FROM EM_CO2_RATE A 
+			WHERE COMPANY_CODE = #{comp}
+		 GROUP BY A.ENERGY_PWR  
+		]]>
+	</select>
+
+	<!-- C_SM0133_03  SM0133| 해당일자 체크 -->
+	<select id="CSM013303" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.EMCO2RATE">
+	/* com.neofect.gts.services.sm.repository.EMCO2RATERepository.CSM013303 */
+		<![CDATA[
+		 SELECT COUNT(*)
+		   FROM EM_CO2_RATE A 
+		  WHERE COMPANY_CODE = #{comp}
+		    AND CO2CONV_CODE = #{code}
+		    AND STD_DATE = #{date}
+		]]>
+	</select>
+
+</mapper>

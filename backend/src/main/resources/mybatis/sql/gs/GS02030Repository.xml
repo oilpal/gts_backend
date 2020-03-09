@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.gs.repository.GS02030Repository">
+	<select id="GS02030_R01" parameterType="com.neofect.gts.services.gs.domain.GS02030" resultType="com.neofect.gts.services.gs.domain.GS02030">
+
+		SELECT	A.MEMBER_ID,
+				A.NAME AS MEMBER_NAME
+		FROM	CODE_MEMBER	A
+		WHERE	A.MEMBER_ID	IN	(	SELECT	DISTINCT
+											MEMBER_ID
+									FROM	SERVICE_SCHEDULE
+									WHERE	DEPT_ID	=	#{deptId}
+									AND		PLAN_DATE	BETWEEN	#{yymm}||'01' AND LAST_DAY(#{yymm}||'01')
+								)
+		ORDER BY A.NAME, A.MEMBER_ID
+
+	</select>
+
+	<select id="GS02030_R02" parameterType="com.neofect.gts.services.gs.domain.GS02030" resultType="com.neofect.gts.services.gs.domain.GS02030">
+
+		SELECT	A.SERVICE_YN,
+				C.CUST_CODE,
+				C.CUST_NAME,
+				A.START_TIME_DIV,
+				A.START_MIN_DIV,
+				A.END_TIME_DIV,
+				A.END_MIN_DIV,
+				A.SERVICE_MIN,
+				P.PRODUCT_CODE,
+				P.PRODUCT_NAME,
+				A.SERVICE_AMT,
+				A.PAY_AMT,
+				A.REQ_AMT,
+				A.REMAIN_AMT,
+				A.REMARK,
+				A.COMPLAIN_MEMO,
+				A.CARER_MEMO,
+				A.ENTER_ID,
+				A.ENTER_DATE,
+				A.EDIT_ID,
+				A.EDIT_DATE,
+				A.SMS_YN,
+				A.CARER_MEMOYN,
+				A.CARER_DATE,
+				A.DEPT_MEMOYN,
+				A.DEPT_DATE,
+				C.PHONE,
+				C.HP,
+				C.ADDR1,
+				C.ADDR2,
+				P.INTRO_RATE,
+				A.MEMBER_ID,
+				M.NAME AS MEMBER_NAME,
+				A.PRODUCT_ID,
+				A.STATUS,
+				A.WON_MEMBER_ID,
+				A.PLAN_DATE,
+				A.S_ID,
+				A.DEPT_ID,
+				A.CUST_ID
+		FROM	SERVICE_SCHEDULE	A
+				LEFT JOIN	CODE_MEMBER	M
+					ON	A.MEMBER_ID = M.MEMBER_ID
+				LEFT JOIN	CODE_CUST	C
+					ON	A.CUST_ID = C.CUST_ID
+				LEFT JOIN	CODE_PRODUCT	P
+					ON	A.PRODUCT_ID = P.PRODUCT_ID
+		WHERE	A.DEPT_ID		LIKE	#{deptId}
+		AND		A.PLAN_DATE	=			#{planDate}
+		AND		A.MEMBER_ID	=			#{memberId}
+
+	</select>
+
+
+	<select id="GET_SERVICESCHEDULE" parameterType="com.neofect.gts.services.gs.domain.GS02030" resultType="com.neofect.gts.services.gs.domain.GS02030">
+		<![CDATA[
+
+		SELECT	NO
+					,	F_GS_GET_SERVICESCHEDULE('MEM', #{deptId}, YYYYMMDD, #{memberId})	AS INFO
+		FROM		(	SELECT	TO_CHAR(ROWNUM)	NO
+										,	B.MM||B.DD	YYYYMMDD
+							FROM		(	SELECT	#{yymm} MM
+															,	LPAD(ROWNUM,2,'0')	DD
+												FROM		DICT
+												WHERE		ROWNUM	<=	31
+											)		B
+							WHERE		TO_CHAR(LAST_DAY(TO_DATE(B.MM||'01','YYYYMMDD')),'DD')	>=	B.DD
+						)	X
+
+		]]>
+	</select>
+
+
+	<select id="GET_SERVICE_MIN" parameterType="com.neofect.gts.services.gs.domain.GS02030" resultType="com.neofect.gts.services.gs.domain.GS02030">
+
+		SELECT	MIN_1
+					,	MIN_2
+					,	MIN_3
+					,	TOTAL_MIN
+		FROM		TABLE(FN_GS_GET_SERVICE_MIN(#{memberId}, #{yymm}))
+
+	</select>
+</mapper>

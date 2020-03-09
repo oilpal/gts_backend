@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SmAuthGroupMenuRepository">
+
+	<!-- C_SM0907_01 -->
+	<select id="CSM090701" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthGroupMenu">
+	/* com.neofect.gts.services.sm.repository.SmAuthGroupMenuRepository.CSM090701*/
+		<![CDATA[
+		  SELECT 
+		  		A.COMPANY_CODE,
+				A.USER_GROUP_CODE,
+				A.SYS_ID,
+				A.PGM_CODE,
+				B.PGM_NAME,
+				A.MENU_CODE,
+				A.MENU_NAME,
+				A.SORT_ORDER,
+				A.AUTH_I,
+				A.AUTH_R,
+				A.AUTH_D,
+				A.AUTH_P,
+				A.AUTH_E
+ 		   FROM 
+ 		   		SM_AUTH_GROUP_MENU A LEFT OUTER JOIN SM_AUTH_PGMCODE B ON A.COMPANY_CODE = B.COMPANY_CODE AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE
+ 		   		  					 LEFT OUTER JOIN SM_AUTH_SYS C  ON A.COMPANY_CODE = B.COMPANY_CODE AND A.SYS_ID = C.SYS_ID
+ 		   WHERE 
+ 		   		A.COMPANY_CODE =  #{comp}
+ 		   AND 
+ 		   		A.USER_GROUP_CODE =  #{group}
+ 		   AND 
+ 		   		A.SYS_ID LIKE  #{sys}
+ 		   AND (A.MENU_CODE LIKE  '%' || #{pgm} || '%' 
+ 		   OR A.MENU_NAME LIKE  '%' || #{pgm} || '%' )
+    	   
+    	   ORDER BY C.SORT_ORDER, A.MENU_CODE, A.SORT_ORDER
+		]]>
+	</select>
+
+	<!-- S_SM0907_01 -->
+	<select id="SSM090701" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthGroupMenu">
+	/* com.neofect.gts.services.sm.repository.SmAuthGroupMenuRepository.SSM090701 */
+		<![CDATA[
+		  SELECT A.MENU_CODE
+ 		  FROM SM_AUTH_GROUP_MENU A	
+ 		  WHERE (A.COMPANY_CODE =  #{comp} )
+ 		  AND (A.USER_GROUP_CODE =  #{group} )
+ 		  AND (A.MENU_CODE =  #{menu} )
+		]]>
+	</select>
+
+	<!-- SM_AUTH_MENU_GROUP_R02 -->
+	<select id="SMAUTHMENUGROUPR02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthGroupMenu">
+	/* com.neofect.gts.services.sm.repository.SmAuthGroupMenuRepository.SMAUTHMENUGROUPR02 */
+		<![CDATA[
+		 SELECT 
+		 		A.MENU_AUTH,
+				A.MENU_AUTH_NAME,
+				A.MENU_AUTH_DESC
+ 		 FROM 
+ 		 		SM_AUTH_MENU_GROUP A	
+  	     WHERE 
+  	     		USE_YN = 'Y'
+		 ORDER BY 1,2,3
+		]]>
+	</select>
+
+	<!-- SM_AUTH_MENU_GROUP_W01 -->
+	<select id="SMAUTHMENUGROUPW01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthGroupMenu">
+	/* com.neofect.gts.services.sm.repository.SmAuthGroupMenuRepository.SMAUTHMENUGROUPW01*/
+		<![CDATA[
+		 SELECT 
+		 		MENU_AUTH AS code,
+				MENU_AUTH_NAME as label
+ 		 FROM 
+ 		 		SM_AUTH_MENU_GROUP	
+  	     WHERE 
+  	     		USE_YN = 'Y'
+		 ORDER BY MENU_AUTH
+		]]>
+	</select>
+
+	<!-- S_SM0918_01 -->
+	<select id="SSM091801" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthGroupMenu">
+	/* com.neofect.gts.services.sm.repository.SmAuthGroupMenuRepository.SSM091801*/
+		<![CDATA[
+		SELECT	
+				A.COMPANY_CODE,
+				A.SYS_ID,
+				A.MENU_CODE,
+				A.MENU_NAME,
+				A.PGM_CODE,
+				B.PGM_NAME,
+				A.AUTH_I,
+				A.AUTH_R,
+				A.AUTH_D,
+				A.AUTH_P,
+				A.AUTH_E
+		FROM 
+				SM_AUTH_GROUP_MENU A
+		LEFT OUTER JOIN SM_AUTH_PGMCODE B ON A.COMPANY_CODE = B.COMPANY_CODE AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE
+		LEFT OUTER JOIN SM_AUTH_SYS C ON A.COMPANY_CODE = B.COMPANY_CODE AND A.SYS_ID = C.SYS_ID
+		WHERE	
+				A.COMPANY_CODE	=	#{companyCode}
+		AND
+				A.USER_GROUP_CODE	IN	(	SELECT	
+													A.USER_GROUP_CODE
+									 		FROM 
+									 				SM_AUTH_GROUP_USERS A	
+											LEFT OUTER JOIN SM_AUTH_GROUP B ON A.COMPANY_CODE = B.COMPANY_CODE AND A.USER_GROUP_CODE = B.USER_GROUP_CODE
+											WHERE		
+													A.COMPANY_CODE = #{companyCode}
+									 		AND			
+									 				A.USER_ID = #{userId})
+		AND
+				A.SYS_ID LIKE '%' || #{sysId} || '%'
+		AND			
+				(A.MENU_CODE LIKE '%' || #{menuCode} || '%'	OR A.MENU_NAME LIKE	'%' || #{menuCode} || '%')
+		UNION
+		
+		SELECT	
+				A.COMPANY_CODE,
+				A.SYS_ID,
+				A.MENU_CODE,
+				A.MENU_NAME,
+				A.PGM_CODE,
+				B.PGM_NAME,
+				A.AUTH_I,
+				A.AUTH_R,
+				A.AUTH_D,
+				A.AUTH_P,
+				A.AUTH_E
+		FROM 
+				SM_AUTH_USER_MENU A
+		LEFT OUTER JOIN SM_AUTH_PGMCODE B ON A.COMPANY_CODE = B.COMPANY_CODE AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE
+		LEFT OUTER JOIN SM_AUTH_SYS C ON A.COMPANY_CODE = B.COMPANY_CODE AND A.SYS_ID = C.SYS_ID
+		WHERE		
+				A.COMPANY_CODE = #{companyCode}
+		AND	 		
+				A.USER_ID =	#{userId}
+		AND			
+				A.SYS_ID LIKE '%' || #{sysId}# || '%'
+		AND			
+				(A.MENU_CODE LIKE '%' || #{menuCode} || '%'	OR	A.MENU_NAME	LIKE '%' || #{menuCode} || '%')
+		ORDER BY 1, 2, 3
+		]]>
+	</select>
+
+</mapper>

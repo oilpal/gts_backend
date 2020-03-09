@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.gs.repository.GS03010Repository">
+	<select id="GS03010_R01" parameterType="com.neofect.gts.services.gs.domain.GS03010" resultType="com.neofect.gts.services.gs.domain.GS03010">
+
+		SELECT	T.DEPT_ID
+			,	N.DEPT_NAME
+			,	T.STATUS
+			,	T.IN_AMT
+			,	T.OUT_AMT
+			,	T.IN_AMT - T.OUT_AMT	AS P_AMT
+		FROM	(	SELECT	A.DEPT_ID
+						,	A.STATUS
+						,	SUM(CASE WHEN B.ACNT_DIV = 'I' THEN A.AMT ELSE 0 END)	AS IN_AMT
+						,	SUM(CASE WHEN B.ACNT_DIV = 'O' THEN A.AMT ELSE 0 END)	AS OUT_AMT
+					FROM	SUM_PL		A
+							INNER JOIN	CODE_PL	B
+								ON	B.PL_TYPE	=	A.PL_TYPE
+								AND	B.ITEM_CODE	=	A.ITEM_CODE
+					WHERE	A.DEPT_ID	LIKE	#{deptId}
+					AND		A.YYYYMM	=	#{yymm}
+					AND		A.PL_TYPE	=	'2000'
+					AND		A.STATUS	=	FN_GET_PL_STATUS(A.DEPT_ID, A.YYYYMM)
+					AND		LENGTH(A.ITEM_CODE)	=	2
+					AND		B.SHOW_YN	=	'Y'
+					GROUP BY	A.DEPT_ID, A.STATUS
+				)		T
+				LEFT JOIN	CODE_DEPT	N
+					ON	N.DEPT_ID	=	T.DEPT_ID
+		ORDER BY	T.DEPT_ID
+	</select>
+
+
+	<select id="GS03010_R02" parameterType="com.neofect.gts.services.gs.domain.GS03010" resultType="com.neofect.gts.services.gs.domain.GS03010">
+
+		SELECT M.DEPT_ID
+		          , N.DEPT_NAME
+		          , M.YYYYMM
+		          , M.RNK
+		          , MAX(M.IN_ITEM_CODE) AS IN_ITEM_CODE
+		          , MAX(M.IN_ITEM_NAME) AS IN_ITEM_NAME
+		          , SUM(M.IN_AMT)            AS IN_AMT
+		          , MAX(M.IN_SHOW_YN)    AS IN_SHOW_YN
+		          , MAX(M.OUT_ITEM_CODE) AS OUT_ITEM_CODE
+		          , MAX(M.OUT_ITEM_NAME) AS OUT_ITEM_NAME
+		          , SUM(M.OUT_AMT)            AS OUT_AMT
+		          , MAX(M.OUT_SHOW_YN)    AS OUT_SHOW_YN
+		          , MAX(M.STATUS)              AS STATUS 
+		  FROM ( SELECT RANK() OVER (PARTITION BY A.YYYYMM, A.DEPT_ID ORDER BY A.DEPT_ID, A.YYYYMM, A.ITEM_CODE) AS RNK
+		                       , B.ACNT_DIV, A.DEPT_ID, A.YYYYMM
+		                       , A.ITEM_CODE AS IN_ITEM_CODE, B.ITEM_NAME AS IN_ITEM_NAME, A.AMT AS IN_AMT, B.SHOW_YN AS IN_SHOW_YN
+		                       , '' AS OUT_ITEM_CODE, '' AS OUT_ITEM_NAME, 0 AS OUT_AMT, '' AS OUT_SHOW_YN
+		                       , A.STATUS
+		                FROM SUM_PL A INNER JOIN CODE_PL B ON (A.PL_TYPE = B.PL_TYPE AND A.ITEM_CODE = B.ITEM_CODE)
+		              WHERE A.DEPT_ID = #{deptId}
+		                  AND A.YYYYMM = #{yymm}
+		                  AND B.ACNT_DIV = 'I'
+		                  AND A.PL_TYPE = '2000'
+		                  AND B.SHOW_YN = 'Y'
+		                  AND A.STATUS = FN_GET_PL_STATUS(A.DEPT_ID, A.YYYYMM)
+		               UNION ALL
+		              SELECT RANK() OVER (PARTITION BY A.YYYYMM, A.DEPT_ID ORDER BY A.DEPT_ID, A.YYYYMM, A.ITEM_CODE) AS RNK
+		                        , B.ACNT_DIV, A.DEPT_ID, A.YYYYMM
+		                        , '' AS IN_ITEM_CODE, '' AS IN_ITEM_NAME, 0 AS IN_AMT, '' AS IN_SHOW_YN
+		                        , A.ITEM_CODE, B.ITEM_NAME, A.AMT, B.SHOW_YN
+		                        , A.STATUS
+		                FROM SUM_PL A INNER JOIN CODE_PL B ON (A.PL_TYPE = B.PL_TYPE AND A.ITEM_CODE = B.ITEM_CODE)
+		 	             WHERE A.DEPT_ID = #{deptId}
+		                  AND A.YYYYMM = #{yymm}
+		                  AND B.ACNT_DIV = 'O'
+		                  AND A.PL_TYPE = '2000'
+		                  AND B.SHOW_YN = 'Y'
+		                  AND A.STATUS = FN_GET_PL_STATUS(A.DEPT_ID, A.YYYYMM) ) M LEFT JOIN CODE_DEPT N ON (M.DEPT_ID = N.DEPT_ID) 
+		GROUP BY M.DEPT_ID, N.DEPT_NAME, M.YYYYMM, M.RNK 
+		ORDER BY M.DEPT_ID, M.YYYYMM, M.RNK
+
+	</select>
+</mapper>

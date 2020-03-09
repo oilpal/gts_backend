@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.CodeComRepository">
+
+	<!-- SM0115 | [청소]표준업무관리] -->
+	<select id="CODECOMCD01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.CodeCom">
+	/* com.neofect.gts.services.sm.repository.CodeComRepository.CODECOMCD01*/
+		<![CDATA[
+		SELECT 
+				A.DCODE as code,
+				A.DNAME as label
+		FROM 
+				SM_COMCODE_D A
+		WHERE 
+				A.HCODE = #{fieldValue}
+		AND 
+				A.USE_YN = 'Y'
+		ORDER BY A.DCODE
+		]]>
+	</select>
+
+	<select id="CODECOMCD02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.CodeCom">
+	/* com.neofect.gts.services.sm.repository.CodeComRepository.CODECOMCD02*/
+		<![CDATA[
+		SELECT 
+				A.DCODE as code,
+				A.DNAME as label
+		FROM 
+				SM_COMCODE_D A
+		WHERE 
+				A.HCODE = #fieldValue}
+		AND 
+				A.USE_YN = 'Y'
+		AND 
+				NVL(A.RELATE_CODE1, '%') LIKE #{commRef1}
+		AND 
+				NVL(A.RELATE_CODE2, '%') LIKE #{commRef2}
+		AND 
+				NVL(A.RELATE_CODE3, '%') LIKE #{commRef3}
+		ORDER BY A.DCODE
+		]]>
+	</select>
+
+	<select id="SMAUTHSYSR01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.CodeCom">
+	/* com.neofect.gts.services.sm.repository.CodeComRepository.SMAUTHSYSR01*/
+		<![CDATA[
+		SELECT 
+				A.SYS_ID as code,
+				A.SYS_NAME as label
+		FROM 
+				SM_AUTH_SYS A
+		WHERE 
+				A.USE_YN = 'Y'
+		ORDER BY A.SORT_ORDER, A.SYS_ID
+		]]>
+	</select>
+
+</mapper>

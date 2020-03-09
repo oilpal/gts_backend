@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM900071Repository">
+  
+	<select id="R_SM900071_C1" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900071">
+
+			SELECT SYS_ID
+           , CODE
+			 , NAME
+			 , HTML_STRING
+			 , HTML_STRING_VIEW
+			 , USE_YN
+			 , REMK
+			 , SCRIPT_STRING
+			 FROM SM_DEV_RETR_T1
+		  WHERE (CODE LIKE #{search} || '%' OR NAME LIKE '%' || #{search} || '%')
+        AND SYS_ID LIKE #{sysId}
+   		ORDER BY CODE ASC
+
+		<!-- <update_table>SM_DEV_RETR_T1</update_table>
+	    <column name='SYS_ID'           type='char' updatable='Y' iskeycol='N' />
+	    <column name='CODE' 						type='char' updatable='Y' iskeycol='Y' />
+	    <column name='NAME' 						type='char' updatable='Y' iskeycol='N' />
+	    <column name='HTML_STRING' 			type='char' updatable='Y' iskeycol='N' />
+	    <column name='HTML_STRING_VIEW'	type='char' updatable='Y' iskeycol='N' />
+	    <column name='USE_YN'					  type='char' updatable='Y' iskeycol='N' />
+	    <column name='REMK' 						type='char' updatable='Y' iskeycol='N' />
+	    <column name='SCRIPT_STRING' 						type='char' updatable='Y' iskeycol='N' /> -->
+
+	</select>
+
+
+	<!-- DATA 유무 체크 -->
+	<select id="R_SM900071_R1" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900071">
+		SELECT COUNT(*) AS DATA_CNT
+		FROM SM_DEV_RETR_T1
+	</select>
+
+	<!-- MAX CODE 체크 -->
+	<select id="R_SM900071_R2" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900071">
+		SELECT NVL( MAX(TO_NUMBER(CODE)), 0) AS MAX_CODE
+		FROM SM_DEV_RETR_T1
+	</select>
+
+
+  	<select id="GET_HTML" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900071">
+      SELECT '@ page language="java" pageEncoding="utf-8" %>' as header1
+           , '@ taglib prefix="html"  uri="/WEB-INF/tlds/mighty.tld" %>' as header2
+           , HTML_STRING  
+       FROM SM_DEV_RETR_T1
+      WHERE CODE = #{code}
+  </select>
+</mapper>

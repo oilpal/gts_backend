@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.CMMAGAMJECDTRepository">
+
+	<!-- SM0113 | [청소]마감재관리] -->
+	<select id="CMAREACDTC01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.CMMAGAMJECDT">
+	/* com.neofect.gts.services.sm.repository.CMMAGAMJECDTRepository.CMMAGAMJECDTC01*/
+		<![CDATA[
+		 SELECT
+		 		 CODE, 
+             	 NAME
+	     FROM 
+	     		CM_MAGAMJE_CD_T
+		 ORDER BY CODE
+		]]>
+	</select>
+
+</mapper>

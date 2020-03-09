@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM900400Repository">
+  
+  	<select id="SM_SMS_RECTEMP" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM90040">
+		SELECT 
+		  A.COMPANY_CODE
+		, A.USER_ID
+		, A.REC_SEQ
+		, A.EMP_COMPANY_CODE
+		, A.EMP_NO
+		, A.GUBUN_CODE
+		, A.REC_NAME
+		, A.HP_NO  
+		FROM SM_SMS_RECTEMP A
+		WHERE A.COMPANY_CODE = #{companyCode} AND A.USER_ID = #{userId}
+
+		<!--<update_table>SM _SMS_RECTEMP</update_table>  
+
+		<column name='COMPANY_CODE'     type='char' updatable='Y' iskeycol='Y' />
+		<column name='USER_ID'          type='char' updatable='Y' iskeycol='Y' /> 
+		<column name='REC_SEQ'          type='char' updatable='Y' iskeycol='Y' /> 
+		<column name='EMP_COMPANY_CODE' type='char' updatable='Y' iskeycol='N' /> 
+		<column name='GUBUN_CODE'       type='char' updatable='Y' iskeycol='N' /> 
+		<column name='EMP_NO'           type='char' updatable='Y' iskeycol='N' /> 
+		<column name='REC_NAME'         type='char' updatable='Y' iskeycol='N' /> 
+		<column name='HP_NO'            type='char' updatable='Y' iskeycol='N' />     -->
+	</select> 
+
+
+	<select id="SM_SMS_TEMP_SEND" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM90040">
+		SELECT 
+		  1
+		FROM DUAL
+	</select> 
+</mapper>

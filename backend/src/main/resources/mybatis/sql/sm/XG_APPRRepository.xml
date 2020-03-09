@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.XG_APPRRepository">
+	
+	<select id="APPR_STAT" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.XG_APPR">
+            SELECT 
+                        CASE WHEN LENGTH(APPR_YN) > 1 THEN APPR_YN
+                              WHEN APPR_YN = 'Y' THEN '승인'
+                              WHEN APPR_YN = 'R' THEN '반려'
+                              WHEN REQ_DATE IS NOT NULL THEN '승인요청'
+                              ELSE ''
+                        END AS APPR_STAT,
+                        CASE WHEN APPR_YN = 'Y' THEN to_char(APPR_DATE, 'mm/dd hh24:mi')
+                              WHEN APPR_YN = 'R' THEN to_char(APPR_DATE, 'mm/dd hh24:mi')
+                              WHEN REQ_DATE IS NOT NULL THEN to_char(REQ_DATE, 'mm/dd hh24:mi')
+                              ELSE ''
+                        END AS APPR_STAT_NAME,
+                        CASE WHEN APPR_YN = 'Y' THEN FN_GET_EMPNAME(A.COMPANY_CODE, A.APPR_USER_ID)
+                              WHEN APPR_YN = 'R' THEN FN_GET_EMPNAME(A.COMPANY_CODE, A.APPR_USER_ID)
+                              WHEN REQ_DATE IS NOT NULL THEN FN_GET_EMPNAME(A.COMPANY_CODE, A.REQ_USER_ID)
+                              ELSE ''
+                        END AS APPR_USER
+              FROM XM_APPR_MASTER A
+             WHERE A.COMPANY_CODE = #{companyCode}
+               AND A.APPR_KEY1 = #{apprKey1}
+               AND A.APPR_KEY2 = #{apprKey2}
+
+      </select>
+      
+      <select id="APPR_STAT_2" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.XG_APPR">
+            SELECT MAX(APPR_YN) AS APPR_STAT
+              FROM XM_APPR_MASTER A
+             WHERE A.COMPANY_CODE = #{companyCode}
+               AND A.APPR_KEY1 = #{apprKey1}
+               AND A.APPR_KEY2 = #{apprKey2}
+            
+      </select>
+</mapper>

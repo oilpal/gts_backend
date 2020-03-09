@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM900050Repository">
+<select id="PGM_CODE_LIST" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900050">
+   SELECT A.COMPANY_CODE,
+          A.SYS_ID,
+          A.SORT_CODE,
+          A.PGM_CODE,
+          REPLACE(A.PGM_NAME,',',' ') AS PGM_NAME,
+          (CASE WHEN COUNT(D.PGM_CODE)>0 THEN '있음' ELSE '-' END) AS EXISTS_DB,
+          'Y'           AS SELECTED,
+          '-'           AS IMP_JS,
+          '-'           AS IMP_XMLX,
+          '-'           AS IMP_GRID,
+          '작업대기중'  AS IMPORT_MESSAGE
+     FROM SM_AUTH_PGMCODE A LEFT JOIN SM_AUTH_SYS B ON A.SYS_ID = B.SYS_ID
+                            LEFT JOIN SM_DEV_GRID_COLS D ON A.SYS_ID = D.SYS_ID
+                                                        AND A.PGM_CODE = D.PGM_CODE
+    WHERE A.SYS_ID LIKE #{sysId}
+      AND (A.PGM_CODE LIKE #{pgmName}
+       OR  A.PGM_NAME LIKE #{pgmName})
+      AND A.SHOW_YESNO = 'Y'
+      AND NOT EXISTS (SELECT 1 FROM SM_AUTH_PGMCODE C WHERE A.SYS_ID = C.SYS_ID AND A.SORT_CODE = C.PARENT_SORT_CODE AND C.SHOW_YESNO='Y')
+	 GROUP BY A.COMPANY_CODE, A.SYS_ID, A.SORT_CODE, A.PGM_CODE, A.PGM_NAME
+	 ORDER BY A.SORT_CODE,
+          A.SYS_ID,
+          A.PGM_CODE
+  </select>
+
+
+  <select id="DEV_GRID_COLS" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900050">
+
+      SELECT UPDATE_TYPE
+           , UPDATABLE
+           , UPDATE_ISKEY
+           , SYS_ID
+           , PGM_CODE
+           , GRID_ID
+           , SEQ
+           , FIELD_SEQ
+           , FIELDNAME
+           , TABLE_NAME
+           , WIDTH
+           , MUST_INPUT
+           , VISIBLE
+           , READONLY
+           , EDITABLE
+           , SORTABLE
+           , HEADER
+           , HEADER_TEXT
+           , STYLES
+           , EDITOR
+           , LOOKUPDISPLAY
+           , RENDERER
+           , BUTTON
+           , ALWAYSSHOWBUTTON
+           , HEADERTOOLTIP
+           , MERGE
+           , MAXLENGTH
+           , FOOTEREXPR
+           , FOOTERALIGN
+           , FOOTERSTYLE
+           , FOOTERPRE
+           , FOOTERPOST
+           , RESIZABLE
+        FROM SM_DEV_GRID_COLS
+       WHERE SYS_ID = #{sysId}
+         AND PGM_CODE = #{pgmCode}
+         AND GRID_ID = #{gridId}
+    ORDER BY SEQ ASC
+
+    <!-- <update_table>SM_DEV_GRID_COLS</update_table>
+
+    <column name='UPDATE_TYPE'      type='char' updatable='Y' iskeycol='N' />
+    <column name='UPDATABLE'        type='char' updatable='Y' iskeycol='N' />
+    <column name='UPDATE_ISKEY'     type='char' updatable='Y' iskeycol='N' />
+    <column name='SYS_ID'           type='char' updatable='Y' iskeycol='Y' />
+    <column name='PGM_CODE'         type='char' updatable='Y' iskeycol='Y' />
+    <column name='GRID_ID'          type='char' updatable='Y' iskeycol='Y' />
+    <column name='SEQ'              type='char' updatable='Y' iskeycol='Y' />
+    <column name='FIELD_SEQ'        type='char' updatable='Y' iskeycol='N' />
+    <column name='FIELDNAME'        type='char' updatable='Y' iskeycol='N' />
+    <column name='TABLE_NAME'       type='char' updatable='Y' iskeycol='N' />
+    <column name='WIDTH'            type='char' updatable='Y' iskeycol='N' />
+    <column name='MUST_INPUT'       type='char' updatable='Y' iskeycol='N' />
+    <column name='VISIBLE'          type='char' updatable='Y' iskeycol='N' />
+    <column name='READONLY'         type='char' updatable='Y' iskeycol='N' />
+    <column name='EDITABLE'         type='char' updatable='Y' iskeycol='N' />
+    <column name='SORTABLE'         type='char' updatable='Y' iskeycol='N' />
+    <column name='HEADER'           type='char' updatable='Y' iskeycol='N' />
+    <column name='HEADER_TEXT'      type='char' updatable='Y' iskeycol='N' />
+    <column name='STYLES'           type='char' updatable='Y' iskeycol='N' />
+    <column name='EDITOR'           type='char' updatable='Y' iskeycol='N' />
+    <column name='LOOKUPDISPLAY'    type='char' updatable='Y' iskeycol='N' />
+    <column name='RENDERER'         type='char' updatable='Y' iskeycol='N' />
+    <column name='BUTTON'           type='char' updatable='Y' iskeycol='N' />
+    <column name='ALWAYSSHOWBUTTON' type='char' updatable='Y' iskeycol='N' />
+    <column name='HEADERTOOLTIP'    type='char' updatable='Y' iskeycol='N' />
+    <column name='MERGE'            type='char' updatable='Y' iskeycol='N' />
+    <column name='MAXLENGTH'        type='char' updatable='Y' iskeycol='N' />
+    <column name='FOOTEREXPR'       type='char' updatable='Y' iskeycol='N' />
+    <column name='FOOTERALIGN'      type='char' updatable='Y' iskeycol='N' />
+    <column name='FOOTERSTYLE'      type='char' updatable='Y' iskeycol='N' />
+    <column name='FOOTERPRE'        type='char' updatable='Y' iskeycol='N' />
+    <column name='FOOTERPOST'       type='char' updatable='Y' iskeycol='N' />
+    <column name='RESIZABLE'        type='char' updatable='Y' iskeycol='N' /> -->
+
+  </select>
+
+
+  <select id="DEV_GRID" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900050">
+
+      SELECT SYS_ID
+           , PGM_CODE
+           , GRID_ID
+           , SQL_FILE
+           , SQL_ID
+           , UPDATE_TABLE
+        FROM SM_DEV_GRID
+       WHERE SYS_ID = #{sysId}
+         AND PGM_CODE = #{pgmCode}
+       }
+    ORDER BY SEQ ASC
+
+    <!-- <update_table>SM_DEV_GRID</update_table>
+
+    <column name='SYS_ID'           type='char' updatable='Y' iskeycol='Y' />
+    <column name='PGM_CODE'         type='char' updatable='Y' iskeycol='Y' />
+    <column name='GRID_ID'          type='char' updatable='Y' iskeycol='Y' />
+    <column name='SQL_FILE'         type='char' updatable='Y' iskeycol='N' />
+    <column name='SQL_ID'           type='char' updatable='Y' iskeycol='N' />
+    <column name='UPDATE_TABLE'     type='char' updatable='Y' iskeycol='N' /> -->
+
+  </select>
+</mapper>

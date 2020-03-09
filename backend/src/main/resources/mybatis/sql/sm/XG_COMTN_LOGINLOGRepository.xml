@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.XG_COMTN_LOGINLOGRepository">
+
+	
+
+	<select id="R_SM0912_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.XG_COMTN_LOGINLOG">
+			
+ 	 	 SELECT A.CONECT_ID, 
+						B.USER_NAME, 
+					 	COUNT(*) AS ACC_COUNT
+		   FROM XG_COMTN_LOGINLOG A LEFT OUTER JOIN SM_AUTH_USER B 
+		   													ON A.COMPANY_CODE = B.COMPANY_CODE AND A.CONECT_ID = B.USER_ID
+			WHERE ( A.COMPANY_CODE = #{companyCode} )
+				AND	( A.CREAT_DT BETWEEN CONVERT(datetime,#{fromDate},120) AND CONVERT(datetime,#{toDate},120)  )
+				AND ( A.CONECT_MTHD = 'I' )
+				AND ( A.CONECT_ID LIKE #{user} || '%' OR  B.USER_NAME LIKE '%' || #{user} || '%')
+			GROUP BY A.CONECT_ID, B.USER_NAME
+			ORDER BY A.CONECT_ID
+	</select>
+
+	<select id="R_SM0912_02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.XG_COMTN_LOGINLOG">
+			
+ 	 	 SELECT A.LOG_ID, 
+						A.CREAT_DT,
+						A.CONECT_IP,
+						A.CONECT_MTHD
+		   FROM XG_COMTN_LOGINLOG A
+			WHERE A.COMPANY_CODE = #{companyCode}
+				AND	A.CONECT_ID = #{user}
+				AND	A.CREAT_DT BETWEEN CONVERT(datetime,#{fromDate},120) AND CONVERT(datetime,#{toDate},120) 
+			ORDER BY A.LOG_ID
+		
+	</select>
+</mapper>

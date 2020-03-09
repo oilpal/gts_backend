@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SAPWBSREQRepository">
+
+	<!-- C_SM0209_01 SM0209|프로젝트WBS -->
+	<select id="CSM020901" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SAPWBSREQ">
+	/* com.neofect.gts.services.sm.repository.SAPWBSREQRepository.CSM020901*/
+		<![CDATA[
+		 SELECT
+			  (CASE WHEN T1.EAI_STAT = 'S' THEN '등록' WHEN T1.EAI_STAT = 'F' THEN '등록실패' ELSE '' END) AS SAPDIV
+			, (CASE WHEN T2.ZPROCFIN = 'F' OR T1.RTNFLAG = 'F' THEN '반려' WHEN T1.RTNFLAG = 'S' AND T1.PSPID != '' THEN '승인' WHEN T1.RTNFLAG = 'S' AND nvl(T1.PSPID,'') = '' THEN '승인요청중' ELSE '' END) AS REQDIV
+			, T1.BUSSNO
+			, T1.PSPID
+			, T1.POSID
+			, T1.POST1
+			, T1.POST2
+			, PJTYEAR
+			, ZDOMO
+			, ZLAND1
+			, ZSELO
+			, T1.AKSTL
+			, T1.AKSTL_DEPT
+			, T3.DEPT_NAME AS AKSTL_NAME
+			, T1.FKSTL
+			, T1.FKSTL_DEPT
+			, T4.DEPT_NAME AS FKSTL_NAME
+			, T1.PSPST
+			, T1.POSSTCD2
+			, PLFAZ
+			, SUBSTR(PLFAZ,1,4)+'-'+SUBSTR(PLFAZ,5,2)+'-'+SUBSTR(PLFAZ,7,2) AS PLFAZ_NAME
+			, PLSEZ
+			, SUBSTR(PLSEZ,1,4)+'-'+SUBSTR(PLSEZ,5,2)+'-'+SUBSTR(PLSEZ,7,2) AS PLSEZ_NAME
+			, B_CODE_ST
+			, B_CODE_NM
+			, MSALES_TP
+			, VBUKR
+			, ZINOO
+			, ZPLCO
+			, ZINHO
+			, ZOUTO
+			, PB_YN
+			, ZGENO
+			, MFI_GBN
+			, ZCUST
+			, (SELECT MAX(VENDOR_CODE) FROM BI_VENDOR WHERE BIZ_REG_NO=T1.ZCUST) AS BIZREGNO
+			, (SELECT MAX(VENDOR_NAME) FROM BI_VENDOR WHERE BIZ_REG_NO=T1.ZCUST) AS ZCUSTNAME
+			, ZAREA
+			, CONTINENT
+			, ZBIDO
+			, MSUJU_TP
+			, ZCOMO
+			, ZCOPO
+			, ZBEXP
+			, ZCODT
+			, T1.DIR_ID
+			, (SELECT EMP_NM FROM IF_EMPLOYE_MST WHERE EMP_ID7=T1.DIR_ID) AS DIR_NAME
+			, T1.PM_ID
+			, (SELECT EMP_NM FROM IF_EMPLOYE_MST WHERE EMP_ID7=T1.PM_ID) AS PM_NAME
+			, CNST_LOCATION
+			, SUJU_AMT
+			, VKBUR
+			, HAJA_RATE
+			, PJT_TYP
+			, MBIZ_FID
+			, Z_SCOPE
+			, (CASE WHEN T2.ZPROCFIN = 'F' OR T1.RTNFLAG = 'F' THEN 'F' WHEN T1.RTNFLAG = 'S' THEN 'S' ELSE '' END) AS RTNFLAG
+			, (CASE WHEN T1.RTNFLAG = 'F' THEN REPLACE(REPLACE(T1.RTNMSG,CHAR(10),' '),CHAR(13),'') WHEN T2.ZPROCFIN = 'F' THEN REPLACE(REPLACE(T2.ZFAILRES,CHAR(10),' '),CHAR(13),'') ELSE REPLACE(REPLACE(T1.RTNMSG,CHAR(10),' '),CHAR(13),'') END) AS RTNMSG
+			, T1.EAI_STAT
+			, REPLACE(REPLACE(T1.EAI_MSG,CHAR(10),' '),CHAR(13),'') AS EAI_MSG
+			, T1.RTNFLAG AS ZPROCFIN
+			, ZCONX
+			, ZMINO
+			, ZDANO
+			, ZSUCU
+			, MCON_TP
+			, ZSYSO
+			, (CASE WHEN T1.RTNFLAG = 'F' THEN ZFAILRES ELSE '' END) AS ZFAILRES
+			, (SELECT MAX(ZVERN) AS ZVERN FROM IF_WBS_REQ_CONTAMT WHERE BUSSNO=T1.BUSSNO) AS ZVERNMAX
+			,	T1.MVENDOR_CODE
+			,	T5.VENDOR_NAME		AS MVENDOR_NAME
+		FROM IF_WBS_REQ T1
+		LEFT OUTER JOIN IF_EPMS_PJTWBS_RESULT T2 ON T1.BUSSNO = T2.BUSSNO
+		LEFT OUTER JOIN IF_CODE_DEPT T3 ON T1.AKSTL_DEPT = T3.DEPT_CODE
+		LEFT OUTER JOIN IF_CODE_DEPT T4 ON T1.FKSTL_DEPT = T4.DEPT_CODE
+		LEFT OUTER JOIN BI_VENDOR    T5 ON T1.MVENDOR_CODE = T5.VENDOR_CODE
+		WHERE
+			nvl(ZSELO,'') LIKE '%' ||#{zselo}|| '%'
+			AND (nvl(T1.PSPID,'') LIKE '%' ||#{find}|| '%'
+				OR nvl(T1.POSID,'') LIKE '%' ||#{find}|| '%'
+				OR nvl(T1.POST1,'') LIKE '%' ||#{find}|| '%')
+		    AND nvl(PSPST,'') LIKE '%' ||#{pspst}|| '%'
+		ORDER BY T1.BUSSNO
+		]]>
+	</select>
+
+	<!-- S_SM0209_02 SM0209|프로젝트WBS -->
+	<select id="SSM020902" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SAPWBSREQ">
+	/* com.neofect.gts.services.sm.repository.SAPWBSREQRepository.SSM020902*/
+		<![CDATA[
+		SELECT
+			MAX(BUSSNO) + 1
+		FROM
+			IF_WBS_REQ
+		]]>
+	</select>
+
+	<!-- D_SM0209_03 SM0209|프로젝트WBS -->
+	<select id="DSM020903" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SAPWBSREQ">
+	/* com.neofect.gts.services.sm.repository.SAPWBSREQRepository.DSM020903 */
+		<![CDATA[
+		DELETE FROM IF_EPMS_PJTWBS_RESULT
+		WHERE
+			BUSSNO = #{bussno}
+		]]>
+	</select>
+
+</mapper>
