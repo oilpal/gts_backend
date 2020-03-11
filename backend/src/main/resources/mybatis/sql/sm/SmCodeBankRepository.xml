@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SmCodeBankRepository">
+
+	<!-- SM_CODE_BANK_C01 SM0916|개인별메뉴권한등록 list왼쪽-->
+	<select id="SMCODEBANKC01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCodeBank">
+	/* com.neofect.gts.services.sm.repository.SmCodeBankRepository.SMCODEBANKC01*/
+		<![CDATA[
+			SELECT 
+					BANK_CODE, 
+			        BANK_NAME, 
+				    USING_TAG, 
+				    CHECK_TAG, 
+				    LIMIT_AMT, 
+				    BILL_TAG, 
+				    TRUST_TAG, 
+				    BILL_BANK_CODE, 
+				    DISLIMIT_AMT, 
+				    OFFICIAL_BANK_CODE,
+				    LIST_ORDER, 
+				    SHORT_NAME,
+				    BANK_ENAME,
+				    BANK_DIV,
+				    CM_USE_YN
+			 FROM SM_CODE_BANK
+			 WHERE USING_TAG = #{useYn}
+			 ORDER BY BANK_CODE
+		]]>
+		<!-- <update_table>SM_CODE_BANK</update_table>
+
+		<column name='BANK_CODE' type='char' updatable='Y' iskeycol='Y' />
+		<column name='BANK_NAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='USING_TAG' type='char' updatable='Y' iskeycol='N' />
+		<column name='CHECK_TAG' type='char' updatable='Y' iskeycol='N' />
+		<column name='LIMIT_AMT' type='number' updatable='Y' iskeycol='N' />
+		<column name='BILL_TAG' type='char' updatable='Y' iskeycol='N' />
+		<column name='TRUST_TAG' type='char' updatable='Y' iskeycol='N' />
+		<column name='BILL_BANK_CODE' type='char' updatable='Y' iskeycol='N' />
+		<column name='DISLIMIT_AMT' type='number' updatable='Y' iskeycol='N' />
+		<column name='OFFICIAL_BANK_CODE' type='char' updatable='Y' iskeycol='N' />
+		<column name='LIST_ORDER' type='number' updatable='Y' iskeycol='N' />
+		<column name='SHORT_NAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='BANK_ENAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='BANK_DIV' type='char' updatable='Y' iskeycol='N' />
+		<column name='CM_USE_YN' type='char' updatable='Y' iskeycol='N' /> -->
+	
+	</select>
+
+	
+</mapper>

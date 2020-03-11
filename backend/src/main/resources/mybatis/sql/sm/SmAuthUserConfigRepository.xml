@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SmAuthUserConfigRepository">
+
+	<!-- GET_CONFIG_LAYOUT 사용자 설정 가져오기-->
+	<select id="GETCONFIGLAYOUT" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUserConfig">
+	/* com.neofect.gts.services.sm.repository.SmAuthUserConfigRepository.GETCONFIGLAYOUT*/
+		<![CDATA[
+			 SELECT  A.CONFIG_LAYOUT
+        	 FROM  CODE_MEMBER A
+       		 WHERE ( #{comp} = #{comp} )
+           	 AND ( A.MEMBER_ID = #{user} )
+		]]>
+	
+	</select>
+
+	<!-- SET_CONFIG_LAYOUT-->
+	<update id="SETCONFIGLAYOUT" parameterType="com.neofect.gts.services.sm.domain.SmAuthUserConfig" >
+	/* com.neofect.gts.services.sm.repository.SmAuthUserConfigRepository.SETCONFIGLAYOUT*/
+		<![CDATA[
+			  UPDATE CODE_MEMBER
+         	  SET CONFIG_LAYOUT = #{config}
+       		  WHERE #{comp} = #{comp}
+         	  AND MEMBER_ID = #{user}
+		]]>
+	
+	</update>
+
+</mapper>

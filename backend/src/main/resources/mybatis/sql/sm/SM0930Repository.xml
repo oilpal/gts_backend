@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM0930Repository">
+	<select id="SM0930_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0930">
+        
+     SELECT A.COMPANY_CODE,
+            A.USER_GROUP_CODE,
+            A.USER_GROUP_NAME,
+            A.REMARKS
+       FROM SM_AUTH_GROUP A 
+      WHERE (A.COMPANY_CODE =  #{companyCode} )
+        AND (A.USER_GROUP_CODE LIKE '%' || #{userGroupCode} || '%' 
+         OR  A.USER_GROUP_NAME LIKE '%' || #{userGroupCode} || '%')
+     ORDER BY 1,2
+ 
+    </select>
+
+    <select id="SM0930_02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0930">
+           SELECT #{companyCode} AS COMPANY_CODE
+                , #{userGroupCode} AS USER_GROUP_CODE
+                , B.SYS_ID   
+                , B.PGM_CODE 
+                , B.SORT_CODE AS MENU_CODE 
+                , B.PGM_NAME AS MENU_NAME  
+                , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_I, 'N') END AS  AUTH_I   
+                , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_R, 'N') END AS  AUTH_R 
+                , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_D, 'N') END AS  AUTH_D 
+                , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_P, 'N') END AS  AUTH_P
+                , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_E, 'N') END AS  AUTH_E
+                , B.MENU_LEVEL AS LEV
+                , (CASE WHEN A.PGM_CODE IS NULL THEN 'Y' ELSE 'N' END) AS NEW_MODE
+             FROM TABLE(TF_MY_PGMCODE_ALL(#{companyCode}, #{sysId}))  B
+                          LEFT JOIN  SM_AUTH_GROUP_MENU A ON ( #{companyCode} = A.COMPANY_CODE AND #{userGroupCode} = A.USER_GROUP_CODE AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE)  
+            WHERE  (B.PGM_NAME    LIKE '%' || #{pgmCode}  || '%' OR B.PGM_CODE LIKE '%' || #{pgmCode} || '%')
+         ORDER BY B.SORT_CODE, B.PGM_CODE
+
+    </select>
+</mapper>

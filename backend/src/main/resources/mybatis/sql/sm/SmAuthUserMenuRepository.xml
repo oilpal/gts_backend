@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SmAuthUserMenuRepository">
+
+	<!-- SM_AUTH_USER_MENU_C01 사용자 등록-->
+	<select id="SMAUTHUSERMENUC01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUserMenu">
+	/* com.neofect.gts.services.sm.repository.SmAuthUserMenuRepository.SMAUTHUSERMENUC01 */
+		<![CDATA[
+			 SELECT A.AUTH_CODE,
+				A.SYS_ID,
+				A.PGM_CODE,
+				B.SORT_CODE,
+				B.PGM_NAME,
+				A.AUTH_I,
+				A.AUTH_R,
+				A.AUTH_D,
+				A.AUTH_P,
+				A.AUTH_TAG
+ 		   FROM SM_AUTH_USER_MENU A	
+ 		 		LEFT OUTER JOIN SM_AUTH_PGMCODE B ON  (A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE)
+ 		  WHERE A.AUTH_CODE = #{auth}
+ 		    AND A.SYS_ID LIKE #{sys}
+ 		    AND (A.PGM_CODE LIKE '%' || #{pgm} || '%' 
+ 		     OR B.PGM_NAME LIKE '%' || #{pgm} || '%')
+		 ORDER BY A.SYS_ID, B.SORT_CODE,A.PGM_CODE
+		]]>
+	<!-- <update_table>SM_AUTH_USER_MENU</update_table>
+		
+		<column name='AUTH_CODE' type='char' updatable='Y' iskeycol='Y' />
+		<column name='SYS_ID' type='char' updatable='Y' iskeycol='Y' />
+		<column name='PGM_CODE' type='char' updatable='Y' iskeycol='Y' />
+		<column name='SORT_CODE' type='char' updatable='N' iskeycol='N' />
+		<column name='PGM_NAME' type='char' updatable='N' iskeycol='N' />
+		<column name='AUTH_I' type='char' updatable='Y' iskeycol='N' />
+		<column name='AUTH_R' type='char' updatable='Y' iskeycol='N' />
+		<column name='AUTH_D' type='char' updatable='Y' iskeycol='N' />
+		<column name='AUTH_P' type='char' updatable='Y' iskeycol='N' />
+		<column name='AUTH_TAG' type='char' updatable='Y' iskeycol='N' /> -->
+	</select>
+
+	<!-- SM_AUTH_USER_MENU_C02 -->
+	<select id="SMAUTHUSERMENUC02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUserMenu">
+	/* com.neofect.gts.services.sm.repository.SmAuthUserMenuRepository.SMAUTHUSERMENUC02 */
+		<![CDATA[
+		  SELECT A.AUTH_CODE,
+				A.SYS_ID,
+				A.PGM_CODE,
+				B.SORT_CODE,
+				B.PGM_NAME,
+				A.AUTH_I,
+				A.AUTH_R,
+				A.AUTH_D,
+				A.AUTH_P,
+				A.AUTH_TAG
+ 		   FROM SM_AUTH_USER_MENU A	
+ 		 		LEFT OUTER JOIN SM_AUTH_PGMCODE B ON  (A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE)
+ 		  WHERE A.AUTH_CODE = #{auth}
+ 		    AND A.SYS_ID LIKE #{sys}
+ 		    AND A.AUTH_TAG = 'G'
+ 		    AND (A.PGM_CODE LIKE '%' || #{pgm} || '%' 
+ 		     OR B.PGM_NAME LIKE '%' || #{pgm} || '%')
+		 ORDER BY 1,2,3
+		]]>
+	
+		<!-- <update_table>SM_AUTH_USER_MENU</update_table>
+		
+		<column name='AUTH_CODE' type='char' updatable='Y' iskeycol='Y' />
+		<column name='SYS_ID' type='char' updatable='Y' iskeycol='Y' />
+		<column name='PGM_CODE' type='char' updatable='Y' iskeycol='Y' />
+		<column name='SORT_CODE' type='char' updatable='N' iskeycol='N' />
+		<column name='PGM_NAME' type='char' updatable='N' iskeycol='N' />
+		<column name='AUTH_I' type='char' updatable='Y' iskeycol='N' />
+		<column name='AUTH_R' type='char' updatable='Y' iskeycol='N' />
+		<column name='AUTH_D' type='char' updatable='Y' iskeycol='N' />
+		<column name='AUTH_P' type='char' updatable='Y' iskeycol='N' />
+		<column name='AUTH_TAG' type='char' updatable='Y' iskeycol='N' /> -->
+	
+	</select>
+
+</mapper>

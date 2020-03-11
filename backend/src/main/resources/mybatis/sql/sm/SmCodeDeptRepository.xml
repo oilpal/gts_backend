@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SmCodeDeptRepository">
+
+	<!-- SM_CODE_DEPT_C01 -->
+	<select id="SMCODEDEPTC01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCodeDept">
+	/* com.neofect.gts.services.sm.repository.SmCodeDeptRepository.SMCODEDEPTC01*/
+		<![CDATA[
+		SELECT COMPANY_CODE        
+				,DEPT_CODE           
+				,DEPT_NAME           
+				,DEPT_SNAME          
+				,DEPT_ENAME          
+				,DEPT_ESNAME         
+				,COST_CODE           
+				,DEPT_DIV            
+				,COSTDEPT_CODE       
+				,TERMINATE_DATE      
+				,BUSINESS_CODE       
+				,SORT_ORDER          
+				,USING_TAG           
+				,TAX_COMPANY_CODE    
+				,COST_TAG            
+				,OFFICE_CODE         
+				,BUDGET_CONTROLTAG   
+				,TAX_OFFICE_CODE     
+				,COST_DEPT_CODE      
+				,RESIDENT_PAY_PLACE  
+				,FIRST_REGIST_DATE   
+				,PAY_ACNT_CODE       
+				,BONUS_ACNT_CODE     
+				,AREA_DIV            
+				,FC_DEPT             
+				,MANUFAC_DIV         
+				,PROJ_DEPOSIT_NO     
+				,NATION_CD           
+				,UPPER_DEPT_CODE     
+				,DEPT_TYPE_DIV       
+				,BONBOO_CODE         
+				,SIL_CODE            
+				,PROJ_SORT_ORDER     
+				,PROJ_DEGREE_NUM     
+				,ORG_DISP_YN         
+				,TAX_DIV             
+				,FOOD_DEPOSIT_YN     
+				,ACC_END_DATE        
+				,TO_SORT_ORDER       
+				,DEPT_GROUP          
+				,EDI_MANAGE_NO 
+	    FROM SM_CODE_DEPT 
+	    /*A LEFT OUTER JOIN SM_CODE_DEPT C 
+	                                     ON (A.COMPANY_CODE = C.COMPANY_CODE AND A.COST_DEPT_CODE = C.DEPT_CODE)
+	                        LEFT OUTER JOIN SM_CODE_OFFICE D
+	                                     ON (A.COMPANY_CODE = D.COMPANY_CODE AND A.OFFICE_CODE = D.OFFICE_CODE)
+	                        LEFT OUTER JOIN SM_CODE_COMPANY E
+	                                     ON (A.TAX_COMPANY_CODE = E.COMPANY_CODE)
+	                        LEFT OUTER JOIN SM_CODE_TAXOFFICE F
+	                                     ON (A.TAX_OFFICE_CODE = F.TAX_OFFICE_CODE)
+	                        LEFT OUTER JOIN SM_CODE_DEPT G
+	                                     ON A.LEVEL1 = G.DEPT_CODE
+	                        LEFT OUTER JOIN SM_CODE_DEPT H
+	                                     ON A.LEVEL2 = H.DEPT_CODE
+	                        LEFT OUTER JOIN SM_CODE_DEPT I
+	                                     ON A.LEVEL3 = I.DEPT_CODE
+	                        LEFT OUTER JOIN AC_CODE_DEPOSIT J
+	                                     ON A.DEPOSIT_NO = J.DEPOSIT_NO*/
+	   WHERE COMPANY_CODE = #as_compcode#
+	     AND ((DEPT_CODE LIKE '%'||#{deptcode}||'%' ) OR (DEPT_NAME LIKE '%'||#{deptcode}||'%'))
+	     AND (USING_TAG = #{useyn} OR #{useyn} = '%')
+		/*ORDER BY NVL(A.LEVEL1,'0'),NVL(A.LEVEL2,'0'), NVL(A.LEVEL3,'0'), A.SORT_ORDER*/
+		ORDER BY SORT_ORDER
+		]]>
+		
+	<!-- 	<update_table>SM_CODE_DEPT</update_table>
+     
+    <column name='COMPANY_CODE' 	  	type='char' updatable='Y' iskeycol='Y' />
+    <column name='DEPT_CODE'					type='char' updatable='Y' iskeycol='Y' />
+    <column name='DEPT_NAME'					type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPT_SNAME'					type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPT_ENAME'					type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPT_ESNAME'				type='char' updatable='Y' iskeycol='N' />
+    <column name='COST_CODE'					type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPT_DIV'						type='char' updatable='Y' iskeycol='N' />
+    <column name='COSTDEPT_CODE'			type='char' updatable='Y' iskeycol='N' />
+    <column name='TERMINATE_DATE'			type='char' updatable='Y' iskeycol='N' />
+    <column name='BUSINESS_CODE'			type='char' updatable='Y' iskeycol='N' />
+    <column name='SORT_ORDER'					type='char' updatable='Y' iskeycol='N' />
+    <column name='USING_TAG'					type='char' updatable='Y' iskeycol='N' />
+    <column name='TAX_COMPANY_CODE'		type='char' updatable='Y' iskeycol='N' />
+    <column name='COST_TAG'						type='char' updatable='Y' iskeycol='N' />
+    <column name='OFFICE_CODE'				type='char' updatable='Y' iskeycol='N' />
+    <column name='BUDGET_CONTROLTAG'	type='char' updatable='Y' iskeycol='N' />
+    <column name='TAX_OFFICE_CODE'		type='char' updatable='Y' iskeycol='N' />
+    <column name='COST_DEPT_CODE'			type='char' updatable='Y' iskeycol='N' />
+    <column name='RESIDENT_PAY_PLACE'	type='char' updatable='Y' iskeycol='N' />
+    <column name='FIRST_REGIST_DATE'	type='char' updatable='Y' iskeycol='N' />
+    <column name='PAY_ACNT_CODE'			type='char' updatable='Y' iskeycol='N' />
+    <column name='BONUS_ACNT_CODE'		type='char' updatable='Y' iskeycol='N' />
+    <column name='AREA_DIV'						type='char' updatable='Y' iskeycol='N' />
+    <column name='FC_DEPT'						type='char' updatable='Y' iskeycol='N' />
+    <column name='MANUFAC_DIV'				type='char' updatable='Y' iskeycol='N' />
+    <column name='PROJ_DEPOSIT_NO'		type='char' updatable='Y' iskeycol='N' />
+    <column name='NATION_CD'					type='char' updatable='Y' iskeycol='N' />
+    <column name='UPPER_DEPT_CODE'		type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPT_TYPE_DIV'			type='char' updatable='Y' iskeycol='N' />
+    <column name='BONBOO_CODE'				type='char' updatable='Y' iskeycol='N' />
+    <column name='SIL_CODE'						type='char' updatable='Y' iskeycol='N' />
+    <column name='PROJ_SORT_ORDER'		type='char' updatable='Y' iskeycol='N' />
+    <column name='PROJ_DEGREE_NUM'		type='char' updatable='Y' iskeycol='N' />
+    <column name='ORG_DISP_YN'				type='char' updatable='Y' iskeycol='N' />
+    <column name='TAX_DIV'						type='char' updatable='Y' iskeycol='N' />
+    <column name='FOOD_DEPOSIT_YN'		type='char' updatable='Y' iskeycol='N' />
+    <column name='ACC_END_DATE'				type='char' updatable='Y' iskeycol='N' />
+    <column name='TO_SORT_ORDER'			type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPT_GROUP'					type='char' updatable='Y' iskeycol='N' />
+    <column name='EDI_MANAGE_NO'			type='char' updatable='Y' iskeycol='N' /> -->
+		
+	</select>
+
+	<!-- SM_CODE_DEPT_C01 -->
+	<select id="SMCODEDEPTC01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCodeDept">
+	/* com.neofect.gts.services.sm.repository.SmCodeDeptRepository.SMCODEDEPTC01*/
+		<![CDATA[
+		SELECT COMPANY_CODE        
+				,DEPT_CODE           
+				,DEPT_NAME           
+				,DEPT_SNAME          
+				,DEPT_ENAME          
+				,DEPT_ESNAME         
+				,COST_CODE           
+				,DEPT_DIV            
+				,COSTDEPT_CODE       
+				,TERMINATE_DATE      
+				,BUSINESS_CODE       
+				,SORT_ORDER          
+				,USING_TAG           
+				,TAX_COMPANY_CODE    
+				,COST_TAG            
+				,OFFICE_CODE         
+				,BUDGET_CONTROLTAG   
+				,TAX_OFFICE_CODE     
+				,COST_DEPT_CODE      
+				,RESIDENT_PAY_PLACE  
+				,FIRST_REGIST_DATE   
+				,PAY_ACNT_CODE       
+				,BONUS_ACNT_CODE     
+				,AREA_DIV            
+				,FC_DEPT             
+				,MANUFAC_DIV         
+				,PROJ_DEPOSIT_NO     
+				,NATION_CD           
+				,UPPER_DEPT_CODE     
+				,DEPT_TYPE_DIV       
+				,BONBOO_CODE         
+				,SIL_CODE            
+				,PROJ_SORT_ORDER     
+				,PROJ_DEGREE_NUM     
+				,ORG_DISP_YN         
+				,TAX_DIV             
+				,FOOD_DEPOSIT_YN     
+				,ACC_END_DATE        
+				,TO_SORT_ORDER       
+				,DEPT_GROUP          
+				,EDI_MANAGE_NO 
+		    FROM SM_CODE_DEPT 
+		    /*
+		    A LEFT OUTER JOIN SM_CODE_DEPT C 
+		                                     ON (A.COMPANY_CODE = C.COMPANY_CODE AND A.COST_DEPT_CODE = C.DEPT_CODE)
+		                        LEFT OUTER JOIN SM_CODE_OFFICE D
+		                                     ON (A.COMPANY_CODE = D.COMPANY_CODE AND A.OFFICE_CODE = D.OFFICE_CODE)
+		                        LEFT OUTER JOIN SM_CODE_COMPANY E
+		                                     ON (A.TAX_COMPANY_CODE = E.COMPANY_CODE)
+		                        LEFT OUTER JOIN SM_CODE_TAXOFFICE F
+		                                     ON (A.TAX_OFFICE_CODE = F.TAX_OFFICE_CODE)
+		                        LEFT OUTER JOIN SM_CODE_DEPT G
+		                                     ON A.LEVEL1 = G.DEPT_CODE
+		                        LEFT OUTER JOIN SM_CODE_DEPT H
+		                                     ON A.LEVEL2 = H.DEPT_CODE
+		                        LEFT OUTER JOIN SM_CODE_DEPT I
+		                                     ON A.LEVEL3 = I.DEPT_CODE
+		                        LEFT OUTER JOIN AC_CODE_DEPOSIT J
+		                                     ON A.DEPOSIT_NO = J.DEPOSIT_NO
+		                                     */
+		   WHERE COMPANY_CODE = #{compcode}
+		     AND (DEPT_CODE LIKE '%'||#{deptcode}||'%' OR #{deptcode} = '%')   
+		     AND (DEPT_NAME LIKE '%'||#{deptname}||'%' OR #{deptname} = '%')   
+		     AND (USING_TAG = #{useyn} OR #{useyn} = '%')
+			/*ORDER BY NVL(A.LEVEL1,'0'),NVL(A.LEVEL2,'0'), NVL(A.LEVEL3,'0'), A.SORT_ORDER*/
+			ORDER BY SORT_ORDER
+		]]>
+		<!-- <update_table>SM_CODE_DEPT</update_table>
+     
+    <column name='COMPANY_CODE' 	type='char' updatable='Y' iskeycol='Y' />
+    <column name='DEPT_CODE'			type='char' updatable='Y' iskeycol='Y' /> -->
+	</select>
+
+</mapper>

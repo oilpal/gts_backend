@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM0945Repository">
+	<select id="SM0945_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0945">
+        SELECT 
+            A.DOC_SEQ ,
+            A.REG_DATE ,
+            A.USER_ID  ,
+            A.USER_NAME ,
+            A.COMPANY_CODE , 
+            A.DEPT_CODE ,
+            B.DEPT_NAME ,
+            A.POS_CODE ,
+            A.SYS_ID ,
+            A.PGM_PATH ,
+            A.PGM_CODE ,
+            A.PGM_NAME ,
+            A.USE_I ,
+            A.USE_R ,
+            A.MAIN_CONTENT ,
+            NVL(A.STATUS_TAG,'0') AS STATUS_TAG ,
+            NVL(A.STATUS_TAG,'0') AS STATUS_Y ,
+            DECODE(NVL(A.STATUS_TAG,'0'),'N','Y') AS STATUS_N
+        FROM SM_PGM_AUTH A LEFT OUTER JOIN SM_CODE_DEPT B ON (A.COMPANY_CODE = B.COMPANY_CODE AND A.DEPT_CODE = B.DEPT_CODE)
+        WHERE A.COMPANY_CODE = #{companyCode}
+        AND X_SEARCH(#{find}, A.USER_ID, A.USER_NAME) = 'Y'
+        AND NVL(A.STATUS_TAG,'0') LIKE #{statusTag}
+        ORDER BY A.DOC_SEQ DESC
+
+    </select>
+
+    <select id="SM0945_R01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0945">
+        SELECT NVL(MAX(CAST(A.DOC_SEQ AS INT )), 0) AS MAX_SEQ
+        FROM SM_PGM_AUTH A      
+    </select>
+</mapper>

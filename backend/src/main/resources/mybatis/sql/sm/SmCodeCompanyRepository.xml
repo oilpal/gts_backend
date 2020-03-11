@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SmCodeCompanyRepository">
+
+	<!-- SM010800_C01 -->
+	<select id="SM010800C01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCodeCompany">
+	/* com.neofect.gts.services.sm.repository.SmCodeCompanyRepository.SM010800C01 */
+		<![CDATA[
+			SELECT COMPANY_CODE,  										 	
+           COMPANY_NAME,                     
+           VENDOR_NO,                        
+           USE_YN,                           
+           HR_USE_YN,                           
+           VENDOR_NAME,                        
+           REPRESENT_NAME,                   
+           REPRESENT_RRN,                    
+           LEGAL_NO,                         
+           BIZ_STATUS,                       
+           BIZ_TYPE,                         
+           PHONE,                            
+           ZIP_CODE,                         
+           ADDR1,                            
+           ADDR2,                            
+           FIRST_S_DATE,                     
+           AM_START_MONTH,                   
+           AM_S_DATE,                        
+           AM_E_DATE,                        
+           SLIP_EVID_CNT_YN,                 
+           TAX_EVID_ISSUE_YN,                
+           BDGT_RESULT_YN,                   
+           SLIP_PRINT_NAME,                  
+           CHI_ADDR,                         
+           CHI_NAME,                         
+           CHI_REPRESENT,                    
+           INPUT_DUTY_ID,                    
+           INPUT_DATE,                       
+           CHG_DUTY_ID,                      
+           CHG_DATE,                         
+           GROUP_DIV,                        
+           GROUP_ORDER,                      
+           COMP_ORDER,                       
+           OUTSOURCE_YN,                     
+           COMP_ENAME,                       
+           ADDR1_ENG,                        
+           ADDR2_ENG,                        
+           REPRESENT_ENAME,                  
+           SITE_ADDR,                        
+           GENERAL_ACNT_USE_YN,              
+           CREDITCARD_VAT_YN,                
+           PROJECT_COST_YN                   
+        FROM SM_CODE_COMPANY
+        WHERE (COMPANY_CODE LIKE #{cname} || '%')
+        OR     (COMPANY_NAME LIKE '%' || #{cname} || '%' ) 
+        ORDER BY COMPANY_CODE
+		]]>
+		<!-- <update_table>SM_CODE_COMPANY</update_table>
+		
+		<column name='COMPANY_CODE' type='char' updatable='Y' iskeycol='Y' />           
+		<column name='COMPANY_NAME' type='char' updatable='Y' iskeycol='N' />           
+		<column name='VENDOR_NO' type='char' updatable='Y' iskeycol='N' />              
+		<column name='USE_YN' type='char' updatable='Y' iskeycol='N' />                 
+		<column name='HR_USE_YN' type='char' updatable='Y' iskeycol='N' />              
+		<column name='VENDOR_NAME' type='char' updatable='Y' iskeycol='N' />            
+		<column name='REPRESENT_NAME' type='char' updatable='Y' iskeycol='N' />         
+		<column name='REPRESENT_RRN' type='char' updatable='Y' iskeycol='N' />          
+		<column name='LEGAL_NO' type='char' updatable='Y' iskeycol='N' />               
+		<column name='BIZ_STATUS' type='char' updatable='Y' iskeycol='N' />             
+		<column name='BIZ_TYPE' type='char' updatable='Y' iskeycol='N' />               
+		<column name='PHONE' type='char' updatable='Y' iskeycol='N' />                  
+		<column name='ZIP_CODE' type='char' updatable='Y' iskeycol='N' />               
+		<column name='ADDR1' type='char' updatable='Y' iskeycol='N' />                  
+		<column name='ADDR2' type='char' updatable='Y' iskeycol='N' />                  
+		<column name='FIRST_S_DATE' type='char' updatable='Y' iskeycol='N' />           
+		<column name='AM_START_MONTH' type='char' updatable='Y' iskeycol='N' />         
+		<column name='AM_S_DATE' type='char' updatable='Y' iskeycol='N' />              
+		<column name='AM_E_DATE' type='char' updatable='Y' iskeycol='N' />              
+		<column name='SLIP_EVID_CNT_YN' type='char' updatable='Y' iskeycol='N' />       
+		<column name='TAX_EVID_ISSUE_YN' type='char' updatable='Y' iskeycol='N' />      
+		<column name='BDGT_RESULT_YN' type='char' updatable='Y' iskeycol='N' />         
+		<column name='SLIP_PRINT_NAME' type='char' updatable='Y' iskeycol='N' />        
+		<column name='CHI_ADDR' type='char' updatable='Y' iskeycol='N' />               
+		<column name='CHI_NAME' type='char' updatable='Y' iskeycol='N' />               
+		<column name='CHI_REPRESENT' type='char' updatable='Y' iskeycol='N' />          
+		<column name='INPUT_DUTY_ID' type='char' updatable='Y' iskeycol='N' />          
+		<column name='INPUT_DATE' type='char' updatable='Y' iskeycol='N' />             
+		<column name='CHG_DUTY_ID' type='char' updatable='Y' iskeycol='N' />            
+		<column name='CHG_DATE' type='char' updatable='Y' iskeycol='N' />               
+		<column name='GROUP_DIV' type='char' updatable='Y' iskeycol='N' />              
+		<column name='GROUP_ORDER' type='char' updatable='Y' iskeycol='N' />            
+		<column name='COMP_ORDER' type='char' updatable='Y' iskeycol='N' />             
+		<column name='OUTSOURCE_YN' type='char' updatable='Y' iskeycol='N' />           
+		<column name='COMP_ENAME' type='char' updatable='Y' iskeycol='N' />             
+		<column name='ADDR1_ENG' type='char' updatable='Y' iskeycol='N' />              
+		<column name='ADDR2_ENG' type='char' updatable='Y' iskeycol='N' />              
+		<column name='REPRESENT_ENAME' type='char' updatable='Y' iskeycol='N' />        
+		<column name='SITE_ADDR' type='char' updatable='Y' iskeycol='N' />              
+		<column name='GENERAL_ACNT_USE_YN' type='char' updatable='Y' iskeycol='N' />    
+		<column name='CREDITCARD_VAT_YN' type='char' updatable='Y' iskeycol='N' />      
+		<column name='PROJECT_COST_YN' type='char' updatable='N' iskeycol='N' />  -->
+	</select>
+
+	<!-- SM010800_dg_1 -->
+	<select id="SM010800dg1" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCodeCompany">
+	/* com.neofect.gts.services.sm.repository.SmCodeCompanyRepository.SM010800dg1 */
+		<![CDATA[
+			SELECT COMPANY_CODE,
+           COMPANY_NAME,
+           VENDOR_NO,
+           VENDOR_NAME,
+           USE_YN,
+           HR_USE_YN,
+           REPRESENT_NAME,
+           REPRESENT_RRN,
+           LEGAL_NO,   
+           BIZ_STATUS,
+           BIZ_TYPE,
+           PHONE,
+           ZIP_CODE,
+           ADDR1, 
+           ADDR2,
+           FIRST_S_DATE,
+           AM_START_MONTH,
+           AM_S_DATE,
+           AM_E_DATE,
+           SLIP_EVID_CNT_YN,
+           TAX_EVID_ISSUE_YN,
+           BDGT_RESULT_YN,
+           SLIP_PRINT_NAME,
+           CHI_ADDR,
+           CHI_NAME,
+           CHI_REPRESENT,
+           INPUT_DUTY_ID,
+           INPUT_DATE,
+           CHG_DUTY_ID,
+           CHG_DATE,
+         	 GROUP_DIV,
+         	 GROUP_ORDER,
+         	 COMP_ORDER,
+         	 OUTSOURCE_YN,
+         	 COMP_ENAME,
+         	 ADDR1_ENG,
+         	 ADDR2_ENG,
+         	 REPRESENT_ENAME,
+         	 SITE_ADDR,
+         	 GENERAL_ACNT_USE_YN,
+         	 CREDITCARD_VAT_YN,
+         	 PROJECT_COST_YN
+        FROM SM_CODE_COMPANY
+        WHERE COMPANY_CODE LIKE #{ccode}
+        AND     COMPANY_NAME LIKE #{cname}
+        ORDER BY COMPANY_CODE
+		]]>
+		<!-- <update_table>SM_CODE_COMPANY</update_table>
+
+		<column name='COMPANY_CODE' type='char' updatable='Y' iskeycol='Y' />
+		<column name='COMPANY_NAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='VENDOR_NO' type='char' updatable='Y' iskeycol='N' />
+		<column name='VENDOR_NAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='REPRESENT_NAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='REPRESENT_RRN' type='char' updatable='Y' iskeycol='N' />
+		<column name='LEGAL_NO' type='char' updatable='Y' iskeycol='N' />
+		<column name='BIZ_STATUS' type='char' updatable='Y' iskeycol='N' />
+		<column name='BIZ_TYPE' type='char' updatable='Y' iskeycol='N' />
+		<column name='PHONE' type='char' updatable='Y' iskeycol='N' />
+		<column name='ZIP_CODE' type='char' updatable='Y' iskeycol='N' />
+		<column name='ADDR1' type='char' updatable='Y' iskeycol='N' />
+		<column name='ADDR2' type='char' updatable='Y' iskeycol='N' />
+		<column name='FIRST_S_DATE' type='char' updatable='Y' iskeycol='N' />
+		<column name='AM_START_MONTH' type='char' updatable='Y' iskeycol='N' />
+		<column name='AM_S_DATE' type='char' updatable='Y' iskeycol='N' />
+		<column name='AM_E_DATE' type='char' updatable='Y' iskeycol='N' />
+		<column name='USE_YN' type='char' updatable='Y' iskeycol='N' />
+		<column name='SLIP_EVID_CNT_YN' type='char' updatable='Y' iskeycol='N' />
+		<column name='TAX_EVID_ISSUE_YN' type='char' updatable='Y' iskeycol='N' />
+		<column name='BDGT_RESULT_YN' type='char' updatable='Y' iskeycol='N' />
+		<column name='HR_USE_YN' type='char' updatable='Y' iskeycol='N' />
+		<column name='SLIP_PRINT_NAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='CHI_ADDR' type='char' updatable='Y' iskeycol='N' />
+		<column name='CHI_NAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='CHI_REPRESENT' type='char' updatable='Y' iskeycol='N' />
+		<column name='INPUT_DUTY_ID' type='char' updatable='Y' iskeycol='N' />
+		<column name='INPUT_DATE' type='char' updatable='Y' iskeycol='N' />
+		<column name='CHG_DUTY_ID' type='char' updatable='Y' iskeycol='N' />
+		<column name='CHG_DATE' type='char' updatable='Y' iskeycol='N' />
+		<column name='GROUP_DIV' type='char' updatable='Y' iskeycol='N' />
+		<column name='GROUP_ORDER' type='char' updatable='Y' iskeycol='N' />
+		<column name='COMP_ORDER' type='char' updatable='Y' iskeycol='N' />
+		<column name='OUTSOURCE_YN' type='char' updatable='Y' iskeycol='N' />
+		<column name='COMP_ENAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='ADDR1_ENG' type='char' updatable='Y' iskeycol='N' />
+		<column name='ADDR2_ENG' type='char' updatable='Y' iskeycol='N' />
+		<column name='REPRESENT_ENAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='SITE_ADDR' type='char' updatable='Y' iskeycol='N' />
+		<column name='GENERAL_ACNT_USE_YN' type='char' updatable='Y' iskeycol='N' />
+		<column name='CREDITCARD_VAT_YN' type='char' updatable='Y' iskeycol='N' />
+		<column name='PROJECT_COST_YN' type='char' updatable='N' iskeycol='N' />  -->
+	</select>
+
+	<!-- SM010800_dg_2 -->
+	<select id="SM010800dg2" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCodeCompany">
+	/* com.neofect.gts.services.sm.repository.SmCodeCompanyRepository.SM010800dg2 */
+		<![CDATA[
+			SELECT COMPANY_CODE,
+           COMPANY_NAME,
+           VENDOR_NO,
+           VENDOR_NAME,
+           REPRESENT_NAME,
+           REPRESENT_RRN,
+           LEGAL_NO,   
+           BIZ_STATUS,
+           BIZ_TYPE,
+           PHONE,
+           ZIP_CODE,
+           ADDR1, 
+           ADDR2,
+           FIRST_S_DATE,
+           AM_START_MONTH,
+           AM_S_DATE,
+           AM_E_DATE,
+           USE_YN,
+           SLIP_EVID_CNT_YN,
+           TAX_EVID_ISSUE_YN,
+           BDGT_RESULT_YN,
+           HR_USE_YN,
+           SLIP_PRINT_NAME,
+           CHI_ADDR,
+           CHI_NAME,
+           CHI_REPRESENT,
+           INPUT_DUTY_ID,
+           INPUT_DATE,
+           CHG_DUTY_ID,
+           CHG_DATE,
+         	 GROUP_DIV,
+         	 GROUP_ORDER,
+         	 COMP_ORDER,
+         	 OUTSOURCE_YN,
+         	 COMP_ENAME,
+         	 ADDR1_ENG,
+         	 ADDR2_ENG,
+         	 REPRESENT_ENAME,
+         	 SITE_ADDR,
+         	 GENERAL_ACNT_USE_YN,
+         	 CREDITCARD_VAT_YN,
+         	 PROJECT_COST_YN
+        FROM SM_CODE_COMPANY
+        WHERE COMPANY_CODE LIKE #{ccode}
+        AND     COMPANY_NAME LIKE #{cname}
+		]]>
+		<!-- <update_table>SM_CODE_COMPANY</update_table>
+
+		<column name='COMPANY_CODE' type='char' updatable='Y' iskeycol='Y' />
+		<column name='COMPANY_NAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='VENDOR_NO' type='char' updatable='Y' iskeycol='N' />
+		<column name='VENDOR_NAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='REPRESENT_NAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='REPRESENT_RRN' type='char' updatable='Y' iskeycol='N' />
+		<column name='LEGAL_NO' type='char' updatable='Y' iskeycol='N' />
+		<column name='BIZ_STATUS' type='char' updatable='Y' iskeycol='N' />
+		<column name='BIZ_TYPE' type='char' updatable='Y' iskeycol='N' />
+		<column name='PHONE' type='char' updatable='Y' iskeycol='N' />
+		<column name='ZIP_CODE' type='char' updatable='Y' iskeycol='N' />
+		<column name='ADDR1' type='char' updatable='Y' iskeycol='N' />
+		<column name='ADDR2' type='char' updatable='Y' iskeycol='N' />
+		<column name='FIRST_S_DATE' type='char' updatable='Y' iskeycol='N' />
+		<column name='AM_START_MONTH' type='char' updatable='Y' iskeycol='N' />
+		<column name='AM_S_DATE' type='char' updatable='Y' iskeycol='N' />
+		<column name='AM_E_DATE' type='char' updatable='Y' iskeycol='N' />
+		<column name='USE_YN' type='char' updatable='Y' iskeycol='N' />
+		<column name='SLIP_EVID_CNT_YN' type='char' updatable='Y' iskeycol='N' />
+		<column name='TAX_EVID_ISSUE_YN' type='char' updatable='Y' iskeycol='N' />
+		<column name='BDGT_RESULT_YN' type='char' updatable='Y' iskeycol='N' />
+		<column name='HR_USE_YN' type='char' updatable='Y' iskeycol='N' />
+		<column name='SLIP_PRINT_NAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='CHI_ADDR' type='char' updatable='Y' iskeycol='N' />
+		<column name='CHI_NAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='CHI_REPRESENT' type='char' updatable='Y' iskeycol='N' />
+		<column name='INPUT_DUTY_ID' type='char' updatable='Y' iskeycol='N' />
+		<column name='INPUT_DATE' type='char' updatable='Y' iskeycol='N' />
+		<column name='CHG_DUTY_ID' type='char' updatable='Y' iskeycol='N' />
+		<column name='CHG_DATE' type='char' updatable='Y' iskeycol='N' />
+		<column name='GROUP_DIV' type='char' updatable='Y' iskeycol='N' />
+		<column name='GROUP_ORDER' type='char' updatable='Y' iskeycol='N' />
+		<column name='COMP_ORDER' type='char' updatable='Y' iskeycol='N' />
+		<column name='OUTSOURCE_YN' type='char' updatable='Y' iskeycol='N' />
+		<column name='COMP_ENAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='ADDR1_ENG' type='char' updatable='Y' iskeycol='N' />
+		<column name='ADDR2_ENG' type='char' updatable='Y' iskeycol='N' />
+		<column name='REPRESENT_ENAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='SITE_ADDR' type='char' updatable='Y' iskeycol='N' />
+		<column name='GENERAL_ACNT_USE_YN' type='char' updatable='Y' iskeycol='N' />
+		<column name='CREDITCARD_VAT_YN' type='char' updatable='Y' iskeycol='N' />
+		<column name='PROJECT_COST_YN' type='char' updatable='Y' iskeycol='N' />  -->
+	</select>
+	
+</mapper>

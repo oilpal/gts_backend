@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SmCodeOfficeRepository">
+
+	<!-- R_SM_CODE_IFINFO_01 -->
+	<select id="SMCODEOFFICEC01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCodeOffice">
+	/* com.neofect.gts.services.sm.repository.SmCodeOfficeRepository.SMCODEOFFICEC01*/
+		<![CDATA[
+			SELECT
+				 A.COMPANY_CODE,           
+				 A.OFFICE_CODE, 
+				 A.OFFICE_NAME, 
+				 A.OFFICES_NAME, 
+				 A.COMP_NO, 
+				 A.OWNER, 
+				 A.CONDITION, 
+				 A.CATEGORY, 
+				 A.ZIP, 
+				 A.ADDR, 
+				 A.ADDR2, 
+				 A.ESTAB_DATE, 
+				 A.TERM, 
+				 A.CLOSE_DATE, 
+				 A.COMPANY_REGNO, 
+				 A.BUDGET_BASIC_TAG, 
+				 B.TAX_OFFICE_NAME ,
+				 A.TEL, 
+				 A.START_DATE, 
+				 A.END_DATE, 
+				 A.DEPOSIT_NO, 
+				 C.BANK_NAME ,
+				 A.OWNER_NO, 
+				 A.SUM_TAG, 
+				 A.BANK_CODE, 
+				 A.REMARK, 
+				 A.TAX_OFFICE_CODE
+        
+			FROM SM_CODE_OFFICE A LEFT OUTER JOIN SM_CODE_TAXOFFICE B 
+				 ON (A.TAX_OFFICE_CODE = B.TAX_OFFICE_CODE) 
+			 LEFT OUTER JOIN SM_CODE_BANK C 
+				 ON (A.BANK_CODE = C.BANK_CODE) 
+			 WHERE A.COMPANY_CODE LIKE #{companyCode}
+					ORDER BY A.OFFICE_CODE 
+		]]>
+		<!-- <update_table>SM_CODE_OFFICE</update_table>
+		
+		<column name='COMPANY_CODE'				type='char' updatable='Y' iskeycol='Y' />                 
+		<column name='OFFICE_CODE' 				type='char' updatable='Y' iskeycol='Y' />      
+		<column name='OFFICE_NAME' 				type='char' updatable='Y' iskeycol='N' />          
+		<column name='OFFICES_NAME' 			type='char' updatable='Y' iskeycol='N' />                
+		<column name='COMP_NO' 						type='char' updatable='Y' iskeycol='N' />              
+		<column name='OWNER' 							type='char' updatable='Y' iskeycol='N' />                  
+		<column name='CONDITION' 					type='char' updatable='Y' iskeycol='N' />          
+		<column name='CATEGORY' 					type='char' updatable='Y' iskeycol='N' />                
+		<column name='ZIP' 								type='char' updatable='Y' iskeycol='N' />                      
+		<column name='ADDR' 							type='char' updatable='Y' iskeycol='N' />                
+		<column name='ADDR2' 							type='char' updatable='Y' iskeycol='N' />                  
+		<column name='ESTAB_DATE' 				type='char' updatable='Y' iskeycol='N' />          
+		<column name='TERM' 							type='char' updatable='Y' iskeycol='N' />                  
+		<column name='CLOSE_DATE' 				type='char' updatable='Y' iskeycol='N' />            
+		<column name='COMPANY_REGNO' 			type='char' updatable='Y' iskeycol='N' />          
+		<column name='BUDGET_BASIC_TAG' 	type='char' updatable='Y' iskeycol='N' />        
+		<column name='TAX_OFFICE_NAME' 		type='char' updatable='N' iskeycol='N' />  
+		<column name='TEL' 								type='char' updatable='Y' iskeycol='N' />                  
+		<column name='START_DATE' 				type='char' updatable='Y' iskeycol='N' />        
+		<column name='END_DATE' 					type='char' updatable='Y' iskeycol='N' />              
+		<column name='DEPOSIT_NO' 				type='char' updatable='Y' iskeycol='N' />        
+		<column name='BANK_NAME' 					type='char' updatable='N' iskeycol='N' />                  
+		<column name='OWNER_NO' 					type='char' updatable='Y' iskeycol='N' />      
+		<column name='SUM_TAG' 						type='char' updatable='Y' iskeycol='N' />          
+		<column name='BANK_CODE' 					type='char' updatable='Y' iskeycol='N' />      
+		<column name='REMARK' 						type='char' updatable='Y' iskeycol='N' />                    
+		<column name='TAX_OFFICE_CODE' 		type='char' updatable='Y' iskeycol='N' /> -->
+	</select>
+	
+	<!-- SM010900_dg1 -->
+	<select id="SM010900dg1" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCodeOffice">
+	/* com.neofect.gts.services.sm.repository.SmCodeOfficeRepository.SM010900dg1*/
+		<![CDATA[
+			SELECT
+				 A.COMPANY_CODE, 
+				 A.OFFICE_CODE, 
+				 A.OFFICE_NAME, 
+				 A.OFFICES_NAME, 
+				 A.COMP_NO, 
+				 A.OWNER, 
+				 A.CONDITION, 
+				 A.CATEGORY, 
+				 A.ZIP, 
+				 A.ADDR, 
+				 A.ADDR2, 
+				 A.ESTAB_DATE, 
+				 A.TERM, 
+				 A.CLOSE_DATE, 
+				 A.COMPANY_REGNO, 
+				 A.BUDGET_BASIC_TAG, 
+				 B.TAX_OFFICE_NAME ,
+				 A.TEL, 
+				 A.START_DATE, 
+				 A.END_DATE, 
+				 A.DEPOSIT_NO, 
+				 C.BANK_NAME ,
+				 A.OWNER_NO, 
+				 A.SUM_TAG, 
+				 A.BANK_CODE, 
+				 A.REMARK, 
+				 A.TAX_OFFICE_CODE
+			FROM SM_CODE_OFFICE A LEFT OUTER JOIN SM_CODE_TAXOFFICE B 
+				 ON (A.TAX_OFFICE_CODE = B.TAX_OFFICE_CODE) 
+			 LEFT OUTER JOIN SM_CODE_BANK C 
+				 ON (A.BANK_CODE = C.BANK_CODE) 
+			 WHERE A.COMPANY_CODE LIKE #{companyCode}
+					ORDER BY A.OFFICE_CODE
+		]]>
+		<!-- <update_table>SM_CODE_OFFICE</update_table>
+		
+		<column name='ADDR' type='char' updatable='Y' iskeycol='N' />
+		<column name='ADDR2' type='char' updatable='Y' iskeycol='N' />
+		<column name='BANK_CODE' type='char' updatable='Y' iskeycol='N' />
+		<column name='BUDGET_BASIC_TAG' type='char' updatable='Y' iskeycol='N' />
+		<column name='CATEGORY' type='char' updatable='Y' iskeycol='N' />
+		<column name='CLOSE_DATE' type='char' updatable='Y' iskeycol='N' />
+		<column name='COMP_NO' type='char' updatable='Y' iskeycol='N' />
+		<column name='COMPANY_CODE' type='char' updatable='Y' iskeycol='Y' />
+		<column name='COMPANY_REGNO' type='char' updatable='Y' iskeycol='N' />
+		<column name='CONDITION' type='char' updatable='Y' iskeycol='N' />
+		<column name='DEPOSIT_NO' type='char' updatable='Y' iskeycol='N' />
+		<column name='END_DATE' type='char' updatable='Y' iskeycol='N' />
+		<column name='ESTAB_DATE' type='char' updatable='Y' iskeycol='N' />
+		<column name='OFFICE_CODE' type='char' updatable='Y' iskeycol='Y' />
+		<column name='OFFICE_NAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='OFFICES_NAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='OWNER' type='char' updatable='Y' iskeycol='N' />
+		<column name='OWNER_NO' type='char' updatable='Y' iskeycol='N' />
+		<column name='REMARK' type='char' updatable='Y' iskeycol='N' />
+		<column name='START_DATE' type='char' updatable='Y' iskeycol='N' />
+		<column name='SUM_TAG' type='char' updatable='Y' iskeycol='N' />
+		<column name='TAX_OFFICE_CODE' type='char' updatable='Y' iskeycol='N' />
+		<column name='TEL' type='char' updatable='Y' iskeycol='N' />
+		<column name='TERM' type='char' updatable='Y' iskeycol='N' />
+		<column name='ZIP' type='char' updatable='Y' iskeycol='N' />
+		<column name='TAX_OFFICE_NAME' type='char' updatable='N' iskeycol='N' />
+		<column name='BANK_NAME' type='char' updatable='N' iskeycol='N' /> -->
+	</select>
+	
+</mapper>

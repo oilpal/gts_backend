@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM0940Repository">
+	<select id="SM0940_01_TREE" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0940">
+        SELECT  SYS_ID   
+        , PGM_CODE 
+        , MENU_CODE 
+        , MENU_NAME          
+        , MAX(AUTH_I_A01) AS I_A01
+        , MAX(AUTH_R_A01) AS R_A01
+        , MAX(AUTH_I_A02) AS I_A02
+        , MAX(AUTH_R_A02) AS R_A02
+        , MAX(AUTH_I_A03) AS I_A03
+        , MAX(AUTH_R_A03) AS R_A03  
+        , MAX(AUTH_I_A04) AS I_A04
+        , MAX(AUTH_R_A04) AS R_A04
+        , MAX(AUTH_I_A05) AS I_A05
+        , MAX(AUTH_R_A05) AS R_A05
+        , MAX(AUTH_I_A06) AS I_A06
+        , MAX(AUTH_R_A06) AS R_A06 
+        , MAX(AUTH_I_A07) AS I_A07
+        , MAX(AUTH_R_A07) AS R_A07       
+        , MAX(AUTH_I_B01) AS I_B01
+        , MAX(AUTH_R_B01) AS R_B01
+        , MAX(AUTH_I_B02) AS I_B02
+        , MAX(AUTH_R_B02) AS R_B02
+        , MAX(AUTH_I_B03) AS I_B03
+        , MAX(AUTH_R_B03) AS R_B03  
+        , MAX(AUTH_I_B04) AS I_B04
+        , MAX(AUTH_R_B04) AS R_B04
+        , MAX(AUTH_I_B05) AS I_B05
+        , MAX(AUTH_R_B05) AS R_B05
+        , MAX(AUTH_I_B07) AS I_B07
+        , MAX(AUTH_R_B07) AS R_B07   
+        , LEV
+        FROM (  
+           SELECT  B.SYS_ID   
+                    , B.PGM_CODE 
+                    , B.SORT_CODE AS MENU_CODE 
+                    , B.PGM_NAME AS MENU_NAME                  
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_I, 'N') END AS  AUTH_I_A01  
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_R, 'N') END AS  AUTH_R_A01 
+                    ,'' AS  AUTH_I_A02
+                    ,'' AS  AUTH_R_A02 
+                    ,'' AS  AUTH_I_A03
+                    ,'' AS  AUTH_R_A03
+                    ,'' AS  AUTH_I_A04
+                    ,'' AS  AUTH_R_A04
+                    ,'' AS  AUTH_I_A05
+                    ,'' AS  AUTH_R_A05
+                    ,'' AS  AUTH_I_A06
+                    ,'' AS  AUTH_R_A06
+                    ,'' AS  AUTH_I_A07
+                    ,'' AS  AUTH_R_A07
+                    ,'' AS  AUTH_I_B01
+                    ,'' AS  AUTH_R_B01       
+                    ,'' AS  AUTH_I_B02
+                    ,'' AS  AUTH_R_B02
+                    ,'' AS  AUTH_I_B03
+                    ,'' AS  AUTH_R_B03
+                    ,'' AS  AUTH_I_B04
+                    ,'' AS  AUTH_R_B04   
+                    ,'' AS  AUTH_I_B05
+                    ,'' AS  AUTH_R_B05
+                    ,'' AS  AUTH_I_B07
+                    ,'' AS  AUTH_R_B07   
+                    , B.MENU_LEVEL AS LEV             
+             FROM TABLE(TF_MY_PGMCODE_ALL(#{companyCode}, #{sysId}))  B
+             LEFT JOIN  SM_AUTH_GROUP_MENU A ON ( #{companyCode} = A.COMPANY_CODE AND 'A01' = A.USER_GROUP_CODE AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE)  
+           
+            UNION ALL         
+            SELECT  B.SYS_ID   
+                    , B.PGM_CODE 
+                    , B.SORT_CODE AS MENU_CODE 
+                    , B.PGM_NAME AS MENU_NAME                  
+                    ,'' AS  AUTH_I_A01
+                    ,'' AS  AUTH_R_A01 
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_I, 'N') END AS  AUTH_I_A02  
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_R, 'N') END AS  AUTH_R_A02                
+                    ,'' AS  AUTH_I_A03
+                    ,'' AS  AUTH_R_A03
+                    ,'' AS  AUTH_I_A04
+                    ,'' AS  AUTH_R_A04
+                    ,'' AS  AUTH_I_A05
+                    ,'' AS  AUTH_R_A05
+                    ,'' AS  AUTH_I_A06
+                    ,'' AS  AUTH_R_A06
+                    ,'' AS  AUTH_I_A07
+                    ,'' AS  AUTH_R_A07
+                    ,'' AS  AUTH_I_B01
+                    ,'' AS  AUTH_R_B01       
+                    ,'' AS  AUTH_I_B02
+                    ,'' AS  AUTH_R_B02
+                    ,'' AS  AUTH_I_B03
+                    ,'' AS  AUTH_R_B03
+                    ,'' AS  AUTH_I_B04
+                    ,'' AS  AUTH_R_B04   
+                    ,'' AS  AUTH_I_B05
+                    ,'' AS  AUTH_R_B05
+                    ,'' AS  AUTH_I_B07
+                    ,'' AS  AUTH_R_B07  
+                    , B.MENU_LEVEL AS LEV              
+             FROM TABLE(TF_MY_PGMCODE_ALL(#{companyCode}, #{sysId}))  B
+             LEFT JOIN  SM_AUTH_GROUP_MENU A ON ( #{companyCode} = A.COMPANY_CODE AND 'A02' = A.USER_GROUP_CODE AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE)
+             
+             UNION ALL         
+             SELECT  B.SYS_ID   
+                    , B.PGM_CODE 
+                    , B.SORT_CODE AS MENU_CODE 
+                    , B.PGM_NAME AS MENU_NAME                  
+                    ,'' AS  AUTH_I_A01
+                    ,'' AS  AUTH_R_A01 
+                    ,'' AS  AUTH_I_A02
+                    ,'' AS  AUTH_R_A02
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_I, 'N') END AS  AUTH_I_A03  
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_R, 'N') END AS  AUTH_R_A03 
+                    ,'' AS  AUTH_I_A04
+                    ,'' AS  AUTH_R_A04
+                    ,'' AS  AUTH_I_A05
+                    ,'' AS  AUTH_R_A05
+                    ,'' AS  AUTH_I_A06
+                    ,'' AS  AUTH_R_A06
+                    ,'' AS  AUTH_I_A07
+                    ,'' AS  AUTH_R_A07
+                    ,'' AS  AUTH_I_B01
+                    ,'' AS  AUTH_R_B01       
+                    ,'' AS  AUTH_I_B02
+                    ,'' AS  AUTH_R_B02
+                    ,'' AS  AUTH_I_B03
+                    ,'' AS  AUTH_R_B03
+                    ,'' AS  AUTH_I_B04
+                    ,'' AS  AUTH_R_B04   
+                    ,'' AS  AUTH_I_B05
+                    ,'' AS  AUTH_R_B05
+                    ,'' AS  AUTH_I_B07
+                    ,'' AS  AUTH_R_B07   
+                    , B.MENU_LEVEL AS LEV             
+             FROM TABLE(TF_MY_PGMCODE_ALL(#{companyCode}, #{sysId}))  B
+             LEFT JOIN  SM_AUTH_GROUP_MENU A ON ( #{companyCode} = A.COMPANY_CODE AND 'A03' = A.USER_GROUP_CODE AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE)  
+             
+             UNION ALL         
+             SELECT  B.SYS_ID   
+                    , B.PGM_CODE 
+                    , B.SORT_CODE AS MENU_CODE 
+                    , B.PGM_NAME AS MENU_NAME                
+                    ,'' AS  AUTH_I_A01
+                    ,'' AS  AUTH_R_A01 
+                    ,'' AS  AUTH_I_A02
+                    ,'' AS  AUTH_R_A02
+                    ,'' AS  AUTH_I_A03
+                    ,'' AS  AUTH_R_A03
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_I, 'N') END AS  AUTH_I_A04  
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_R, 'N') END AS  AUTH_R_A04                
+                    ,'' AS  AUTH_I_A05
+                    ,'' AS  AUTH_R_A05
+                    ,'' AS  AUTH_I_A06
+                    ,'' AS  AUTH_R_A06
+                    ,'' AS  AUTH_I_A07
+                    ,'' AS  AUTH_R_A07
+                    ,'' AS  AUTH_I_B01
+                    ,'' AS  AUTH_R_B01       
+                    ,'' AS  AUTH_I_B02
+                    ,'' AS  AUTH_R_B02
+                    ,'' AS  AUTH_I_B03
+                    ,'' AS  AUTH_R_B03
+                    ,'' AS  AUTH_I_B04
+                    ,'' AS  AUTH_R_B04   
+                    ,'' AS  AUTH_I_B05
+                    ,'' AS  AUTH_R_B05
+                    ,'' AS  AUTH_I_B07
+                    ,'' AS  AUTH_R_B07  
+                    , B.MENU_LEVEL AS LEV              
+             FROM TABLE(TF_MY_PGMCODE_ALL(#{companyCode}, #{sysId}))  B
+             LEFT JOIN  SM_AUTH_GROUP_MENU A ON ( #{companyCode} = A.COMPANY_CODE AND 'A04' = A.USER_GROUP_CODE AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE)    
+             
+             UNION ALL         
+             SELECT  B.SYS_ID   
+                    , B.PGM_CODE 
+                    , B.SORT_CODE AS MENU_CODE 
+                    , B.PGM_NAME AS MENU_NAME                  
+                    ,'' AS  AUTH_I_A01
+                    ,'' AS  AUTH_R_A01 
+                    ,'' AS  AUTH_I_A02
+                    ,'' AS  AUTH_R_A02
+                    ,'' AS  AUTH_I_A03
+                    ,'' AS  AUTH_R_A03
+                    ,'' AS  AUTH_I_A04
+                    ,'' AS  AUTH_R_A04
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_I, 'N') END AS  AUTH_I_A05  
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_R, 'N') END AS  AUTH_R_A05 
+                    ,'' AS  AUTH_I_A06
+                    ,'' AS  AUTH_R_A06
+                    ,'' AS  AUTH_I_A07
+                    ,'' AS  AUTH_R_A07
+                    ,'' AS  AUTH_I_B01
+                    ,'' AS  AUTH_R_B01       
+                    ,'' AS  AUTH_I_B02
+                    ,'' AS  AUTH_R_B02
+                    ,'' AS  AUTH_I_B03
+                    ,'' AS  AUTH_R_B03
+                    ,'' AS  AUTH_I_B04
+                    ,'' AS  AUTH_R_B04   
+                    ,'' AS  AUTH_I_B05
+                    ,'' AS  AUTH_R_B05
+                    ,'' AS  AUTH_I_B07
+                    ,'' AS  AUTH_R_B07  
+                    , B.MENU_LEVEL AS LEV              
+             FROM TABLE(TF_MY_PGMCODE_ALL(#{companyCode}, #{sysId}))  B
+             LEFT JOIN  SM_AUTH_GROUP_MENU A ON ( #{companyCode} = A.COMPANY_CODE AND 'A05' = A.USER_GROUP_CODE AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE)  
+             
+             UNION ALL         
+             SELECT  B.SYS_ID   
+                    , B.PGM_CODE 
+                    , B.SORT_CODE AS MENU_CODE 
+                    , B.PGM_NAME AS MENU_NAME                  
+                    ,'' AS  AUTH_I_A01
+                    ,'' AS  AUTH_R_A01 
+                    ,'' AS  AUTH_I_A02
+                    ,'' AS  AUTH_R_A02
+                    ,'' AS  AUTH_I_A03
+                    ,'' AS  AUTH_R_A03
+                    ,'' AS  AUTH_I_A04
+                    ,'' AS  AUTH_R_A04
+                    ,'' AS  AUTH_I_A05
+                    ,'' AS  AUTH_R_A05
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_I, 'N') END AS  AUTH_I_A06  
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_R, 'N') END AS  AUTH_R_A06   
+                    ,'' AS  AUTH_I_A07
+                    ,'' AS  AUTH_R_A07             
+                    ,'' AS  AUTH_I_B01
+                    ,'' AS  AUTH_R_B01       
+                    ,'' AS  AUTH_I_B02
+                    ,'' AS  AUTH_R_B02
+                    ,'' AS  AUTH_I_B03
+                    ,'' AS  AUTH_R_B03
+                    ,'' AS  AUTH_I_B04
+                    ,'' AS  AUTH_R_B04   
+                    ,'' AS  AUTH_I_B05
+                    ,'' AS  AUTH_R_B05
+                    ,'' AS  AUTH_I_B07
+                    ,'' AS  AUTH_R_B07   
+                    , B.MENU_LEVEL AS LEV             
+             FROM TABLE(TF_MY_PGMCODE_ALL(#{companyCode}, #{sysId}))  B
+             LEFT JOIN  SM_AUTH_GROUP_MENU A ON ( #{companyCode} = A.COMPANY_CODE AND 'A06' = A.USER_GROUP_CODE AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE) 
+
+             UNION ALL         
+             SELECT  B.SYS_ID   
+                    , B.PGM_CODE 
+                    , B.SORT_CODE AS MENU_CODE 
+                    , B.PGM_NAME AS MENU_NAME                  
+                    ,'' AS  AUTH_I_A01
+                    ,'' AS  AUTH_R_A01 
+                    ,'' AS  AUTH_I_A02
+                    ,'' AS  AUTH_R_A02
+                    ,'' AS  AUTH_I_A03
+                    ,'' AS  AUTH_R_A03
+                    ,'' AS  AUTH_I_A04
+                    ,'' AS  AUTH_R_A04
+                    ,'' AS  AUTH_I_A05
+                    ,'' AS  AUTH_R_A05
+                    ,'' AS  AUTH_I_A06
+                    ,'' AS  AUTH_R_A06
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_I, 'N') END AS  AUTH_I_A07  
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_R, 'N') END AS  AUTH_R_A07                             
+                    ,'' AS  AUTH_I_B01
+                    ,'' AS  AUTH_R_B01       
+                    ,'' AS  AUTH_I_B02
+                    ,'' AS  AUTH_R_B02
+                    ,'' AS  AUTH_I_B03
+                    ,'' AS  AUTH_R_B03
+                    ,'' AS  AUTH_I_B04
+                    ,'' AS  AUTH_R_B04   
+                    ,'' AS  AUTH_I_B05
+                    ,'' AS  AUTH_R_B05
+                    ,'' AS  AUTH_I_B07
+                    ,'' AS  AUTH_R_B07   
+                    , B.MENU_LEVEL AS LEV             
+             FROM TABLE(TF_MY_PGMCODE_ALL(#{companyCode}, #{sysId}))  B
+             LEFT JOIN  SM_AUTH_GROUP_MENU A ON ( #{companyCode} = A.COMPANY_CODE AND 'A07' = A.USER_GROUP_CODE AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE)     
+             
+             UNION ALL         
+             SELECT  B.SYS_ID   
+                    , B.PGM_CODE 
+                    , B.SORT_CODE AS MENU_CODE 
+                    , B.PGM_NAME AS MENU_NAME                 
+                    ,'' AS  AUTH_I_A01
+                    ,'' AS  AUTH_R_A01 
+                    ,'' AS  AUTH_I_A02
+                    ,'' AS  AUTH_R_A02
+                    ,'' AS  AUTH_I_A03
+                    ,'' AS  AUTH_R_A03
+                    ,'' AS  AUTH_I_A04
+                    ,'' AS  AUTH_R_A04
+                    ,'' AS  AUTH_I_A05
+                    ,'' AS  AUTH_R_A05
+                    ,'' AS  AUTH_I_A06
+                    ,'' AS  AUTH_R_A06
+                    ,'' AS  AUTH_I_A07
+                    ,'' AS  AUTH_R_A07 
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_I, 'N') END AS  AUTH_I_B01  
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_R, 'N') END AS  AUTH_R_B01  
+                    ,'' AS  AUTH_I_B02
+                    ,'' AS  AUTH_R_B02
+                    ,'' AS  AUTH_I_B03
+                    ,'' AS  AUTH_R_B03
+                    ,'' AS  AUTH_I_B04
+                    ,'' AS  AUTH_R_B04   
+                    ,'' AS  AUTH_I_B05
+                    ,'' AS  AUTH_R_B05
+                    ,'' AS  AUTH_I_B07
+                    ,'' AS  AUTH_R_B07 
+                    , B.MENU_LEVEL AS LEV               
+             FROM TABLE(TF_MY_PGMCODE_ALL(#{companyCode}, #{sysId}))  B
+             LEFT JOIN  SM_AUTH_GROUP_MENU A ON ( #{companyCode} = A.COMPANY_CODE AND 'B01' = A.USER_GROUP_CODE AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE)  
+             
+             UNION ALL         
+             SELECT  B.SYS_ID   
+                    , B.PGM_CODE 
+                    , B.SORT_CODE AS MENU_CODE 
+                    , B.PGM_NAME AS MENU_NAME                  
+                    ,'' AS  AUTH_I_A01
+                    ,'' AS  AUTH_R_A01 
+                    ,'' AS  AUTH_I_A02
+                    ,'' AS  AUTH_R_A02
+                    ,'' AS  AUTH_I_A03
+                    ,'' AS  AUTH_R_A03
+                    ,'' AS  AUTH_I_A04
+                    ,'' AS  AUTH_R_A04
+                    ,'' AS  AUTH_I_A05
+                    ,'' AS  AUTH_R_A05
+                    ,'' AS  AUTH_I_A06
+                    ,'' AS  AUTH_R_A06
+                    ,'' AS  AUTH_I_A07
+                    ,'' AS  AUTH_R_A07 
+                    ,'' AS  AUTH_I_B01
+                    ,'' AS  AUTH_R_B01
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_I, 'N') END AS  AUTH_I_B02  
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_R, 'N') END AS  AUTH_R_B02  
+                    ,'' AS  AUTH_I_B03
+                    ,'' AS  AUTH_R_B03
+                    ,'' AS  AUTH_I_B04
+                    ,'' AS  AUTH_R_B04   
+                    ,'' AS  AUTH_I_B05
+                    ,'' AS  AUTH_R_B05
+                    ,'' AS  AUTH_I_B07
+                    ,'' AS  AUTH_R_B07 
+                    , B.MENU_LEVEL AS LEV               
+             FROM TABLE(TF_MY_PGMCODE_ALL(#{companyCode}, #{sysId}))  B
+             LEFT JOIN  SM_AUTH_GROUP_MENU A ON ( #{companyCode} = A.COMPANY_CODE AND 'B02' = A.USER_GROUP_CODE AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE)  
+             
+             UNION ALL         
+             SELECT  B.SYS_ID   
+                    , B.PGM_CODE 
+                    , B.SORT_CODE AS MENU_CODE 
+                    , B.PGM_NAME AS MENU_NAME                  
+                    ,'' AS  AUTH_I_A01
+                    ,'' AS  AUTH_R_A01 
+                    ,'' AS  AUTH_I_A02
+                    ,'' AS  AUTH_R_A02
+                    ,'' AS  AUTH_I_A03
+                    ,'' AS  AUTH_R_A03
+                    ,'' AS  AUTH_I_A04
+                    ,'' AS  AUTH_R_A04
+                    ,'' AS  AUTH_I_A05
+                    ,'' AS  AUTH_R_A05
+                    ,'' AS  AUTH_I_A06
+                    ,'' AS  AUTH_R_A06
+                    ,'' AS  AUTH_I_A07
+                    ,'' AS  AUTH_R_A07 
+                    ,'' AS  AUTH_I_B01
+                    ,'' AS  AUTH_R_B01
+                    ,'' AS  AUTH_I_B02
+                    ,'' AS  AUTH_R_B02
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_I, 'N') END AS  AUTH_I_B03  
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_R, 'N') END AS  AUTH_R_B03
+                    ,'' AS  AUTH_I_B04
+                    ,'' AS  AUTH_R_B04   
+                    ,'' AS  AUTH_I_B05
+                    ,'' AS  AUTH_R_B05
+                    ,'' AS  AUTH_I_B07
+                    ,'' AS  AUTH_R_B07 
+                    , B.MENU_LEVEL AS LEV               
+             FROM TABLE(TF_MY_PGMCODE_ALL(#{companyCode}, #{sysId}))  B
+             LEFT JOIN  SM_AUTH_GROUP_MENU A ON ( #{companyCode} = A.COMPANY_CODE AND 'B03' = A.USER_GROUP_CODE AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE)  
+             
+             UNION ALL         
+             SELECT  B.SYS_ID   
+                    , B.PGM_CODE 
+                    , B.SORT_CODE AS MENU_CODE 
+                    , B.PGM_NAME AS MENU_NAME                 
+                    ,'' AS  AUTH_I_A01
+                    ,'' AS  AUTH_R_A01 
+                    ,'' AS  AUTH_I_A02
+                    ,'' AS  AUTH_R_A02
+                    ,'' AS  AUTH_I_A03
+                    ,'' AS  AUTH_R_A03
+                    ,'' AS  AUTH_I_A04
+                    ,'' AS  AUTH_R_A04
+                    ,'' AS  AUTH_I_A05
+                    ,'' AS  AUTH_R_A05
+                    ,'' AS  AUTH_I_A06
+                    ,'' AS  AUTH_R_A06
+                    ,'' AS  AUTH_I_A07
+                    ,'' AS  AUTH_R_A07 
+                    ,'' AS  AUTH_I_B01
+                    ,'' AS  AUTH_R_B01
+                    ,'' AS  AUTH_I_B02
+                    ,'' AS  AUTH_R_B02
+                    ,'' AS  AUTH_I_B03
+                    ,'' AS  AUTH_R_B03 
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_I, 'N') END AS  AUTH_I_B04  
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_R, 'N') END AS  AUTH_R_B04
+                    ,'' AS  AUTH_I_B05
+                    ,'' AS  AUTH_R_B05
+                    ,'' AS  AUTH_I_B07
+                    ,'' AS  AUTH_R_B07    
+                    , B.MENU_LEVEL AS LEV            
+             FROM TABLE(TF_MY_PGMCODE_ALL(#{companyCode}, #{sysId}))  B
+             LEFT JOIN  SM_AUTH_GROUP_MENU A ON ( #{companyCode} = A.COMPANY_CODE AND 'B04' = A.USER_GROUP_CODE AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE)  
+             
+             UNION ALL         
+             SELECT  B.SYS_ID   
+                    , B.PGM_CODE 
+                    , B.SORT_CODE AS MENU_CODE 
+                    , B.PGM_NAME AS MENU_NAME                  
+                    ,'' AS  AUTH_I_A01
+                    ,'' AS  AUTH_R_A01 
+                    ,'' AS  AUTH_I_A02
+                    ,'' AS  AUTH_R_A02
+                    ,'' AS  AUTH_I_A03
+                    ,'' AS  AUTH_R_A03
+                    ,'' AS  AUTH_I_A04
+                    ,'' AS  AUTH_R_A04
+                    ,'' AS  AUTH_I_A05
+                    ,'' AS  AUTH_R_A05
+                    ,'' AS  AUTH_I_A06
+                    ,'' AS  AUTH_R_A06
+                    ,'' AS  AUTH_I_A07
+                    ,'' AS  AUTH_R_A07 
+                    ,'' AS  AUTH_I_B01
+                    ,'' AS  AUTH_R_B01
+                    ,'' AS  AUTH_I_B02
+                    ,'' AS  AUTH_R_B02
+                    ,'' AS  AUTH_I_B03
+                    ,'' AS  AUTH_R_B03 
+                    ,'' AS  AUTH_I_B04
+                    ,'' AS  AUTH_R_B04
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_I, 'N') END AS  AUTH_I_B05  
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_R, 'N') END AS  AUTH_R_B05
+                    ,'' AS  AUTH_I_B07
+                    ,'' AS  AUTH_R_B07  
+                    , B.MENU_LEVEL AS LEV              
+             FROM TABLE(TF_MY_PGMCODE_ALL(#{companyCode}, #{sysId}))  B
+             LEFT JOIN  SM_AUTH_GROUP_MENU A ON ( #{companyCode} = A.COMPANY_CODE AND 'B05' = A.USER_GROUP_CODE AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE)
+             
+             UNION ALL         
+             SELECT  B.SYS_ID   
+                    , B.PGM_CODE 
+                    , B.SORT_CODE AS MENU_CODE 
+                    , B.PGM_NAME AS MENU_NAME                  
+                    ,'' AS  AUTH_I_A01
+                    ,'' AS  AUTH_R_A01 
+                    ,'' AS  AUTH_I_A02
+                    ,'' AS  AUTH_R_A02
+                    ,'' AS  AUTH_I_A03
+                    ,'' AS  AUTH_R_A03
+                    ,'' AS  AUTH_I_A04
+                    ,'' AS  AUTH_R_A04
+                    ,'' AS  AUTH_I_A05
+                    ,'' AS  AUTH_R_A05
+                    ,'' AS  AUTH_I_A06
+                    ,'' AS  AUTH_R_A06
+                    ,'' AS  AUTH_I_A07
+                    ,'' AS  AUTH_R_A07 
+                    ,'' AS  AUTH_I_B01
+                    ,'' AS  AUTH_R_B01
+                    ,'' AS  AUTH_I_B02
+                    ,'' AS  AUTH_R_B02
+                    ,'' AS  AUTH_I_B03
+                    ,'' AS  AUTH_R_B03 
+                    ,'' AS  AUTH_I_B04
+                    ,'' AS  AUTH_R_B04
+                    ,'' AS  AUTH_I_B05
+                    ,'' AS  AUTH_R_B05
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_I, 'N') END AS  AUTH_I_B07  
+                    , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_R, 'N') END AS  AUTH_R_B07
+                    , B.MENU_LEVEL AS LEV
+             FROM TABLE(TF_MY_PGMCODE_ALL(#{companyCode}, #{sysId}))  B
+             LEFT JOIN  SM_AUTH_GROUP_MENU A ON ( #{companyCode} = A.COMPANY_CODE AND 'B07' = A.USER_GROUP_CODE AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE)
+        )    
+        GROUP BY SYS_ID,PGM_CODE,MENU_CODE,MENU_NAME,LEV
+        ORDER BY MENU_CODE,PGM_CODE
+        
+
+    </select>
+ 
+
+</mapper>

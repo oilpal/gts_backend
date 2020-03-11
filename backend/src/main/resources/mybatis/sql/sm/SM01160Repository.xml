@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM01160Repository">
+	
+<select id="SM01160_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01160">
+    
+           SELECT B.SYS_ID AS SYS_ID_M
+                , B.PGM_CODE AS PGM_CODE_M
+                , B.SORT_CODE AS MENU_CODE
+                , B.PGM_NAME AS MENU_NAME
+                , (B.MENU_LEVEL - #AS_DIV#) AS LEV  
+                , A.COMPANY_CODE
+                , A.SYS_ID
+                , A.PGM_CODE    
+                , A.MENU_CONTENT
+                , A.MENU_PATH
+                , A.MENU_ORDER
+                , A.FILE_NAME 
+                , A.FILE_TYPE   
+                , A.FILE_PATH   
+                , A.FILE_ID
+             FROM TABLE(TF_MY_PGMCODE_ALL(#{companyCode}, #{sysId}))  B  LEFT JOIN SM_MANUAL A ON #{companyCode}  =  A.COMPANY_CODE 
+                                                                                            AND B.SYS_ID = A.SYS_ID
+                                                                                            AND B.PGM_CODE = A.PGM_CODE              
+            WHERE B.MENU_LEVEL <![CDATA[ <> ]]> #{div}
+            AND B.SORT_CODE LIKE #{sortCode}||'%'
+         ORDER BY B.SORT_CODE, B.PGM_CODE
+    
+  </select>
+
+    <select id="SM01160_02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01160">
+         SELECT    A.COMPANY_CODE      
+                 , A.SYS_ID            
+                 , A.PGM_CODE           
+                 , A.MENU_TAG          
+                 , A.MENU_SEQ           
+                 , A.MENU_TITLE        
+                 , A.MENU_CONTENT        
+                 , A.SORT_ORDER
+         FROM SM_MANUAL_DETAIL A
+         WHERE A.COMPANY_CODE = #{companyCode} 
+           AND A.SYS_ID = #{sysId} 
+           AND A.PGM_CODE = #{pgmCode} 
+           AND A.MENU_TAG = #{menuTag} 
+         ORDER BY A.SORT_ORDER, A.ROW_INPUT_DATE
+
+  </select>
+
+  <select id="SM01160_03" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01160">
+         SELECT    A.COMPANY_CODE      
+                 , A.SYS_ID            
+                 , A.PGM_CODE           
+                 , A.MENU_TAG          
+                 , A.MENU_SEQ           
+                 , A.MENU_TITLE        
+                 , A.MENU_CONTENT        
+                 , A.SORT_ORDER
+         FROM SM_MANUAL_DETAIL A
+         WHERE A.COMPANY_CODE = #{companyCode} 
+           AND A.SYS_ID = #{sysId} 
+           AND A.PGM_CODE = #{pgmCode} 
+           AND A.MENU_TAG = #{menuTag} 
+         ORDER BY A.SORT_ORDER, A.ROW_INPUT_DATE
+  </select>
+
+
+    <select id="SM01160_R02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01160">
+            SELECT NVL(MAX(CAST(A.MENU_SEQ AS INT )), 0) AS MAX_SEQ
+        FROM SM_MANUAL_DETAIL A
+           WHERE A.COMPANY_CODE = #{companyCode}
+             AND A.SYS_ID = #{sysId} 
+             AND A.PGM_CODE = #{pgmCode} 
+             AND A.MENU_TAG = #{menuTag} 
+
+    </select>
+    
+
+    <insert id="SM01160_I01" parameterType="java.util.HashMap">
+        INSERT INTO SM_MANUAL
+                (COMPANY_CODE, SYS_ID,      PGM_CODE,   MENU_CONTENT, MENU_PATH, MENU_ORDER, ROW_INPUT_DATE, ROW_INPUT_EMP_NO, ROW_INPUT_IP ) 
+        VALUES  (#{companyCode},    #{sysId}, #{pgmCode}, #{menuContent}, #{menuPath}, #{menuOrder}, SYSDATE,        #{rowInputEmpNo},      #{rowInputIp}  )
+
+    </insert>
+
+    <select id="GET_PGM_LEV2" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01160">
+           SELECT B.SORT_CODE AS CODE
+                , B.PGM_NAME AS LABEL               
+             FROM TABLE(TF_MY_PGMCODE_ALL(#{companyCode}, #{sysId}))  B           
+            WHERE B.MENU_LEVEL = '2'
+         ORDER BY B.SORT_CODE, B.PGM_CODE
+  </select>
+
+</mapper>

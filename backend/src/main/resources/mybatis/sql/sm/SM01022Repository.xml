@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM01022Repository">
+
+	<!-- SM01022_01 -->
+	<select id="SM0102201" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01022">
+	/* com.neofect.gts.services.sm.repository.SM01022Repository.SM0102201 */
+		<![CDATA[
+	   SELECT 
+	   			A.USE_YN
+	   			, A.CUST_TAG
+	   			, A.CUST_CODE
+	   			, A.CUST_NAME
+	   			, A.OWNER
+	   			, A.CONDITION
+	   			, A.CATEGORY
+	   			, A.ZIP
+	   			, A.ADDR
+	   			, A.ADDR2
+	   			, A.TEL
+	   			, A.TEL2
+	   			, A.FAX
+	   			, A.TRADE_TYPE
+	   			, A.BUSINESS_TYPE
+	   			, A.PAY_GROUP
+					,	(	SELECT	'('||K.SHORT_NAME||') '||J.DEPOSIT_NO
+							FROM		SM_CODE_CUST_DEPOSIT	J
+											INNER JOIN	SM_CODE_BANK	K
+												ON	K.BANK_CODE	=	J.BANK_CODE
+							WHERE		J.CUST_CODE		=	A.CUST_CODE
+							AND			J.DEPOSIT_CHK	=	'Y'
+							AND			J.MAIN_YN			=	'Y'
+							AND			ROWNUM				=	1
+						)			AS MAIN_BANK_INFO
+	   			, A.BANK_CODE
+	   			, A.BANK_NAME
+	   			, A.DEPOSIT_NO
+	   			, A.DEPOSIT_OWNER
+	   			, A.BUY_CARD_NO
+	   			, A.JOIN_NO
+	   			, A.COMPANY_NO
+	   			, A.CHARGE_NAME
+	   			, A.REGISTER_NO
+	   			, A.CLOSING_DATE
+	   			, A.INPUT_DATE
+	   			, A.TAXEMP_DEPT_NAME
+	   			, A.TAXEMP_NAME
+	   			, A.TAXEMP_TEL
+	   			, A.TAXEMP_EMAIL
+	   			, A.HQ_ZIP
+	   			, A.HQ_ADDR
+	   			, A.HQ_ADDR2
+	   			, A.VEND_CODE
+	   			, A.VEND_TYPE
+	   			, A.VALID_STDATE
+	   			, A.VALID_ENDATE
+	   			, A.BILL_DEPOSIT_NO
+	   			, A.CUST_GROUP
+	   			, A.REMARK
+	   			, A.STATUS_CODE
+	   			, A.OPEN_DATE
+	   			, A.CUST_TAG1
+	   			, A.CUST_TAG2
+	   			, A.CUST_TAG3
+	   			, A.CUST_TAG4
+	   			, A.CUST_TAG5
+	   			, A.TAX_OFFICE_CODE
+	   			, A.ATTACH_DATE
+	   			, A.DEBT_AMT
+	   			, A.ATTACH_AMT
+	   			, A.COMPETENT_COURT
+	   			, A.ATTACH_END_DATE
+	   			, A.ATTACH_REASON
+	   			, A.ATTACH_YN
+	   			, A.ATTACH_FILE_ID
+	   			, G.ORIGNL_FILE_NM		AS ATTACH_FILE_NAME
+	   			, A.TAXEMP_COM_ID
+	   			, A.EMP_NO
+	   			, A.BUSINESS_CHK_DATE
+	   			, A.USE_DEPT
+	   			, A.EMAIL
+	   			, A.DEPOSIT_FROMDATE
+	   			, A.DEPOSIT_TODATE
+	   			, A.BANK_CODE1
+	   			, A.BANK_NAME1
+	   			, A.DEPOSIT_NO1
+	   			, A.DEPOSIT_OWNER1
+	   			, A.DEPOSIT_FROMDATE1
+	   			, A.DEPOSIT_TODATE1
+	   			, A.BANK_CODE2
+	   			, A.BANK_NAME2
+	   			, A.DEPOSIT_NO2
+	   			, A.DEPOSIT_OWNER2
+	   			, A.DEPOSIT_FROMDATE2
+	   			, A.DEPOSIT_TODATE2
+	   			, A.EBILL_BANK_CODE
+	   			, A.EBILL_BANK_NAME
+	   			, A.EBILL_REG_NO
+	   			, A.EBILL_BANK_CODE1
+	   			, A.EBILL_BANK_NAME1
+	   			, A.EBILL_REG_NO1
+	   			, A.EBILL_BANK_CODE2
+	   			, A.EBILL_BANK_NAME2
+	   			, A.EBILL_REG_NO2
+	   			, A.EBILL_BANK_CODE3
+	   			, A.EBILL_BANK_NAME3
+	   			, A.EBILL_REG_NO3
+	   			, A.AR_BANK_CODE
+	   			, A.AR_BANK_NAME
+	   			, A.AR_DEPOSIT_NO
+	   			, A.AR_LOAN_ACNT_NAME
+	   			, A.AR_LOAN_FROMDATE
+	   			, A.AR_LOAN_TODATE
+	   			, A.AR_LOAN_LIMIT
+	   			, A.AR_RECOURSE_YN
+	   			, A.AR_BANK_CODE1
+	   			, A.AR_BANK_NAME1
+	   			, A.AR_DEPOSIT_NO1
+	   			, A.AR_LOAN_ACNT_NAME1
+	   			, A.AR_LOAN_FROMDATE1
+	   			, A.AR_LOAN_TODATE1
+	   			, A.AR_LOAN_LIMIT1
+	   			, A.AR_RECOURSE_YN1
+	   			, A.AR_BANK_CODE2
+	   			, A.AR_BANK_NAME2
+	   			, A.AR_DEPOSIT_NO2
+	   			, A.AR_LOAN_ACNT_NAME2
+	   			, A.AR_LOAN_FROMDATE2
+	   			, A.AR_LOAN_TODATE2
+	   			, A.AR_LOAN_LIMIT2
+	   			, A.AR_RECOURSE_YN2
+	   			, A.AR_BANK_CODE3
+	   			, A.AR_BANK_NAME3
+	   			, A.AR_DEPOSIT_NO3
+	   			, A.AR_LOAN_ACNT_NAME3
+	   			, A.AR_LOAN_FROMDATE3
+	   			, A.AR_LOAN_TODATE3
+	   			, A.AR_LOAN_LIMIT3
+	   			, A.AR_RECOURSE_YN3
+	   			, A.HOLDING_DATE
+	   			, A.HOLDING_REASON
+	   			, A.HOLDING_TYPE
+	   			, A.WCMS_BUSINESS_TYPE
+	   			, A.BANK_USE1
+	   			, A.BANK_USE2
+	   			, A.EBILL_BANK_USE1
+	   			, A.EBILL_BANK_USE2
+	   			, A.EBILL_BANK_USE3
+	   			, A.AR_BANK_USE1
+	   			, A.AR_BANK_USE2
+	   			, A.AR_BANK_USE3
+	   			, A.DEPOSIT_NO_CHK1
+	   			, A.DEPOSIT_NO_CHK2
+	   			, 'N' as USE_DEPT_C
+	   			, 'N' as USE_DEPT_P
+	   			, 'N' as USE_DEPT_F
+	   			, 'E' as USE_DEPT_E
+	   			, NVL(A.ROW_UPDATE_DATE,A.ROW_INPUT_DATE) AS UP_DATE
+	   			, B.USER_NAME AS UP_EMP_NAME
+	   			, A.USE_REMARK 
+	   			,	A.PAY_TAG
+			 FROM SM_CODE_CUST A LEFT JOIN SM_AUTH_USER B
+							 			ON NVL(A.ROW_UPDATE_EMP_NO,A.ROW_INPUT_EMP_NO) = B.USER_ID
+						LEFT OUTER JOIN SM_COMM_FILE_DETAIL	G
+							ON	G.ATCH_FILE_ID	=	A.ATTACH_FILE_ID
+							AND	G.FILE_SN				=	'1'
+			WHERE (#{custTag} ='%' OR A.CUST_TAG = #{custTag})
+				AND NVL(A.USE_YN,'N') LIKE #{useYn}
+				AND (#{closingYn} ='%'
+					  OR (#{closingYn} = 'N' AND A.CUST_TAG IN ('0','1','2','3','4','5','6','7','8','9','10','%') AND (A.CLOSING_DATE IS NOT NULL AND LENGTH(A.CLOSING_DATE)>0))
+					  OR #{closingYn} = 'Y' AND A.CUST_TAG IN ('0','1','2','3','4','5','6','7','8','9','10','%') AND (A.CLOSING_DATE IS NULL OR LENGTH(A.CLOSING_DATE)=0)
+				    )
+				AND (
+						(CASE WHEN A.CUST_CODE IS NULL THEN '' ELSE A.CUST_CODE END LIKE #{cust} || '%')
+				 OR (CASE WHEN A.CUST_NAME IS NULL THEN '' ELSE A.CUST_NAME END LIKE '%' || #{cust} || '%')
+				  )
+				AND CASE WHEN A.EMP_NO IS NULL THEN '%' ELSE A.EMP_NO END LIKE #{empNo} || '%'
+  			ORDER BY A.CUST_TAG ASC, A.ROW_INPUT_DATE DESC, A.CUST_NAME ASC
+
+		]]>
+		
+		<!-- 		<update_table>SM_CODE_CUST</update_table>
+
+    <column name='USE_YN'             type='char' updatable='Y' iskeycol='N' />
+    <column name='CUST_TAG'           type='char' updatable='Y' iskeycol='N' />
+    <column name='CUST_CODE'          type='char' updatable='Y' iskeycol='Y' />
+    <column name='CUST_NAME'          type='char' updatable='Y' iskeycol='N' />
+    <column name='OWNER'              type='char' updatable='Y' iskeycol='N' />
+    <column name='CONDITION'          type='char' updatable='Y' iskeycol='N' />
+    <column name='CATEGORY'           type='char' updatable='Y' iskeycol='N' />
+    <column name='ZIP'                type='char' updatable='Y' iskeycol='N' />
+    <column name='ADDR'               type='char' updatable='Y' iskeycol='N' />
+    <column name='ADDR2'              type='char' updatable='Y' iskeycol='N' />
+    <column name='TEL'                type='char' updatable='Y' iskeycol='N' />
+    <column name='TEL2'               type='char' updatable='Y' iskeycol='N' />
+    <column name='FAX'                type='char' updatable='Y' iskeycol='N' />
+    <column name='TRADE_TYPE'         type='char' updatable='Y' iskeycol='N' />
+    <column name='BUSINESS_TYPE'      type='char' updatable='Y' iskeycol='N' />
+    <column name='PAY_GROUP'          type='char' updatable='Y' iskeycol='N' />
+    <column name='BANK_CODE'          type='char' updatable='Y' iskeycol='N' />
+    <column name='BANK_NAME'          type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPOSIT_NO'         type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPOSIT_OWNER'      type='char' updatable='Y' iskeycol='N' />
+    <column name='BUY_CARD_NO'        type='char' updatable='Y' iskeycol='N' />
+    <column name='JOIN_NO'            type='char' updatable='Y' iskeycol='N' />
+    <column name='COMPANY_NO'         type='char' updatable='Y' iskeycol='N' />
+    <column name='CHARGE_NAME'        type='char' updatable='Y' iskeycol='N' />
+    <column name='REGISTER_NO'        type='char' updatable='Y' iskeycol='N' />
+    <column name='CLOSING_DATE'       type='char' updatable='Y' iskeycol='N' />
+    <column name='INPUT_DATE'         type='char' updatable='Y' iskeycol='N' />
+    <column name='TAXEMP_DEPT_NAME'   type='char' updatable='Y' iskeycol='N' />
+    <column name='TAXEMP_NAME'        type='char' updatable='Y' iskeycol='N' />
+    <column name='TAXEMP_TEL'         type='char' updatable='Y' iskeycol='N' />
+    <column name='TAXEMP_EMAIL'       type='char' updatable='Y' iskeycol='N' />
+    <column name='HQ_ZIP'             type='char' updatable='Y' iskeycol='N' />
+    <column name='HQ_ADDR'            type='char' updatable='Y' iskeycol='N' />
+    <column name='HQ_ADDR2'           type='char' updatable='Y' iskeycol='N' />
+    <column name='VEND_CODE'          type='char' updatable='Y' iskeycol='N' />
+    <column name='VEND_TYPE'          type='char' updatable='Y' iskeycol='N' />
+    <column name='VALID_STDATE'       type='char' updatable='Y' iskeycol='N' />
+    <column name='VALID_ENDATE'       type='char' updatable='Y' iskeycol='N' />
+    <column name='BILL_DEPOSIT_NO'    type='char' updatable='Y' iskeycol='N' />
+    <column name='CUST_GROUP'         type='char' updatable='Y' iskeycol='N' />
+    <column name='REMARK'             type='char' updatable='Y' iskeycol='N' />
+    <column name='STATUS_CODE'        type='char' updatable='Y' iskeycol='N' />
+    <column name='OPEN_DATE'          type='char' updatable='Y' iskeycol='N' />
+    <column name='CUST_TAG1'          type='char' updatable='Y' iskeycol='N' />
+    <column name='CUST_TAG2'          type='char' updatable='Y' iskeycol='N' />
+    <column name='CUST_TAG3'          type='char' updatable='Y' iskeycol='N' />
+    <column name='CUST_TAG4'          type='char' updatable='Y' iskeycol='N' />
+    <column name='CUST_TAG5'          type='char' updatable='Y' iskeycol='N' />
+    <column name='TAX_OFFICE_CODE'    type='char' updatable='Y' iskeycol='N' />
+    <column name='ATTACH_DATE'        type='char' updatable='Y' iskeycol='N' />
+    <column name='DEBT_AMT'           type='char' updatable='Y' iskeycol='N' />
+    <column name='ATTACH_AMT'         type='char' updatable='Y' iskeycol='N' />
+    <column name='COMPETENT_COURT'    type='char' updatable='Y' iskeycol='N' />
+    <column name='ATTACH_END_DATE'    type='char' updatable='Y' iskeycol='N' />
+    <column name='ATTACH_REASON'      type='char' updatable='Y' iskeycol='N' />
+    <column name='TAXEMP_COM_ID'      type='char' updatable='Y' iskeycol='N' />
+    <column name='EMP_NO'             type='char' updatable='Y' iskeycol='N' />
+    <column name='BUSINESS_CHK_DATE'  type='char' updatable='Y' iskeycol='N' />
+    <column name='USE_DEPT'           type='char' updatable='Y' iskeycol='N' />
+    <column name='EMAIL'              type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPOSIT_FROMDATE'   type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPOSIT_TODATE'     type='char' updatable='Y' iskeycol='N' />
+    <column name='BANK_CODE1'         type='char' updatable='Y' iskeycol='N' />
+    <column name='BANK_NAME1'         type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPOSIT_NO1'        type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPOSIT_OWNER1'     type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPOSIT_FROMDATE1'  type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPOSIT_TODATE1'    type='char' updatable='Y' iskeycol='N' />
+    <column name='BANK_CODE2'         type='char' updatable='Y' iskeycol='N' />
+    <column name='BANK_NAME2'         type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPOSIT_NO2'        type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPOSIT_OWNER2'     type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPOSIT_FROMDATE2'  type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPOSIT_TODATE2'    type='char' updatable='Y' iskeycol='N' />
+    <column name='EBILL_BANK_CODE'    type='char' updatable='Y' iskeycol='N' />
+    <column name='EBILL_BANK_NAME'    type='char' updatable='Y' iskeycol='N' />
+    <column name='EBILL_REG_NO'       type='char' updatable='Y' iskeycol='N' />
+    <column name='EBILL_BANK_CODE1'   type='char' updatable='Y' iskeycol='N' />
+    <column name='EBILL_BANK_NAME1'   type='char' updatable='Y' iskeycol='N' />
+    <column name='EBILL_REG_NO1'      type='char' updatable='Y' iskeycol='N' />
+    <column name='EBILL_BANK_CODE2'   type='char' updatable='Y' iskeycol='N' />
+    <column name='EBILL_BANK_NAME2'   type='char' updatable='Y' iskeycol='N' />
+    <column name='EBILL_REG_NO2'      type='char' updatable='Y' iskeycol='N' />
+    <column name='EBILL_BANK_CODE3'   type='char' updatable='Y' iskeycol='N' />
+    <column name='EBILL_BANK_NAME3'   type='char' updatable='Y' iskeycol='N' />
+    <column name='EBILL_REG_NO3'      type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_BANK_CODE'       type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_BANK_NAME'       type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_DEPOSIT_NO'      type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_LOAN_ACNT_NAME'  type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_LOAN_FROMDATE'   type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_LOAN_TODATE'     type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_LOAN_LIMIT'      type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_RECOURSE_YN'     type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_BANK_CODE1'      type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_BANK_NAME1'      type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_DEPOSIT_NO1'     type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_LOAN_ACNT_NAME1' type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_LOAN_FROMDATE1'  type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_LOAN_TODATE1'    type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_LOAN_LIMIT1'     type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_RECOURSE_YN1'    type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_BANK_CODE2'      type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_BANK_NAME2'      type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_DEPOSIT_NO2'     type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_LOAN_ACNT_NAME2' type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_LOAN_FROMDATE2'  type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_LOAN_TODATE2'    type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_LOAN_LIMIT2'     type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_RECOURSE_YN2'    type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_BANK_CODE3'      type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_BANK_NAME3'      type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_DEPOSIT_NO3'     type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_LOAN_ACNT_NAME3' type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_LOAN_FROMDATE3'  type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_LOAN_TODATE3'    type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_LOAN_LIMIT3'     type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_RECOURSE_YN3'    type='char' updatable='Y' iskeycol='N' />
+    <column name='HOLDING_DATE'       type='char' updatable='Y' iskeycol='N' />
+    <column name='HOLDING_REASON'     type='char' updatable='Y' iskeycol='N' />
+    <column name='HOLDING_TYPE'       type='char' updatable='Y' iskeycol='N' />
+    <column name='WCMS_BUSINESS_TYPE' type='char' updatable='Y' iskeycol='N' />
+    <column name='BANK_USE1'          type='char' updatable='Y' iskeycol='N' />
+    <column name='BANK_USE2'          type='char' updatable='Y' iskeycol='N' />
+    <column name='EBILL_BANK_USE1'    type='char' updatable='Y' iskeycol='N' />
+    <column name='EBILL_BANK_USE2'    type='char' updatable='Y' iskeycol='N' />
+    <column name='EBILL_BANK_USE3'    type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_BANK_USE1'       type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_BANK_USE2'       type='char' updatable='Y' iskeycol='N' />
+    <column name='AR_BANK_USE3'       type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPOSIT_NO_CHK1'    type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPOSIT_NO_CHK2'    type='char' updatable='Y' iskeycol='N' />
+    <column name='USE_DEPT_C'         type='char' updatable='N' iskeycol='N' />
+    <column name='USE_DEPT_P'         type='char' updatable='N' iskeycol='N' />
+    <column name='USE_DEPT_F'         type='char' updatable='N' iskeycol='N' />
+    <column name='USE_DEPT_E'         type='char' updatable='N' iskeycol='N' />
+    <column name='UP_DATE'         	  type='char' updatable='N' iskeycol='N' />
+    <column name='UP_EMP_NAME'        type='char' updatable='N' iskeycol='N' /> -->
+	</select>
+
+	<!-- R_SM01022_02 -->
+	<select id="RSM0102202" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01022">
+	/* com.neofect.gts.services.sm.repository.SM01022Repository.RSM0102202 */
+		<![CDATA[
+	  	  SELECT 	A.CUST_ID
+ 		  FROM  SM_CODE_CUST A
+		]]>
+	</select>
+
+	<!-- R_SM01022_03 -->
+	<select id="RSM0102203" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01022">
+	/* com.neofect.gts.services.sm.repository.SM01022Repository.RSM0102203 */
+		<![CDATA[
+	  	   SELECT A.DCODE AS CODE
+          , A.DNAME AS LABEL
+       	   FROM SM_COMCODE_D A
+      	   WHERE A.SYS_ID = #{sysId}
+           AND A.HCODE  = #{hcode}
+           AND A.USE_YN = 'Y'
+           ORDER BY A.HCODE, A.DVALUE, A.DCODE
+		]]>
+	</select>
+
+	<!-- R_SM01022_04 -->
+	<select id="RSM0102204" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01022">
+	/* com.neofect.gts.services.sm.repository.SM01022Repository.RSM0102204 */
+		<![CDATA[
+	  	  SELECT A.CUST_NAME
+ 		  FROM  SM_CODE_CUST A
+		]]>
+	</select>
+
+	<!-- R_SM01022_05 -->
+	<select id="RSM0102205" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01022">
+	/* com.neofect.gts.services.sm.repository.SM01022Repository.RSM0102205 */
+		<![CDATA[
+	  	  SELECT 	A.BUYR_CORP_NM
+ 		  FROM  SM_CODE_CUST A
+		]]>
+	</select>
+
+	<!-- R_SM01022_06 -->
+	<select id="RSM0102206" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01022">
+	/* com.neofect.gts.services.sm.repository.SM01022Repository.RSM0102206 */
+		<![CDATA[
+	  	  SELECT COUNT(*) AS CNT
+		  FROM SM_AUTH_USER
+		  WHERE USER_ID = #{userId}
+		]]>
+	</select>
+
+	<!-- R_SM01022_07 -->
+	<select id="RSM0102207" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01022">
+	/* com.neofect.gts.services.sm.repository.SM01022Repository.RSM0102207 */
+		<![CDATA[
+	  	  SELECT COUNT(*) AS CNT
+		  FROM AC_SLIP_MAIN
+		  WHERE CUST_CODE =	#{custCode}
+		]]>
+	</select>
+
+	<!-- CUST_DELECT_LOG -->
+	<select id="CUSTDELECTLOG" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01022">
+	/* com.neofect.gts.services.sm.repository.SM01022Repository.CUSTDELECTLOG */
+		<![CDATA[
+	  	  INSERT INTO SM_CODE_CUST_D_LOG(CUST_CODE, CUST_TAG, CUST_NAME, ROW_INPUT_DATE, ROW_INPUT_EMP_NO, ROW_INPUT_IP)
+    	  VALUES(#{custCode},#{custTag},#{custName},#{sysdate},#{userId},#{userIp})
+		]]>
+	</select>
+
+</mapper>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM010200Repository">
+
+	<!-- R_SM010200_01 -->
+	<select id="R_SM010200_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM010200">
+		<![CDATA[
+	   	 SELECT A.COMPANY_CODE,
+				       A.DEPT_CODE,
+				       A.OBJ_TYPE,
+				       A.DEPT_NAME,
+				       A.DEPT_SNAME,
+				       A.UP_DEPT_CODE,
+				       A.KOSTL,
+				       A.SALE_DIV,
+				       A.USE_YESNO,
+				       A.SORT_ORDER,
+               dbo.UF_GET_DEPT_PROC(A.COMPANY_CODE, A.DEPT_CODE, 'NAME') AS PROC_NAME
+				  FROM IF_CODE_DEPT A WITH(NOLOCK) LEFT OUTER JOIN SM_COMCODE_D B ON A.OBJ_TYPE = B.DCODE
+				 WHERE (A.DEPT_NAME LIKE '%' + #{searchString} + '%' OR A.DEPT_SNAME LIKE '%' + #{searchString} + '%')
+				 	 AND A.COMPANY_CODE = #{compCode}
+				   AND A.OBJ_TYPE     LIKE #{objType} + '%'
+				   AND CASE WHEN A.USE_YESNO IS NULL THEN 'N' ELSE A.USE_YESNO END  LIKE #{useYn} 	 + '%'
+				   AND B.USE_YN = 'Y'
+				   AND B.HCODE  = 'OBJ_TYPE'
+				   AND B.SYS_ID = 'SM'
+				 ORDER BY SORT_ORDER, DVALUE , CAST(SUBSTR(DEPT_CODE,2,6) AS INT), DEPT_NAME
+
+		]]>
+	<!-- <update_table>IF_CODE_DEPT</update_table>
+
+    <column name='COMPANY_CODE'   type='char' updatable='Y' iskeycol='Y' />
+    <column name='DEPT_CODE'      type='char' updatable='Y' iskeycol='Y' />
+    <column name='OBJ_TYPE'     	type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPT_NAME'      type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPT_SNAME'     type='char' updatable='Y' iskeycol='N' />
+    <column name='UP_DEPT_CODE'   type='char' updatable='Y' iskeycol='N' />
+    <column name='KOSTL'      		type='char' updatable='Y' iskeycol='N' />
+    <column name='SALE_DIV'      type='char' updatable='Y' iskeycol='N' />
+    <column name='USE_YESNO'      type='char' updatable='Y' iskeycol='N' />
+    <column name='SORT_ORDER'     type='char' updatable='Y' iskeycol='N' />
+    <column name='PROC_NAME'      type='char' updatable='N' iskeycol='N' /> -->
+	</select>
+
+	<!-- R_SM010200_02 -->
+	<select id="R_SM010200_02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM010200">
+		<![CDATA[
+	   	SELECT A.DCODE AS CODE,
+			       A.DNAME AS LABEL
+			  FROM SM_COMCODE_D A	
+			 WHERE A.USE_YN = 'Y'
+			   AND A.HCODE 	= 'OBJ_TYPE'
+			   AND A.SYS_ID = 'SM'
+		ORDER BY A.DCODE
+		]]>
+		
+	
+	</select>
+	
+	<!-- R_SM010200_DEPT_CODE_MAX -->
+	<select id="R_SM010200_DEPT_CODE_MAX" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM010200">
+		<![CDATA[
+	   	SELECT CASE WHEN MAX(CAST(SUBSTR(DEPT_CODE, 2, 6)AS INT)) IS NULL THEN 0 ELSE MAX(CAST(SUBSTR(DEPT_CODE, 2, 6)AS INT)) END
+   		FROM IF_CODE_DEPT
+		]]>
+		
+	
+	</select>
+
+</mapper>

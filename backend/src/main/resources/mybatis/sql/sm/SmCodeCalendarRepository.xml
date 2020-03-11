@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SmCodeCalendarRepository">
+
+	<!-- SM_CODE_HOLYBASE_C01 -->
+	<select id="SMCODEHOLYBASEC01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCodeCalendar">
+	/* com.neofect.gts.services.sm.repository.SmCodeCalendarRepository.SMCODEHOLYBASEC01 */
+		<![CDATA[
+			SELECT A.HOLY_DATE, 
+					 A.MOON_TAG, 
+					 A.HOLY_NAME, 
+					 A.PRE_DAYS, 
+					 A.NEXT_DAYS, 
+					 A.REMARK 
+		    FROM SM_CODE_HOLYBASE A 
+			ORDER BY A.HOLY_DATE ASC 
+		]]>
+		
+		<!-- <update_table>SM_CODE_HOLYBASE</update_table>
+		
+		<column name='HOLY_DATE' type='char' updatable='Y' iskeycol='Y' />
+		<column name='MOON_TAG' type='char' updatable='Y' iskeycol='Y' />
+		<column name='HOLY_NAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='PRE_DAYS' type='number' updatable='Y' iskeycol='N' />
+		<column name='NEXT_DAYS' type='number' updatable='Y' iskeycol='N' />
+		<column name='REMARK' type='char' updatable='Y' iskeycol='N' /> -->
+	</select>
+
+	<!-- SM_CODE_HOLYDATE_C01 -->
+	<select id="SMCODEHOLYDATEC01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCodeCalendar">
+	/* com.neofect.gts.services.sm.repository.SmCodeCalendarRepository.SMCODEHOLYDATEC01 */
+		<![CDATA[
+			SELECT 
+					A.COMPANY_CODE, 
+					A.HOLY_YEAR, 
+					A.HOLY_DATE, 
+					SUBSTR( A.HOLY_DATE, 5, 4 ) AS HOLY_DAY, 
+					A.HOLY_NAME, 
+					A.REMARK 
+			FROM  
+					SM_CODE_HOLYDATE A 
+	  	    WHERE  
+	  	    		A.COMPANY_CODE = #{comp}
+			AND  
+					A.HOLY_YEAR = #{year}
+   	   		ORDER BY  
+   	   				A.COMPANY_CODE ASC, 
+		 			A.HOLY_DATE ASC 
+		]]>
+		
+		<!-- <update_table>SM_CODE_HOLYDATE</update_table>
+		
+		<column name='COMPANY_CODE' type='char' updatable='Y' iskeycol='Y' />
+		<column name='HOLY_YEAR' type='char' updatable='Y' iskeycol='Y' />
+		<column name='HOLY_DATE' type='char' updatable='Y' iskeycol='Y' />
+		<column name='HOLY_DAY' type='char' updatable='N' iskeycol='N' />
+		<column name='HOLY_NAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='REMARK' type='char' updatable='Y' iskeycol='N' /> -->
+	</select>
+
+	
+</mapper>

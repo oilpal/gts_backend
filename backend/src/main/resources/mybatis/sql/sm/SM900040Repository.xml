@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM900040Repository">
+	<select id="DEV_PGM_CODE"  parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900040">
+    SELECT A.SYS_ID
+         , A.PGM_CODE
+         , A.PGM_NAME
+         , B.GRID_ID
+         , RANK() OVER (PARTITION BY A.SYS_ID, A.PGM_CODE ORDER BY B.GRID_ID ASC) AS GRID_RNK
+     FROM (SELECT A.SYS_ID
+                , A.PGM_CODE
+                , A.PGM_NAME
+             FROM SM_AUTH_PGMCODE A
+            WHERE X_SEARCH(UPPER(#{pgmCode}), A.PGM_CODE, A.PGM_NAME) = 'Y'
+              AND SYS_ID LIKE #{sysId}) A INNER JOIN SM_DEV_GRID B ON A.SYS_ID = B.SYS_ID
+                                                             AND A.PGM_CODE = B.PGM_CODE
+	GROUP BY A.SYS_ID, A.PGM_CODE, A.PGM_NAME, B.GRID_ID
+  	ORDER BY A.SYS_ID, A.PGM_CODE, B.GRID_ID ASC
+
+  </select>
+
+  <select id="S_GRID_COLS"  parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900040">
+      SELECT A.UPDATE_TABLE 
+           , B.TABLE_NAME
+           , B.FIELDNAME
+           , B.UPDATE_TYPE
+           , B.UPDATABLE
+           , B.UPDATE_ISKEY
+        FROM SM_DEV_GRID A INNER JOIN SM_DEV_GRID_COLS B on (A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE AND A.GRID_ID = B.GRID_ID)
+       WHERE A.SYS_ID = #{sysId}
+         AND A.PGM_CODE = #{pgmCode}
+         AND A.SQL_FILE = #{sqlFile}
+         AND A.SQL_ID = #{sqlId}
+         AND A.UPDATE_TABLE IS NOT NULL 
+    ORDER BY B.FIELD_SEQ, B.SEQ
+
+  </select>
+    
+  <select id="DEV_GRID_COLS"  parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900040">
+      SELECT UPDATE_TYPE
+           , UPDATABLE
+           , UPDATE_ISKEY
+           , SYS_ID
+           , PGM_CODE
+           , GRID_ID
+           , SEQ
+           , FIELD_SEQ
+           , FIELDNAME
+           , TABLE_NAME
+           , WIDTH
+           , MUST_INPUT
+           , VISIBLE
+           , READONLY
+           , EDITABLE
+           , SORTABLE
+           , HEADER
+           , HEADER_TEXT
+           , STYLES
+           , EDITOR
+           , FREEFORM_RATE
+           , LOOKUPDISPLAY
+           , RENDERER
+           , BUTTON
+           , ALWAYSSHOWBUTTON
+           , HEADERTOOLTIP
+           , MERGE
+           , MAXLENGTH
+           , FOOTEREXPR
+           , FOOTERALIGN
+           , FOOTERSTYLE
+           , FOOTERPRE
+           , FOOTERPOST
+           , RESIZABLE
+        FROM SM_DEV_GRID_COLS
+       WHERE SYS_ID = #{sysId}
+         AND PGM_CODE = #{pgmCode}
+         AND GRID_ID = #{gridId}
+    ORDER BY GRID_ID, FIELD_SEQ, SEQ
+
+    <!-- <update_table>SM_DEV_GRID_COLS</update_table>
+
+    <column name='UPDATE_TYPE'      type='char' updatable='Y' iskeycol='N' />
+    <column name='UPDATABLE'        type='char' updatable='Y' iskeycol='N' />
+    <column name='UPDATE_ISKEY'     type='char' updatable='Y' iskeycol='N' />
+    <column name='SYS_ID'           type='char' updatable='Y' iskeycol='Y' />
+    <column name='PGM_CODE'         type='char' updatable='Y' iskeycol='Y' />
+    <column name='GRID_ID'          type='char' updatable='Y' iskeycol='Y' />
+    <column name='SEQ'              type='char' updatable='Y' iskeycol='Y' />
+    <column name='FIELD_SEQ'        type='char' updatable='Y' iskeycol='N' />
+    <column name='FIELDNAME'        type='char' updatable='Y' iskeycol='N' />
+    <column name='TABLE_NAME'       type='char' updatable='Y' iskeycol='N' />
+    <column name='WIDTH'            type='char' updatable='Y' iskeycol='N' />
+    <column name='MUST_INPUT'       type='char' updatable='Y' iskeycol='N' />
+    <column name='VISIBLE'          type='char' updatable='Y' iskeycol='N' />
+    <column name='READONLY'         type='char' updatable='Y' iskeycol='N' />
+    <column name='EDITABLE'         type='char' updatable='Y' iskeycol='N' />
+    <column name='SORTABLE'         type='char' updatable='Y' iskeycol='N' />
+    <column name='HEADER'           type='char' updatable='Y' iskeycol='N' />
+    <column name='HEADER_TEXT'      type='char' updatable='Y' iskeycol='N' />
+    <column name='STYLES'           type='char' updatable='Y' iskeycol='N' />
+    <column name='EDITOR'           type='char' updatable='Y' iskeycol='N' />
+    <column name='FREEFORM_RATE'    type='char' updatable='Y' iskeycol='N' />
+    <column name='LOOKUPDISPLAY'    type='char' updatable='Y' iskeycol='N' />
+    <column name='RENDERER'         type='char' updatable='Y' iskeycol='N' />
+    <column name='BUTTON'           type='char' updatable='Y' iskeycol='N' />
+    <column name='ALWAYSSHOWBUTTON' type='char' updatable='Y' iskeycol='N' />
+    <column name='HEADERTOOLTIP'    type='char' updatable='Y' iskeycol='N' />
+    <column name='MERGE'            type='char' updatable='Y' iskeycol='N' />
+    <column name='MAXLENGTH'        type='char' updatable='Y' iskeycol='N' />
+    <column name='FOOTEREXPR'       type='char' updatable='Y' iskeycol='N' />
+    <column name='FOOTERALIGN'      type='char' updatable='Y' iskeycol='N' />
+    <column name='FOOTERSTYLE'      type='char' updatable='Y' iskeycol='N' />
+    <column name='FOOTERPRE'        type='char' updatable='Y' iskeycol='N' />
+    <column name='FOOTERPOST'       type='char' updatable='Y' iskeycol='N' />
+    <column name='RESIZABLE'        type='char' updatable='Y' iskeycol='N' /> -->
+
+  </select>
+
+
+  <select id="SM900002_GRIDSRC"  parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900040">
+      SELECT M.SYS_ID
+           , M.PGM_CODE
+           , M.GRID_ID
+           , M.SEQ
+           , M.FIELD_SEQ
+           , M.FIELDNAME
+           , M.TABLE_NAME
+           , M.WIDTH
+           , M.MUST_INPUT
+           , M.VISIBLE
+           , M.READONLY
+           , M.EDITABLE
+           , M.SORTABLE
+           , M.HEADER
+           , M.HEADER_TEXT
+           , M.STYLES
+           , M.EDITOR
+           , M.LOOKUPDISPLAY
+           , M.RENDERER
+           , M.BUTTON
+           , M.ALWAYSSHOWBUTTON
+           , M.HEADERTOOLTIP
+           , M.MERGE
+           , M.MAXLENGTH
+           , M.FOOTEREXPR
+           , M.FOOTERALIGN
+           , M.FOOTERSTYLE
+           , M.FOOTERPRE
+           , M.FOOTERPOST
+           , M.RESIZABLE
+           , M.FREEFORM_RATE
+        FROM SM_DEV_GRID_COLS M INNER JOIN (SELECT B.SYS_ID, B.PGM_CODE, B.GRID_ID, B.SEQ, B.FIELDNAME, B.MATCHING_POINT
+                           , RANK() OVER (PARTITION BY B.FIELDNAME ORDER BY B.MATCHING_POINT DESC, B.PGM_CODE DESC, B.GRID_ID ASC) AS RK
+                          FROM (SELECT A.SYS_ID, A.PGM_CODE, A.GRID_ID, A.SEQ, A.FIELDNAME
+                                   , SUM(CASE WHEN A.SYS_ID=#{sysId} THEN 10 ELSE 1 END) -- AS POINT_SYS
+                               + SUM(CASE WHEN A.PGM_CODE=#{pgmCode} THEN 10 ELSE 1 END) -- AS POINT_PGM
+                               + SUM(CASE WHEN SUBSTR(A.PGM_CODE, 1, 4)=SUBSTR(#{pgmCode}, 1, 4) THEN 10 ELSE 1 END) -- AS POINT_DEPTH2
+                               + SUM(CASE WHEN SUBSTR(A.PGM_CODE, 1, 6)=SUBSTR(#{pgmCode}, 1, 6) THEN 10 ELSE 1 END) AS MATCHING_POINT -- AS POINT_DEPTH3
+                              FROM SM_DEV_GRID_COLS A
+                             WHERE INSTR(#{cols}, '@'||A.FIELDNAME||'@') > 0
+                            GROUP BY A.SYS_ID, A.PGM_CODE, A.GRID_ID, A.SEQ, A.FIELDNAME) B ) N ON M.SYS_ID = N.SYS_ID
+                                                                                               AND M.PGM_CODE = N.PGM_CODE
+                                                             AND M.GRID_ID = N.GRID_ID
+                                                             AND M.SEQ = N.SEQ
+      WHERE N.RK = 1
+
+  </select>
+
+  <select id="DEV_GRID"  parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900040">
+	SELECT SYS_ID,
+	       PGM_CODE,
+	       GRID_ID,
+	       SQL_FILE,
+	       SQL_ID,
+	       UPDATE_TABLE
+	  FROM SM_DEV_GRID
+	 WHERE SYS_ID = #{sysId}
+	   AND PGM_CODE = #{pgmCode}
+	   AND GRID_ID = #{gridId}
+
+  </select>
+
+  <select id="DEV_GRID_UPDATE"  parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900040">
+    MERGE INTO SM_DEV_GRID A
+    USING (SELECT #{sysId} AS SYS_ID, #{pgmCode} AS PGM_CODE, #{gridId} AS GRID_ID, #{sqlFile} AS SQL_FILE, #{sqlId} AS SQL_ID, #{updateTable} AS UPDATE_TABLE FROM DUAL ) B
+       ON (A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE AND A.GRID_ID = B.GRID_ID)
+     WHEN MATCHED THEN
+          UPDATE SET A.SQL_FILE = B.SQL_FILE, A.SQL_ID = B.SQL_ID, A.UPDATE_TABLE = B.UPDATE_TABLE
+     WHEN NOT MATCHED THEN
+          INSERT (A.SYS_ID, A.PGM_CODE, A.GRID_ID, A.SQL_FILE, A.SQL_ID, A.UPDATE_TABLE) VALUES (B.SYS_ID, B.PGM_CODE, B.GRID_ID, B.SQL_FILE, B.SQL_ID, B.UPDATE_TABLE)
+
+  </select>
+
+
+  <select id="DEV_COLUMN_LIST"  parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900040">
+      SELECT '' AS FIELDNAME
+           , '' AS FIENDTITLE
+           , '' AS ACTION
+           , '' AS EDITOR
+        FROM DUAL
+
+  </select>
+
+  
+  <select id="PROC_SAVE"  parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900040">
+      EXEC SP_SM_DEV_FREEFORM (#{pgm}, #{title}, #{cols}, #{ff}, #{user}, #{ip})
+  </select>
+
+
+  <select id="DEV_FREEFORM"  parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM900040">
+	  SELECT TO_CHAR(ROW_INPUT_DATE, 'yyyy.mm.dd HH24:MI:SS') AS SAVED_DATE
+	       , PGM_CODE
+	       , GRID_ID
+	       , FF_TITLE
+	       , FF_COLUMNS
+	       , FF_OBJECT
+	       , FF_ID
+	    FROM SM_DEV_FREEFORM
+	   WHERE ((#{pgmCode}='' AND PGM_CODE IS NULL) 
+	       OR PGM_CODE = #{pgmCode})
+	     AND ((#{gridId}='' AND GRID_ID IS NULL)
+	       OR GRID_ID = #{gridId})
+		ORDER BY FF_ID DESC
+
+  </select>
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SmCodeIfinfoRepository">
+
+	<!-- R_SM_CODE_IFINFO_01 WebService|웹서비스호출 -->
+	<select id="RSMCODEIFINFO01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCodeIfinfo">
+	/* com.neofect.gts.services.sm.repository.SmCodeIfinfoRepository.RSMCODEIFINFO01*/
+		<![CDATA[
+			SELECT 
+				master.dbo.dec_char_sel('0','ACN',IF_IP) AS VALUE
+			
+			FROM 
+				SM_CODE_IFINFO
+			
+			WHERE 
+				IF_SYS = #{ifSys} 
+			AND 
+				USE_YESNO = 'Y'
+			
+			ORDER BY 
+				SORT_ORDER
+		]]>
+	</select>
+
+	<!-- R_SM_CODE_IFINFO_02 WebService|웹서비스호출 -->
+	<select id="RSMCODEIFINFO02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCodeIfinfo">
+	/* com.neofect.gts.services.sm.repository.SmCodeIfinfoRepository.RSMCODEIFINFO02 */
+		<![CDATA[
+			SELECT 
+				master.dbo.dec_char_sel('0','ACN',IF_IP) AS VALUE
+			FROM 
+				SM_CODE_IFINFO
+			WHERE 
+				IF_SYS = #{ifSys}
+			AND 
+				IF_CODE = #{ifCode}
+			AND 
+				USE_YESNO = 'Y'
+			ORDER BY 
+				SORT_ORDER
+		]]>
+	</select>
+
+	
+</mapper>

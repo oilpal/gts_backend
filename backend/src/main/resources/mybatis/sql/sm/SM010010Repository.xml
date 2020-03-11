@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM010010Repository">
+
+	<!-- CENTER_INFO -->
+	<select id="CENTERINFO" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM010010">
+	/* com.neofect.gts.services.sm.repository.SM010010Repository.CENTERINFO */
+		<![CDATA[
+	   	 SELECT 
+	   	 		   A.CENTER_CODE,
+			       A.CENTER_NAME,
+			       A.VENDOR_NO,
+			       A.REPRET_NAME,
+			       A.POST_CODE,
+			       A.ADDRESS1,
+			       A.ADDRESS2,
+			       A.REPORT_DIV,
+			       A.TAX_MANAGE_NO,
+			       A.MAIN_PHONENO,
+			       A.MAIN_FAXNO,
+			       A.MAIN_EMAIL,
+			       A.ESTAB_YEAR,
+			       A.HOMEPAGE_URL
+			  FROM CENTER_INFO A
+			 WHERE A.CENTER_NAME LIKE #{itemMame}
+			 ORDER BY A.CENTER_CODE 
+
+		]]>
+		<!-- <update_table>CENTER_INFO</update_table>
+     
+     <column name='CENTER_CODE'   type='char' updatable='Y' iskeycol='Y' />
+     <column name='CENTER_NAME'   type='char' updatable='Y' iskeycol='N' />
+     <column name='VENDOR_NO'     type='char' updatable='Y' iskeycol='N' />
+     <column name='REPRET_NAME'   type='char' updatable='Y' iskeycol='N' />
+     <column name='POST_CODE'     type='char' updatable='Y' iskeycol='N' />
+     <column name='ADDRESS1'      type='char' updatable='Y' iskeycol='N' />
+     <column name='ADDRESS2'      type='char' updatable='Y' iskeycol='N' />
+     <column name='REPORT_DIV'    type='char' updatable='Y' iskeycol='N' />
+     <column name='TAX_MANAGE_NO' type='char' updatable='Y' iskeycol='N' />
+     <column name='MAIN_PHONENO'  type='char' updatable='Y' iskeycol='N' />
+     <column name='MAIN_FAXNO'    type='char' updatable='Y' iskeycol='N' />
+     <column name='MAIN_EMAIL'    type='char' updatable='Y' iskeycol='N' />
+     <column name='ESTAB_YEAR'    type='char' updatable='Y' iskeycol='N' />
+     <column name='HOMEPAGE_URL'  type='char' updatable='Y' iskeycol='N' /> -->
+	
+	</select>
+
+</mapper>

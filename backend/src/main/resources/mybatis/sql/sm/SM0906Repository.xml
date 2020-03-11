@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM0906Repository">
+<!-- 사용자등록 -->
+    <select id="Z_USER_C01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0906">
+        SELECT    A.COMPCODE
+                , A.USER_DIV
+                , A.CUST_CODE
+                , B.CUST_NAME
+                , A.EMPNAME
+                , A.LOGINID
+                , A.GROUP_ID
+                , SUBSTR(A.PASSWORD, 1,4)||'******' AS PASSWORD2
+                , A.PASSWORD
+                , A.USINGTAG
+                , A.TELNUMBER
+                , A.MOBILE
+                , A.EMAIL
+                , A.MESSENGER_DIV
+                , A.JIK_GUB
+                , A.PAGE_TAG
+        FROM    Z_USER A
+        LEFT OUTER JOIN BM_CODE_CUST B
+        ON A.CUST_CODE = B.CUST_CODE
+        WHERE A.COMPCODE = #{companyCode}
+        AND     (A.EMPNAME LIKE #{empname} || '%' OR A.LOGINID LIKE #{empname} || '%')
+        AND     A.USER_DIV LIKE #{userDiv}
+        ORDER BY A.USER_DIV ASC, A.EMPNAME ASC
+
+    </select>
+
+    <select id="BM_COMM_DETAIL_R01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0906">
+        SELECT  A.DCODE AS CODE,
+                            A.DNAME AS LABEL
+            FROM        BM_COMM_DETAIL A
+            WHERE HCODE IN ('01', '03')
+        AND USE_YN  = 'Y'
+            ORDER BY A.DCODE
+
+    </select>
+
+
+
+    <select id="SM_AUTH_USER_U01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0906">
+        <![CDATA[
+        UPDATE SM_AUTH_USER
+          SET  LOGIN_TIME = SYSDATE,
+               IP_ADDR  = #{ipAddr}
+         WHERE USER_ID = #{userId}
+        ]]>
+
+    </select>
+
+
+    <select id="R_SM0906_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0906">
+        
+        SELECT   A.COMPANY_CODE,
+                 A.USER_ID,
+                 A.USER_NAME,
+                 A.USER_DESC,
+                 A.USER_PASSWORD,
+                 A.USE_YN,
+                 A.USER_TAG,
+                 A.DEPT_CODE,
+                 B.DEPT_NAME,
+                 A.VENDOR_CODE,
+                 C.VENDOR_NAME,
+                 A.MOBILE_NO,
+                 A.E_MAIL,
+                 A.LOGIN_COUNT,
+                 A.LOGIN_LOCK_YESNO,
+                 A.LOGIN_TIME,
+                 A.LOGOUT_TIME,
+                 A.IP_ADDR,
+                 A.INSPECT_CENTER
+            FROM SM_AUTH_USER A
+            LEFT OUTER JOIN IF_CODE_DEPT B ON A.COMPANY_CODE = B.COMPANY_CODE AND A.DEPT_CODE = B.DEPT_CODE
+            LEFT OUTER JOIN BI_VENDOR C ON A.COMPANY_CODE = C.COMPANY_CODE AND A.VENDOR_CODE = C.VENDOR_CODE
+           WHERE ( A.USER_ID LIKE #{user} + '%' OR
+                   A.USER_NAME LIKE '%' + #{user} + '%')
+             AND ( #{useYn}='%' OR A.USE_YN = #{useYn} )
+             AND ( #{userTag}='%' OR A.USER_TAG = #{userTag} )
+             AND A.USER_TAG != '4'
+         ORDER BY A.USER_ID, A.USER_NAME
+        
+    </select>
+
+
+    <select id="R_SM050500_02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0906">
+         SELECT DISTINCT A.VENDOR_CODE AS CODE
+              , B.VENDOR_NAME AS LABEL
+         FROM SM_AUTH_USER A
+                        LEFT OUTER JOIN BI_VENDOR B ON A.COMPANY_CODE = B.COMPANY_CODE
+                                                                         AND A.VENDOR_CODE  = B.VENDOR_CODE
+          WHERE A.COMPANY_CODE = #{companyCode}
+            AND VENDOR_NAME IS NOT NULL
+        ORDER BY A.VENDOR_CODE
+
+    </select>
+
+        <select id="R_SM050500_03" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0906">
+        
+         SELECT DISTINCT A.VENDOR_CODE AS CODE
+              , B.VENDOR_NAME AS LABEL
+         FROM SM_AUTH_USER A
+                        LEFT OUTER JOIN BI_VENDOR B ON A.COMPANY_CODE = B.COMPANY_CODE
+                                                                         AND A.VENDOR_CODE  = B.VENDOR_CODE
+          WHERE VENDOR_NAME LIKE '%' + #{search} + '%'
+            AND A.COMPANY_CODE = #{companyCode}
+            AND VENDOR_NAME IS NOT NULL
+     ORDER BY A.VENDOR_CODE
+
+    </select>
+
+    <!-- 협력업체직원 삭제 usertag -->
+    <select id="R_SM0906_02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0906">
+        <![CDATA[
+          SELECT    DCODE AS CODE
+                    ,     DNAME AS LABEL
+            FROM        SM_COMCODE_D
+            WHERE       HCODE = #{userTag}
+            AND         SYS_ID = #{sysId}
+            AND         DCODE <> '4'
+        ]]>
+    </select>
+</mapper>

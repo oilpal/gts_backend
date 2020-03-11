@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM02020Repository">
+	 <select id="SM02020_C01"  parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM02020">
+
+        SELECT  A.WORK_DATE
+            ,   A.SATURDAY_YN
+            ,   A.SUNDAY_YN
+            ,   A.HOLIDAY_YN
+            ,   A.HOLIDAY_NAME
+            ,   A.WORK_YN
+            ,   A.REMARK  
+        FROM    SM_CODE_CALENDAR    A
+        WHERE   A.WORK_DATE LIKE    #{yyyy}||'%'
+        ORDER BY    A.WORK_DATE
+
+    </select>
+
+</mapper>

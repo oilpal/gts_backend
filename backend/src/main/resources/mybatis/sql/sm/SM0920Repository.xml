@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM0920Repository">
+	<select id="SM0920_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0920">
+	      SELECT  A.COMPANY_CODE,
+	              A.ACT_CODE,
+	              A.ACT_NAME,
+	              A.ACT_TAG1,
+	              A.ACT_TAG2,
+	              A.ACT_TAG3,
+	              A.ACT_TAG4,
+	              A.ACT_TAG5
+	        FROM  SM_AUTH_ACT A
+	  WHERE A.COMPANY_CODE = #{companyCode}
+	     ORDER BY A.COMPANY_CODE, A.ACT_CODE
+	
+	  </select>
+	
+	  <select id="SM0920_02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0920">
+	    SELECT A.COMPANY_CODE,
+	           A.ACT_CODE,
+	           A.USER_ID,
+	           B.USER_NAME,
+	           B.USER_TAG
+	    FROM SM_AUTH_ACT_USER A
+	         LEFT JOIN TABLE(TF_MY_AUTH_USER(#{companyCode}, '%')) B ON (A.USER_ID = B.USER_ID)
+	  WHERE A.COMPANY_CODE = ##{companyCode}
+	    AND A.ACT_CODE = #{actCode}
+	
+	  </select>
+	
+	  <select id="SM0920_03" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0920">
+	       SELECT #AS_COMP# AS COMPANY_CODE
+	            , A.USER_ID AS EMP_NO
+	            , A.USER_NAME AS EMP_NAME
+	            , A.DEPT_CODE
+	            , A.DEPT_NAME
+	            , A.REAL_DEPT_CODE
+	            , A.REAL_DEPT_NAME
+	            , A.GRADE_CODE
+	            , A.GRADE_NAME
+	            , A.DUTY_CODE
+	            , A.DUTY_NAME
+	            , A.JOIN_DATE
+	            , A.RETIRE_DATE
+	            , A.RRN_NO
+	            , A.USER_TAG
+	            , A.USER_TAG_NAME
+	         FROM TABLE(TF_MY_AUTH_USER(#{companyCode},#{find})) A
+	        WHERE A.USER_TAG IN ('01','51')
+	        ORDER BY A.USER_TAG, A.USER_NAME
+	
+	  </select>
+</mapper>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SmAuthSysRepository">
+
+	<!-- C_SM0901_01 -->
+	<select id="CSM090101" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthSys">
+	/* com.neofect.gts.services.sm.repository.SmAuthSysRepository.CSM090101*/
+		<![CDATA[
+			 SELECT 	
+			 		A.SYS_ID,
+				    A.SYS_NAME,
+				 	A.USE_YN,
+			 		A.SORT_ORDER,
+			 		A.SIDEPANEL_YN
+ 	    	 FROM
+ 	    	 		SM_AUTH_SYS A
+		 	ORDER BY A.SORT_ORDER, A.SYS_ID
+		]]>
+		<!-- <update_table>SM_AUTH_SYS</update_table>
+
+		<column name='SYS_ID' type='char' updatable='Y' iskeycol='Y' />
+		<column name='SYS_NAME' type='char' updatable='Y' iskeycol='N' />
+		<column name='USE_YN' type='char' updatable='Y' iskeycol='N' />
+		<column name='SORT_ORDER' type='char' updatable='Y' iskeycol='N' />
+		<column name='SIDEPANEL_YN' type='char' updatable='Y' iskeycol='N' /> -->
+	</select>
+
+	<!-- W_SM0915_01 -->
+	<select id="WSM091501" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthSys">
+	/* com.neofect.gts.services.sm.repository.SmAuthSysRepository.WSM091501*/
+		<![CDATA[
+			SELECT 
+					SYS_ID as code,
+			        SYS_NAME as label
+			FROM 
+					SM_AUTH_SYS
+			WHERE 
+					USE_YN = 'Y'
+			ORDER BY SORT_ORDER, SYS_ID
+		]]>
+	</select>
+
+	<!-- W_SM0915_02 -->
+	<select id="WSM091502" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthSys">
+	/* com.neofect.gts.services.sm.repository.SmAuthSysRepository.WSM091502 */
+		<![CDATA[
+			 SELECT 
+			 		SYS_ID as code,
+			        SYS_NAME as label
+			 FROM 
+			 		SM_AUTH_SYS
+			 WHERE 
+			 		USE_YN LIKE '%'
+			 ORDER BY SYS_ID
+		]]>
+	</select>
+
+	<!-- R_SM0903_01 -->
+	<select id="RSM090301" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthSys">
+	/* com.neofect.gts.services.sm.repository.SmAuthSysRepository.RSM090301 */
+		<![CDATA[
+			 SELECT 
+			 		A.SYS_ID as code,
+			        A.SYS_NAME as label
+			 FROM 
+			 		SM_AUTH_SYS A
+			 WHERE 
+			 		USE_YN = 'Y'
+			 ORDER BY A.SORT_ORDER, A.SYS_ID
+		]]>
+	</select>
+
+	<!-- SM_AUTH_SYS_R02 -->
+	<select id="SMAUTHSYSR02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthSys">
+	/* com.neofect.gts.services.sm.repository.SmAuthSysRepository.SMAUTHSYSR02 */
+		<![CDATA[
+			SELECT 
+					A.SYS_ID
+		    FROM 
+		    		SM_AUTH_SYS A
+		    WHERE 
+		    		A.SYS_ID = #{sysId}
+		]]>
+	</select>
+
+	<!-- SM_AUTH_SYS_R01 -->
+	<select id="SMAUTHSYSR01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthSys">
+	/* com.neofect.gts.services.sm.repository.SmAuthSysRepository.SMAUTHSYSR01 */
+		<![CDATA[
+			SELECT 
+					SYS_ID AS CODE,
+           			SYS_NAME AS LABEL,
+           			SORT_ORDER,
+			FROM 
+					SM_AUTH_SYS
+			WHERE 
+					USE_YN = 'Y'
+			UNION ALL
+			
+			SELECT 
+					'%',
+			     	'전체',
+			     	0
+			FROM DUAL
+			ORDER BY SORT_ORDER
+		]]>
+	</select>
+
+</mapper>

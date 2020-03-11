@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM0915Repository">
+    <select id="SM0915_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0915">
+        SELECT #{companyCode} AS COMPANY_CODE,
+             A.USER_ID,
+             A.USER_NAME,
+             A.GRADE_CODE,
+             A.GRADE_NAME,
+             A.USER_TAG,
+             A.USER_TAG_NAME,
+             A.DEPT_CODE,
+             A.DEPT_NAME,
+             A.USE_YN,
+             A.LOGIN_TIME,
+             A.LOGOUT_TIME,
+             A.DUTY_NAME
+        FROM TABLE(TF_MY_AUTH_USER(#{companyCode},#{find})) A
+        WHERE NVL(A.USE_YN,'Y') LIKE #{useYn}
+        AND NVL(A.USER_TAG,'%') LIKE #{userTag}
+        AND ( 1 = #{type}# OR A.USER_ID in (SELECT USER_ID FROM SM_AUTH_USER_MENU AA INNER JOIN SM_AUTH_PGMCODE BB
+                                                                                    ON AA.SYS_ID = BB.SYS_ID
+                                                                                    AND AA.PGM_CODE = BB.PGM_CODE
+                                                            WHERE AA.COMPANY_CODE = #{companyCode} 
+                                                            AND  X_SEARCH('Y',AA.AUTH_I,AA.AUTH_R,AA.AUTH_D,AA.AUTH_P,AA.AUTH_E) = 'Y'))         
+        ORDER BY A.USER_TAG, A.USER_NAME
+
+    </select>
+
+    <select id="SM0915_02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0915">
+        SELECT #{companyCode} AS COMPANY_CODE
+                , #{userId} AS USER_ID
+                , B.SYS_ID
+                , B.PGM_CODE
+                , B.SORT_CODE AS MENU_CODE
+                , B.PGM_NAME AS MENU_NAME
+                , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_I, 'N') END AS  AUTH_I
+                , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_R, 'N') END AS  AUTH_R
+                , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_D, 'N') END AS  AUTH_D
+                , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_P, 'N') END AS  AUTH_P
+                , CASE WHEN B.LAST_MENU_YN = 'N'  THEN 'N'  ELSE NVL(A.AUTH_E, 'N') END AS  AUTH_E
+                , B.MENU_LEVEL AS LEV
+                , (CASE WHEN A.PGM_CODE IS NULL THEN 'Y' ELSE 'N' END) AS NEW_MODE
+             FROM TABLE(TF_MY_PGMCODE_ALL(#{companyCode}, #{sysId}))  B
+                          LEFT JOIN  SM_AUTH_USER_MENU A ON ( #{companyCode} = A.COMPANY_CODE AND #{userId} = A.USER_ID AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE)
+            WHERE  (B.PGM_NAME    LIKE '%' || #{pgmCode}  || '%' OR B.PGM_CODE LIKE '%' || #{pgmCode} || '%')
+        ORDER BY B.SORT_CODE, B.PGM_CODE
+
+    </select>
+</mapper>

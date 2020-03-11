@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SmCodeTaxofficeRepository">
+
+	<!-- SM_CODE_TAXOFFICE_R01 -->
+	<select id="SMCODETAXOFFICER01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCodeTaxoffice">
+	/* com.neofect.gts.services.sm.repository.SmCodeTaxofficeRepository.SMCODETAXOFFICER01*/
+		<![CDATA[
+			SELECT 
+					TAX_OFFICE_CODE AS CODE
+					,TAX_OFFICE_NAME AS LABEL
+			FROM 
+					SM_CODE_TAXOFFICE
+			ORDER BY TAX_OFFICE_NAME ASC
+		]]>
+		
+	</select>
+	
+	
+</mapper>

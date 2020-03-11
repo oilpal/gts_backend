@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SmAuthUserRepository">
+
+	<!-- C_SM0905_01 사용자 등록-->
+	<select id="CSM090501" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser">
+	/* com.neofect.gts.services.sm.repository.SmAuthUserRepository.CSM090501*/
+		<![CDATA[
+			  SELECT A.COMPANY_CODE,
+             A.USER_ID,
+             S.USER_NAME,
+             DECODE(#AS_USER_TAG#,'1', S.GRADE_CODE,'2',A.POS_CODE) AS POS_CODE,
+             DECODE(#AS_USER_TAG#,'1', S.DUTY_CODE,'2',A.JOB_CODE) AS JOB_CODE,
+             A.USER_DESC,
+             A.USE_YN,
+             A.USER_TAG,
+             DECODE(#AS_USER_TAG#,'1', S.DEPT_CODE,'2',A.DEPT_CODE) AS DEPT_CODE,
+             B.DEPT_NAME,
+             DECODE(#AS_USER_TAG#,'9',C.CUST_CODE, A.VENDOR_CODE) AS VENDOR_CODE,
+             C.CUST_NAME,
+             A.MOBILE_NO,
+             A.E_MAIL,
+             A.LOGIN_COUNT,
+             A.LOGIN_LOCK_YESNO,
+             A.LOGIN_TIME,
+             A.LOGOUT_TIME,
+             A.PASSWORD_UPDATE,
+             S.RRN_NO,
+             A.LOGIN_ID,
+             S.JOIN_DATE,
+             S.RETIRE_DATE ,
+             A.PUBLIC_EMAIL ,
+             A.STD_CODE ,
+			 D.PGM_NAME
+        FROM SM_AUTH_USER A
+        	 INNER JOIN TABLE(TF_MY_AUTH_USER(#AS_COMP#,#AS_FIND#)) S ON (A.USER_ID=S.USER_ID)
+        	 LEFT OUTER JOIN SM_CODE_DEPT B ON (A.COMPANY_CODE = B.COMPANY_CODE AND S.DEPT_CODE = B.DEPT_CODE)
+          	 LEFT OUTER JOIN SM_CODE_CUST C ON DECODE(#AS_USER_TAG#,'9', A.USER_ID,A.VENDOR_CODE) = C.CUST_CODE
+        	 LEFT OUTER JOIN SM_AUTH_PGMCODE D ON A.STD_CODE = D.PGM_CODE
+      WHERE NVL(A.USE_YN,'Y') LIKE #{useYn}
+	  AND NVL(A.USER_TAG,'%') LIKE #{userTag}
+ 	  ORDER BY A.USER_TAG, A.USER_NAME
+		]]>
+	
+	</select>
+
+	<!-- C_SM0905_01_2 사용자 등록(전직원)-->
+	<select id="CSM0905012" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser">
+	/* com.neofect.gts.services.sm.repository.SmAuthUserRepository.CSM0905012*/
+		<![CDATA[
+			 SELECT A.COMPANY_CODE,
+             A.USER_ID,
+             nvl(S.EMP_NAME,A.USER_NAME) AS USER_NAME,
+             S.GRADE_CODE AS POS_CODE,
+             S.DUTY_CODE AS JOB_CODE,
+             S.EMPNAME_ENG AS USER_DESC,
+             A.USE_YN,
+             A.USER_TAG,
+             S.DEPT_CODE,
+             B.DEPT_NAME,
+             A.VENDOR_CODE,
+             C.CUST_NAME,
+             A.MOBILE_NO,
+             A.E_MAIL,
+             A.LOGIN_COUNT,
+             A.LOGIN_LOCK_YESNO,
+             A.LOGIN_TIME,
+             A.LOGOUT_TIME,
+             A.PASSWORD_UPDATE,
+             S.RRN AS RRN_NO,
+             A.LOGIN_ID,
+             TO_DATE(S.JOIN_DATE, 'YYYYMMDD')    AS JOIN_DATE,                                        <!-- 입사일자 -->
+             TO_DATE(S.RETIRE_DATE, 'YYYYMMDD')   AS RETIRE_DATE ,
+             A.PUBLIC_EMAIL,
+             A.STD_CODE ,
+			 D.PGM_NAME
+        FROM SM_AUTH_USER A
+        	 LEFT JOIN HR_PERS_MASTER S ON (A.COMPANY_CODE = S.COMPANY_CODE AND A.USER_ID=S.EMP_NO)
+        	 LEFT OUTER JOIN SM_CODE_DEPT B ON (A.COMPANY_CODE = B.COMPANY_CODE AND S.DEPT_CODE = B.DEPT_CODE)
+          	 LEFT OUTER JOIN SM_CODE_CUST C ON A.VENDOR_CODE = C.CUST_CODE
+        	 LEFT OUTER JOIN SM_AUTH_PGMCODE D ON A.STD_CODE = D.PGM_CODE
+      WHERE NVL(A.USE_YN,'Y') LIKE #{useYn}
+	    AND NVL(A.USER_TAG,'%') LIKE #{userTag}
+	    AND X_SEARCH(#AS_FIND#, A.USER_ID, S.EMP_NAME, A.LOGIN_ID) = 'Y'
+	    AND (A.USER_ID IN ('XADMIN','XINTER') OR S.EMP_NAME IS NOT NULL)
+  		ORDER BY A.USER_TAG, A.USER_NAME
+		]]>
+	
+	</select>
+
+	<!-- C_SM0905_01_3 사용자등록(계약직) -->
+	<!-- TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD')) - FN_GET_LAST_WORK_DATE(#AS_COMP#, A.USER_ID) AS ABSENT_DAY  , -->
+	<select id="CSM0905013" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser">
+	/* com.neofect.gts.services.sm.repository.SmAuthUserRepository.CSM0905013*/
+		<![CDATA[
+		 SELECT
+		 	 A.COMPANY_CODE,
+             A.USER_ID,
+             S.USER_NAME,
+             A.POS_CODE AS POS_CODE,
+             A.JOB_CODE AS JOB_CODE,
+             A.USER_DESC,
+             A.USE_YN,
+             A.USER_TAG,
+             A.DEPT_CODE AS DEPT_CODE,
+             B.DEPT_NAME,
+             A.VENDOR_CODE AS VENDOR_CODE,
+             C.CUST_NAME,
+             A.MOBILE_NO,
+             A.E_MAIL,
+             A.LOGIN_COUNT,
+             A.LOGIN_LOCK_YESNO,
+             A.LOGIN_TIME,
+             A.LOGOUT_TIME,
+             A.PASSWORD_UPDATE,
+             S.RRN_NO,
+             A.LOGIN_ID,
+             S.JOIN_DATE,
+             NULL  AS ABSENT_DAY,
+             A.PUBLIC_EMAIL,
+             A.STD_CODE ,
+			 D.PGM_NAME
+      FROM SM_AUTH_USER A
+        	 INNER JOIN TABLE(TF_MY_AUTH_USER(#{comp},#{find})) S ON (A.USER_ID=S.USER_ID)
+        	 LEFT OUTER JOIN SM_CODE_DEPT B ON (A.COMPANY_CODE = B.COMPANY_CODE AND S.DEPT_CODE = B.DEPT_CODE)
+	         LEFT OUTER JOIN SM_CODE_CUST C ON A.VENDOR_CODE = C.CUST_CODE
+        	 LEFT OUTER JOIN SM_AUTH_PGMCODE D ON A.STD_CODE = D.PGM_CODE
+      WHERE NVL(A.USE_YN,'Y') LIKE #{useYn}
+	  AND NVL(A.USER_TAG,'%') LIKE #{userTag}
+  	  ORDER BY A.USER_TAG, A.USER_NAME
+		]]>
+	
+	</select>
+
+	<!-- C_SM0905_02 사용자등록 -->
+	<select id="CSM090502" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser">
+	/* com.neofect.gts.services.sm.repository.SmAuthUserRepository.CSM090502*/
+		<![CDATA[
+		  SELECT 
+		  		A.COMPANY_CODE,
+			    A.USER_ID,
+				A.SYS_ID,
+				A.PGM_CODE,
+				B.SYS_NAME,
+			    B.SORT_ORDER,
+			    A.AUTH_YN,
+			    A.MASTER_YN,
+			    'N' AS ISNEW
+			  FROM 
+			  		SM_AUTH_USER_MENU A INNER JOIN SM_AUTH_SYS B
+			  ON A.SYS_ID = B.SYS_ID
+			  AND A.PGM_CODE = B.SYS_ID
+			  WHERE A.COMPANY_CODE = #{comp}
+			  AND A.USER_ID = #{user}
+		ORDER BY ISNEW, SYS_ID
+		]]>
+	
+	</select>
+
+	<!-- C_SM0905_03 사용자등록 -->
+	<select id="CSM090503" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser">
+	/* com.neofect.gts.services.sm.repository.SmAuthUserRepository.CSM090503 */
+		<![CDATA[
+		 SELECT 
+		 		A.COMPANY_CODE
+ 				, A.USER_ID
+			    , A.SYS_ID
+			    , A.PGM_CODE
+			    , A.MENU_CODE
+			    , A.MENU_NAME
+			    , A.AUTH_I
+				, A.AUTH_R
+				, A.AUTH_D
+				, A.AUTH_P
+				, A.AUTH_E
+			 FROM SM_AUTH_USER_MENU A LEFT OUTER JOIN SM_AUTH_SYS B
+			 ON A.COMPANY_CODE = B.COMPANY_CODE
+			 AND A.SYS_ID = B.SYS_ID
+			WHERE A.SYS_ID 	= #{sysId}
+		    AND A.USER_ID = #{userId}
+	 		ORDER BY B.SORT_ORDER
+	 				, A.PGM_CODE
+		]]>
+		<!-- <update_table>SM_AUTH_USER_MENU</update_table>
+		<column name='COMPANY_CODE' type='char' updatable='N' iskeycol='Y' />
+		<column name='USER_ID' 			type='char' updatable='N' iskeycol='Y' />
+		<column name='SYS_ID' 			type='char' updatable='N' iskeycol='Y' />
+		<column name='PGM_CODE' 		type='char' updatable='N' iskeycol='Y' />
+		<column name='MENU_CODE' 		type='char' updatable='N' iskeycol='N' />
+		<column name='MENU_NAME' 		type='char' updatable='N' iskeycol='N' />
+		<column name='AUTH_I' 			type='char' updatable='Y' iskeycol='N' />
+		<column name='AUTH_R' 			type='char' updatable='Y' iskeycol='N' />
+		<column name='AUTH_D' 			type='char' updatable='Y' iskeycol='N' />
+		<column name='AUTH_P' 			type='char' updatable='Y' iskeycol='N' />
+		<column name='AUTH_E' 			type='char' updatable='Y' iskeycol='N' /> -->
+	</select>
+
+	<!-- R_SM0905_01 아이디 중복체크 -->
+	<select id="RSM090501" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser">
+	/* com.neofect.gts.services.sm.repository.SmAuthUserRepository.RSM090501*/
+		<![CDATA[
+		 SELECT 	
+		 		A.USER_ID
+ 		 FROM  SM_AUTH_USER A
+ 		 WHERE ( A.COMPANY_CODE = #{comp} )
+  		 AND ( A.USER_ID = #{user} )
+		]]>
+	
+	</select>
+
+	<!-- R_SM0905_02-->
+	<select id="RSM090502" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser">
+	/* com.neofect.gts.services.sm.repository.SmAuthUserRepository.RSM090502*/
+		<![CDATA[
+		SELECT 	A.USER_ID
+ 		FROM  SM_AUTH_USER A
+ 		WHERE ( A.COMPANY_CODE = #{comp} )
+  		AND ( A.LOGIN_ID = #{id} )
+  		AND ( A.USER_ID <> #{user} )
+		]]>
+	
+	</select>
+
+	<!-- R_SM0910_01-->
+	<select id="RSM091001" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser">
+	/* com.neofect.gts.services.sm.repository.SmAuthUserRepository.RSM091001*/
+		<![CDATA[
+		  SELECT 	
+				A.COMPANY_CODE,
+				A.USER_ID,
+				A.USER_NAME,
+				A.USER_DESC,
+				CASE A.USER_TAG  WHEN '1' THEN C.DEPT_NAME ELSE D.VENDOR_NAME END AS REMARKS
+ 		  FROM SM_AUTH_USER A LEFT OUTER JOIN IF_CODE_DEPT C  ON A.COMPANY_CODE = C.COMPANY_CODE AND A.DEPT_CODE = C.DEPT_CODE
+ 		   		  							 LEFT OUTER JOIN BI_VENDOR D  ON A.COMPANY_CODE = D.COMPANY_CODE AND A.VENDOR_CODE = D.VENDOR_CODE
+		  WHERE (A.COMPANY_CODE =  #{comp} )
+ 		  AND ( A.USER_ID LIKE #{user} || '%' OR
+ 		       	 A.USER_NAME LIKE '%' || #{user} || '%')
+ 		  AND A.USE_YN = 'Y'
+		  ORDER BY 1
+		]]>
+	
+	</select>
+
+	<!-- SM_AUTH_USER_R02-->
+	<select id="SMAUTHUSERR02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser">
+	/* com.neofect.gts.services.sm.repository.SmAuthUserRepository.SMAUTHUSERR02*/
+		<![CDATA[
+		  SELECT 	
+		  		'' as SELECT_RETURN,
+  				A.USER_ID,
+				A.USER_NAME,
+				A.USER_DESC,
+				A.MENU_AUTH,
+				B.MENU_AUTH_NAME
+ 		  FROM  SM_AUTH_USER A LEFT OUTER JOIN SM_AUTH_MENU_GROUP B ON A.MENU_AUTH = B.MENU_AUTH
+  		  WHERE (A.USER_ID LIKE #{findstr} || '%' OR
+ 		        A.USER_NAME LIKE '%' || #{findstr} || '%')
+ 		  AND A.USE_YN = 'Y'
+ 		  AND A.USER_ID != #{user}
+		  ORDER BY 1
+		]]>
+	
+	</select>
+
+	<!-- SM_AUTH_USER_U01-->
+	<update id="SMAUTHUSERU01" parameterType="com.neofect.gts.services.sm.domain.SmAuthUser">
+	/* com.neofect.gts.services.sm.repository.SmAuthUserRepository.SMAUTHUSERU01*/
+		<![CDATA[
+		  UPDATE SM_AUTH_USER
+ 		  SET  LOGIN_TIME = SYSDATE,
+ 		  	   IP_ADDR  = #{ip}
+  		 WHERE USER_ID = #{user}
+		]]>
+	
+	</update>
+	
+	<!-- R_SM0906_01-->
+	<select id="RSM090601" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser">
+	/* com.neofect.gts.services.sm.repository.SmAuthUserRepository.RSM090601*/
+		<![CDATA[
+		  SELECT   
+		  		A.COMPANY_CODE,
+        		A.USER_ID,
+        		A.USER_NAME,
+		        A.USER_DESC,
+		        A.USER_PASSWORD,
+		        A.USE_YN,
+		        A.USER_TAG,
+		        A.DEPT_CODE,
+		        B.DEPT_NAME,
+		        A.VENDOR_CODE,
+		        C.VENDOR_NAME,
+		        A.MOBILE_NO,
+		        A.E_MAIL,
+		        A.LOGIN_COUNT,
+		        A.LOGIN_LOCK_YESNO,
+		        A.LOGIN_TIME,
+		        A.LOGOUT_TIME,
+		        A.IP_ADDR,
+		        A.INSPECT_CENTER
+    		FROM SM_AUTH_USER A
+    		LEFT OUTER JOIN IF_CODE_DEPT B ON A.COMPANY_CODE = B.COMPANY_CODE AND A.DEPT_CODE = B.DEPT_CODE
+    		LEFT OUTER JOIN BI_VENDOR C ON A.COMPANY_CODE = C.COMPANY_CODE AND A.VENDOR_CODE = C.VENDOR_CODE
+ 		    WHERE ( A.USER_ID LIKE #{user} || '%' OR
+ 		   	       A.USER_NAME LIKE '%' || #{user} || '%')
+  		    AND ( #{useyn}='%' OR A.USE_YN = #{useyn} )
+  		    AND ( #{tag}='%' OR A.USER_TAG = #{tag} )
+  		    AND A.USER_TAG != '4'
+		    ORDER BY A.USER_ID, A.USER_NAME
+		]]>
+	
+	</select>
+
+	<!-- R_SM0905_02-->
+	<select id="RSM090502" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser">
+	/* com.neofect.gts.services.sm.repository.SmAuthUserRepository.RSM090502*/
+		<![CDATA[
+		  SELECT DISTINCT 
+		  		A.VENDOR_CODE AS CODE
+     		  , B.VENDOR_NAME AS LABEL
+  		 FROM SM_AUTH_USER A
+		 LEFT OUTER JOIN BI_VENDOR B ON A.COMPANY_CODE = B.COMPANY_CODE
+		 AND A.VENDOR_CODE  = B.VENDOR_CODE
+		 WHERE A.COMPANY_CODE = #{comp}
+		 AND VENDOR_NAME IS NOT NULL
+		 ORDER BY A.VENDOR_CODE
+		]]>
+	
+	</select>
+
+	<!-- R_SM0905_03-->
+	<select id="RSM090503" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser">
+	/* com.neofect.gts.services.sm.repository.SmAuthUserRepository.RSM090503*/
+		<![CDATA[
+		  SELECT DISTINCT 
+		  		A.VENDOR_CODE AS CODE
+     		  , B.VENDOR_NAME AS LABEL
+  		 FROM SM_AUTH_USER A
+			  LEFT OUTER JOIN BI_VENDOR B ON A.COMPANY_CODE = B.COMPANY_CODE
+			  AND A.VENDOR_CODE  = B.VENDOR_CODE
+		 WHERE VENDOR_NAME LIKE '%' || #{search} || '%'
+		 AND A.COMPANY_CODE = #{comp}
+		 AND VENDOR_NAME IS NOT NULL
+	 	 ORDER BY A.VENDOR_CODE
+		]]>
+	
+	</select>
+
+	<!-- R_SM0906_02 협력업체직원 삭제 usertag -->
+	<select id="RSM090602" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser">
+	/* com.neofect.gts.services.sm.repository.SmAuthUserRepository.RSM090602*/
+		<![CDATA[
+		 SELECT	
+		 			DCODE AS CODE,	  
+		 			DNAME AS LABEL
+		 FROM 
+		 		SM_COMCODE_D
+		 WHERE 
+	 		HCODE = #{userTag}
+		 AND
+			SYS_ID = #{sysId}
+		 AND
+ 			DCODE <> '4'
+		]]>
+	
+	</select>
+
+	<!-- R_SM010200_01 -->
+	<select id="RSM01020001" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser">
+	/* com.neofect.gts.services.sm.repository.SmAuthUserRepository.RSM01020001*/
+		<![CDATA[
+		 SELECT A.CUST_CODE, A.CUST_TAG, A.CUST_NAME, A.OWNER, A.CONDITION, A.CATEGORY, A.TEL, A.TEL2, A.FAX, A.ZIP,
+						A.ADDR, A.ADDR2, A.HQ_ZIP, A.HQ_ADDR, A.HQ_ADDR2, A.BUSINESS_TYPE, A.VEND_CODE, A.VEND_TYPE, A.VALID_STDATE, A.VALID_ENDATE,
+						A.BANK_CODE, A.BANK_NAME, A.DEPOSIT_NO, A.DEPOSIT_OWNER, A.BUY_CARD_NO, A.JOIN_NO, A.COMPANY_NO, A.CHARGE_NAME, A.BILL_DEPOSIT_NO, A.CUST_GROUP,
+						A.REMARK, A.REGISTER_NO, A.STATUS_CODE, A.OPEN_DATE, A.CLOSING_DATE, A.INPUT_DATE, A.CUST_TAG1, A.CUST_TAG2, A.CUST_TAG3, A.CUST_TAG4,
+						A.CUST_TAG5, A.TAX_OFFICE_CODE, A.ATTACH_DATE, A.DEBT_AMT, A.ATTACH_AMT, A.COMPETENT_COURT, A.ATTACH_END_DATE, A.ATTACH_REASON, A.TAXEMP_DEPT_NAME, A.TAXEMP_NAME,
+						A.TAXEMP_TEL, A.TAXEMP_EMAIL, A.TAXEMP_COM_ID, A.TRADE_TYPE, A.PAY_GROUP, A.EMP_NO, A.BUSINESS_CHK_DATE, A.USE_DEPT, A.EMAIL, A.DEPOSIT_FROMDATE,
+						A.DEPOSIT_TODATE, A.BANK_CODE1, A.BANK_NAME1, A.DEPOSIT_NO1, A.DEPOSIT_OWNER1, A.DEPOSIT_FROMDATE1, A.DEPOSIT_TODATE1, A.BANK_CODE2, A.BANK_NAME2, A.DEPOSIT_NO2,
+						A.DEPOSIT_OWNER2, A.DEPOSIT_FROMDATE2, A.DEPOSIT_TODATE2, A.EBILL_BANK_CODE, A.EBILL_BANK_NAME, A.EBILL_REG_NO, A.EBILL_BANK_CODE1, A.EBILL_BANK_NAME1, A.EBILL_REG_NO1, A.EBILL_BANK_CODE2,
+						A.EBILL_BANK_NAME2, A.EBILL_REG_NO2, A.EBILL_BANK_CODE3, A.EBILL_BANK_NAME3, A.EBILL_REG_NO3, A.AR_BANK_CODE, A.AR_BANK_NAME, A.AR_DEPOSIT_NO, A.AR_LOAN_ACNT_NAME, A.AR_LOAN_FROMDATE,
+						A.AR_LOAN_TODATE, A.AR_LOAN_LIMIT, A.AR_RECOURSE_YN, A.AR_BANK_CODE1, A.AR_BANK_NAME1, A.AR_DEPOSIT_NO1, A.AR_LOAN_ACNT_NAME1, A.AR_LOAN_FROMDATE1, A.AR_LOAN_TODATE1, A.AR_LOAN_LIMIT1,
+						A.AR_RECOURSE_YN1, A.AR_BANK_CODE2, A.AR_BANK_NAME2, A.AR_DEPOSIT_NO2, A.AR_LOAN_ACNT_NAME2, A.AR_LOAN_FROMDATE2, A.AR_LOAN_TODATE2, A.AR_LOAN_LIMIT2, A.AR_RECOURSE_YN2, A.AR_BANK_CODE3,
+						A.AR_BANK_NAME3, A.AR_DEPOSIT_NO3, A.AR_LOAN_ACNT_NAME3, A.AR_LOAN_FROMDATE3, A.AR_LOAN_TODATE3, A.AR_LOAN_LIMIT3, A.AR_RECOURSE_YN3, A.HOLDING_DATE, A.HOLDING_REASON, A.HOLDING_TYPE,
+						A.WCMS_BUSINESS_TYPE, A.USE_YN,
+						A.BANK_USE1, A.BANK_USE2, A.EBILL_BANK_USE1, A.EBILL_BANK_USE2, A.EBILL_BANK_USE3,
+						A.AR_BANK_USE1, A.AR_BANK_USE2, A.AR_BANK_USE3,
+						A.DEPOSIT_NO_CHK1, A.DEPOSIT_NO_CHK2,
+						A.RECEIVE_ZIP, A.RECEIVE_ADDR, A.RECEIVE_ADDR2, A.RECEIVE_EMAIL,
+						A.NATION_CODE, A.SERIAL_NUMBER, A.M_ADDR, A.M_COMP_NAME, A.SERIAL_TAG, A.CUSTOMER_USE, A.RETURN_REMARK, A.BUYR_CORP_NM,
+						'N' as USE_DEPT_C, 'N' as USE_DEPT_P, 'N' as USE_DEPT_F, 'E' as USE_DEPT_E
+		 FROM SM_CODE_CUST A
+		 WHERE (#{custTag}='%' OR A.CUST_TAG = #{custTag})
+		 AND ISNULL(A.USE_YN,'N') LIKE #{useYn}
+		 AND (#{closingYn} ='%' OR (#{closingYn} = 'N' AND A.CUST_TAG IN ('0','1') AND (A.CLOSING_DATE IS NOT NULL AND LENGTH(A.CLOSING_DATE)>0))
+		 OR #{closingYn} = 'Y' AND A.CUST_TAG IN ('0','1') AND (A.CLOSING_DATE IS NULL OR LENGTH(A.CLOSING_DATE)=0))
+		 AND (A.CUST_CODE LIKE '%'+ #{cust} +'%'
+		 OR A.CUST_NAME LIKE '%'+ #{cust} +'%')
+		 AND A.CUSTOMER_USE LIKE #{customerUse}
+		 AND A.EMP_NO LIKE #{empNo}
+		]]>
+	
+	</select>
+
+	<!-- R_SM010200_02 신사고 하이테크 거래처 중복체크 -->
+	<select id="RSM01020002" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser">
+	/* com.neofect.gts.services.sm.repository.SmAuthUserRepository.RSM01020002*/
+		<![CDATA[
+		  SELECT 	
+		  		A.CUST_CODE
+ 		  FROM  
+ 		  		SM_CODE_CUST A
+		]]>
+	
+	</select>
+
+</mapper>

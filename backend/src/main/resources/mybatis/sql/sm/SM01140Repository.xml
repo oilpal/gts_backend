@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM01140Repository">
+	
+<select id="SM01140_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01140">
+    
+          <![CDATA[
+        SELECT A.*  
+              , C.OVAL AS SYSTEM_VERSION
+              , C.ROW_UPDATE_IP AS CU_IP
+        
+          FROM   
+                 (SELECT 
+                            A.COMPANY_CODE
+                          , A.SENSORID
+                          , A.SENSOR_NAME
+                          , A.SENSOR_MODEL
+                          , A.SENSOR_SN
+                          , A.PROJ_CODE
+                          , B.PROJ_NAME
+                          , A.INSTALL_DATE
+                          , A.INSTALL_EMP_NO
+                          , A.INSTALL_PLACE
+                          , A.RETURN_DATE
+                          , A.RETURN_EMP_NO
+                          , NVL(A.TIMER_YN,'N') AS TIMER_YN
+                          , A.DEPT_CODE
+                          , A.REMARKS
+                          , C.LAST_ACTIVE
+                          , C.OVAL AS SYSTEM_VERSION
+                          , C.ROW_INPUT_IP AS CU_IP
+                          , FN_GET_EMPNAME(A.COMPANY_CODE, A.INSTALL_EMP_NO) AS INSTALL_EMP_NAME
+                          , FN_GET_EMPNAME(A.COMPANY_CODE, A.RETURN_EMP_NO) AS RETURN_EMP_NAME
+                          , FN_GET_DEPTNAME(A.COMPANY_CODE, A.DEPT_CODE) AS DEPT_NAME
+                          , A.KEEP_YN
+                          , A.DISCARD_YN
+                       FROM CM_CHECKINOUT_SENSOR A
+                              LEFT JOIN SM_CODE_PROJECT B ON (A.COMPANY_CODE = B.COMPANY_CODE AND A.PROJ_CODE = B.PROJ_CODE)
+                              LEFT JOIN (SELECT CU_ID, MAX(ROW_UPDATE_DATE) AS LAST_ACTIVE
+                                           FROM XM_IO_SYNC_LOG 
+                                          WHERE 'IO_CONFIG' = TYPE
+                                          GROUP BY CU_ID
+                                          )   C 
+                                     ON (A.SENSORID = C.CU_ID )
+                 ) A  LEFT JOIN XM_IO_SYNC_LOG C ON (A.SENSORID = C.CU_ID AND A.LAST_ACTIVE = C.ROW_UPDATE_DATE)         
+          WHERE A.COMPANY_CODE = #{compCode}
+           AND NVL(A.PROJ_CODE,'%')   LIKE  #{projCode}#
+           AND NVL(A.KEEP_YN,'N') = #{keepYn}
+           AND NVL(A.DISCARD_YN,'N') = #{discardYN}
+           AND X_SEARCH(#{find}, A.SENSORID, A.SENSOR_NAME, A.INSTALL_PLACE, A.REMARKS) = 'Y'          
+          ORDER BY A.PROJ_NAME
+
+        ]]>
+    
+  </select>
+
+	<select id="SM01140_02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01140">
+    
+          <![CDATA[
+        SELECT 
+                A.COMPANY_CODE
+                , A.SENSORID               
+                , A.PROJ_CODE
+                , B.PROJ_NAME
+                , A.INSTALL_DATE
+                , A.INSTALL_EMP_NO               
+                , A.RETURN_DATE
+                , A.RETURN_EMP_NO              
+          FROM CM_CHECKINOUT_SENSOR_HIS A
+                    LEFT JOIN SM_CODE_PROJECT B ON (A.COMPANY_CODE = B.COMPANY_CODE AND A.PROJ_CODE = B.PROJ_CODE)                   
+          WHERE A.COMPANY_CODE = #{compCode}
+           AND A.SENSORID = #{sensorid}    
+          ORDER BY A.INSTALL_DATE DESC
+
+        ]]>
+    
+  	</select>
+
+	<select id="R_SM01140_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01140">
+    
+          <![CDATA[
+	       SELECT  COUNT(A.SENSORID)
+	       FROM  CM_CHECKINOUT_SENSOR A
+	       WHERE ( A.COMPANY_CODE = #compCode} )
+	       AND ( A.SENSORID = #{sensorid} )
+
+        ]]>
+    
+  	</select>
+
+</mapper>

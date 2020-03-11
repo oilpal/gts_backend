@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM01050Repository">
+
+	<!-- SM01050_R01 -->
+	<select id="SM01050R01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01050">
+	/* com.neofect.gts.services.sm.repository.SM01050Repository.SM01050R01 */
+	<![CDATA[
+      SELECT	
+      					COMPANY_CODE			-- 1	1	1	N	VARCHAR2 (15 Byte)	회사코드
+					 ,	DEPT_CODE					-- 2	2	2	N	VARCHAR2 (10 Byte)	부서코드
+					 ,	DEPT_NAME					-- 3			N	VARCHAR2 (100 Byte)	부서명
+					 ,	DEPT_ENAME					-- 4			Y	VARCHAR2 (100 Byte)	부서명(영문)
+					 ,	TAX_COMPANY_CODE	-- 5			Y	VARCHAR2 (3 Byte)		세무사업장코드
+					 ,	COST_TAG					-- 6			Y	CHAR (1 Byte)				원가구분
+					 ,	COST_CODE					-- 7			Y	VARCHAR2 (2 Byte)		원가코드
+					 ,	LEVELS						-- 8			Y	NUMBER (1)					레벨코드
+					 ,	LEVEL1						-- 9			Y	VARCHAR2 (10 Byte)	레벨코드1
+					 ,	LEVEL2						-- 10			Y	VARCHAR2 (10 Byte)	레벨코드2
+					 ,	LEVEL3						-- 11			Y	VARCHAR2 (10 Byte)	레벨코드3
+					 ,	SORT_ORDER				-- 12			N	NUMBER (6)	0				정렬순서
+					 ,	USING_TAG					-- 13			N	CHAR (1 Byte)	0			사용유무
+					 ,	OFFICE_CODE				-- 14			Y	VARCHAR2 (3 Byte)		사업장코드
+					 ,	GROUP_CODE				-- 15			Y	VARCHAR2 (2 Byte)		그룹코드
+					 ,	BUDGET_CONTROLTAG	-- 16			Y	VARCHAR2 (1 Byte)		예산유무
+		FROM SM_CODE_DEPT
+		WHERE COMPANY_CODE = #{compCode}
+			   AND (DEPT_CODE LIKE '%' || #{searchString} || '%' OR DEPT_NAME LIKE '%' || #{searchString} || '%')
+			   AND USING_TAG LIKE #{useYn}
+		ORDER BY LEVEL1, nvl(LEVEL2,' '), nvl(LEVEL3,' '), DEPT_CODE, DEPT_NAME
+    ]]>
+<!--     <update_table>SM_CODE_DEPT</update_table>
+    <column name='COMPANY_CODE'   	 type='char' updatable='Y' iskeycol='Y' />
+    <column name='DEPT_CODE'  	 		 type='char' updatable='Y' iskeycol='Y' />
+    <column name='DEPT_NAME'     		 type='char' updatable='Y' iskeycol='N' />
+    <column name='DEPT_ENG'    		 	 type='char' updatable='Y' iskeycol='N' />
+    <column name='TAX_COMPANY_CODE'  type='char' updatable='Y' iskeycol='N' />
+    <column name='COST_TAG'      		 type='char' updatable='Y' iskeycol='N' />
+    <column name='COST_CODE'      	 type='char' updatable='Y' iskeycol='N' />
+    <column name='LEVELS'      			 type='char' updatable='Y' iskeycol='N' />
+    <column name='LEVEL1'      			 type='char' updatable='Y' iskeycol='N' />
+    <column name='LEVEL2'      			 type='char' updatable='Y' iskeycol='N' />
+    <column name='LEVEL3'      			 type='char' updatable='Y' iskeycol='N' />
+    <column name='SORT_ORDER'      	 type='char' updatable='Y' iskeycol='N' />
+    <column name='USING_TAG'      	 type='char' updatable='Y' iskeycol='N' />
+    <column name='OFFICE_CODE'       type='char' updatable='Y' iskeycol='N' />
+    <column name='GROUP_CODE'      	 type='char' updatable='Y' iskeycol='N' />
+    <column name='BUDGET_CONTROLTAG' type='char' updatable='Y' iskeycol='N' /> -->
+
+
+	</select>
+
+	<!-- R_SM01050_DEPT_CODE_MAX -->
+	<select id="RSM01050DEPTCODEMAX" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01050">
+	/* com.neofect.gts.services.sm.repository.SM01050Repository.RSM01050DEPTCODEMAX*/
+	<![CDATA[
+     SELECT NVL(MAX(DEPT_CODE), '000')  AS MAX_CODE
+			  FROM SM_CODE_DEPT
+			 WHERE COMPANY_CODE = #{comp}
+    ]]>
+
+	</select>
+
+</mapper>

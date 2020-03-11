@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SmAuthUser2Repository">
+
+	<!-- S_SM0916_01 SM0916|개인별메뉴권한등록 list왼쪽-->
+	<select id="SSM091601" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser2">
+	/* com.neofect.gts.services.sm.repository.SmAuthUser2Repository.SSM091601*/
+		<![CDATA[
+			SELECT 
+					A.COMPANY_CODE
+          			, A.USER_ID
+          			, A.USER_NAME
+          			, A.USER_DESC
+			 FROM SM_AUTH_USER A
+       		 WHERE (A.COMPANY_CODE =  #{comp} )
+          	 AND ( A.USER_ID LIKE #{user} || '%' OR A.USER_NAME LIKE '%' || #{user} || '%')
+             AND  A.USER_TAG LIKE #{tag} || '%'
+             AND A.USE_YN = 'Y'
+         	 ORDER BY 1 
+		]]>
+	
+	</select>
+
+	<!-- S_SM0916_02 SM0916|개인별메뉴권한등록 setcombo1 -->
+	<select id="SSM091602" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser2">
+	/* com.neofect.gts.services.sm.repository.SmAuthUser2Repository.SSM091602 */
+		<![CDATA[
+			SELECT 
+					PGM_CODE AS CODE
+		       		, PGM_NAME AS LABEL
+		    FROM 
+		    		SM_AUTH_PGMCODE 
+		]]>
+	
+	</select>
+
+	<!-- S_SM0916_03 SM0916|개인별메뉴권한등록 popup필요쿼리 -->
+	<select id="SSM091603" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser2">
+	/* com.neofect.gts.services.sm.repository.SmAuthUser2Repository.SSM091603 */
+		<![CDATA[
+			SELECT 
+					C.USER_GROUP_CODE AS CODE
+		       		, C.USER_GROUP_CODE AS LABEL
+  		    FROM 
+  		    		SM_AUTH_USER_MENU B
+        	LEFT 
+        			OUTER JOIN SM_AUTH_GROUP_USERS C
+          	ON 
+          			B.COMPANY_CODE = C.COMPANY_CODE
+         	AND B.USER_ID = C.USER_ID
+       		WHERE B.COMPANY_CODE = #{comp}
+       	 	AND B.USER_ = #{user}
+		]]>
+	
+	</select>
+
+	<!-- C_SM0916_01 SM0916|개인별메뉴권한등록 list오른쪽 -->
+	<select id="CSM091601" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser2">
+	/* com.neofect.gts.services.sm.repository.SmAuthUser2Repository.CSM091601 */
+		<![CDATA[
+			SELECT 
+					A.COMPANY_CODE  <!-- 회사코드 -->
+	 				, A.USER_ID	      <!-- 유저아이디 -->
+	 				, A.SYS_ID        <!-- 시스템코드 -->
+	 				, A.PGM_CODE      <!-- 프로그램코드 -->
+					, A.MENU_CODE     <!-- 메뉴코드 -->
+	 				, A.MENU_NAME     <!-- 메뉴명 -->
+	 				, A.AUTH_I        <!-- 입력 -->
+	 				, A.AUTH_R        <!-- 조회 -->
+	 				, A.AUTH_D        <!-- 삭제 -->
+	 				, A.AUTH_P        <!-- 출력 -->
+	 				, A.AUTH_E        <!-- 엑셀 -->
+	 				, A.SORT_ORDER    <!-- 정렬순서 -->
+  			 FROM SM_AUTH_USER_MENU A
+ 			 WHERE A.COMPANY_CODE = #{comp}
+ 			 AND A.USER_ID   	LIKE '%' || #{user}	|| '%'
+ 			 AND A.SYS_ID    	LIKE '%' || #{sysid} 	|| '%'
+ 			 AND (A.MENU_NAME 	LIKE '%' || #{pgmcd} 	|| '%' OR A.MENU_CODE LIKE '%' || #{pgmcd} || '%')
+ 		 	 ORDER BY A.MENU_CODE
+		]]>
+	  <!-- <update_table>SM_AUTH_USER_MENU</update_table>
+
+	  <column name='COMPANY_CODE' type='char' updatable='Y' iskeycol='Y' />
+	  <column name='USER_ID'      type='char' updatable='Y' iskeycol='Y' />
+	  <column name='SYS_ID'       type='char' updatable='Y' iskeycol='Y' />
+	  <column name='PGM_CODE'  		type='char' updatable='Y' iskeycol='Y' />
+	  <column name='MENU_CODE' 		type='char' updatable='Y' iskeycol='N' />
+	  <column name='MENU_NAME' 		type='char' updatable='Y' iskeycol='N' />
+	  <column name='AUTH_I' 	 		type='char' updatable='Y' iskeycol='N' />
+	  <column name='AUTH_R' 	 		type='char' updatable='Y' iskeycol='N' />
+	  <column name='AUTH_D' 	 		type='char' updatable='Y' iskeycol='N' />
+	  <column name='AUTH_P' 	 		type='char' updatable='Y' iskeycol='N' />
+	  <column name='AUTH_E' 	 		type='char' updatable='Y' iskeycol='N' />
+ -->	</select>
+
+</mapper>

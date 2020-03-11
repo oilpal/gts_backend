@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM0218Repository">
+	
+	<!-- S_0218_01 -->
+	<select id="S021801" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0218">
+	/* com.neofect.gts.services.sm.repository.SM0218Repository.S021801*/
+		<![CDATA[
+			SELECT A.COMPANY_CODE	
+			  	,B.DEPT_NAME
+			  	,D.DEPT_NAME AS DEPT_NAME2
+			  	,A.EMP_NM			
+			  	,A.WORK_LOC_ID
+			  	,A.POST_NM2			
+			  	,A.SITE_CODE		
+			  	,A.WORK_PART		
+			  	,A.WORK_GROUP		
+			  	,A.WORK_LOC_TEL_NO	
+			  	,A.MOBILE_NO		
+			  	,A.MAIL_ADDR		
+			  	,CASE WHEN A.EMP_STATUS = '1' THEN '재직'
+								WHEN A.EMP_STATUS = '2' THEN '휴직'
+								WHEN A.EMP_STATUS = '3' THEN '퇴직' END AS EMP_STATUS	
+			  	,CONVERT(DATE,A.EMP_YMD,120) AS EMP_YMD	
+			  	,A.REMARK1			
+			  	,A.REMARK2			
+			  	,A.DEPT_CODE		
+		      , CASE WHEN (E.LOCAL_DIV = '1' OR E.LOCAL_DIV IS NULL) AND (A.SITE_CODE = 'AAAAAA' OR A.SITE_CODE IS NULL) THEN '1'
+						 WHEN E.LOCAL_DIV = '2' THEN '3' 
+						 ELSE '2' END AS WORK_PLACE_NUM 
+				  , CASE WHEN (E.LOCAL_DIV = '1' OR E.LOCAL_DIV IS NULL) AND (A.SITE_CODE = 'AAAAAA' OR A.SITE_CODE IS NULL) THEN '본사'
+						 WHEN E.LOCAL_DIV = '2' THEN '해외' 
+						 ELSE '현장' END AS WORK_PLACE
+			  	,A.EMP_ID			
+			  	,A.EMP_ID7			
+			  	,A.POST_CD2			
+		  FROM IF_EMPLOYE_MST A 
+		  LEFT OUTER JOIN IF_CODE_DEPT B 
+  		  ON B.COMPANY_CODE = A.COMPANY_CODE
+		  AND B.DEPT_CODE	 = A.DEPT_CODE
+		  LEFT OUTER JOIN SM_COMCODE_D C 
+		  ON B.DEPT_CODE = C.DCODE
+		  AND C.HCODE     = 'DEPT_CODE'
+		  LEFT OUTER JOIN IF_CODE_DEPT D 
+		  ON A.COMPANY_CODE = D.COMPANY_CODE
+		  AND A.WORK_LOC_ID	 = D.DEPT_CODE
+		  LEFT OUTER JOIN SM_SITE E
+		  ON A.COMPANY_CODE = E.COMPANY_CODE
+		  AND A.SITE_CODE    = E.SITE_CODE
+		 
+		  WHERE A.COMPANY_CODE = #{comp}
+		  AND A.EMP_NM LIKE 		'%' || #{empnm} || '%'
+		  AND nvl(A.POST_CD2,'') LIKE 	'%' || #{postnm2} || '%'  
+		  AND nvl(A.DEPT_CODE,'') LIKE '%' || #{deptnName} || '%' 
+		  AND nvl(A.EMP_STATUS,'') LIKE '%' || #{status} || '%'   
+		  AND nvl(A.WORK_LOC_ID,'') LIKE '%' || #{workLoc} || '%'   
+		  AND (A.WORK_PART = #{workPart} OR #{workPart} = '%')   
+		  AND nvl(A.WORK_GROUP,'') LIKE '%' || #{workGroup} || '%'  
+		  AND ((#{workPlace} = '%') OR (#{workPlace} = '1' 
+		  AND (E.LOCAL_DIV = '1' OR E.LOCAL_DIV IS NULL) 
+		  AND (A.SITE_CODE = 'AAAAAA' OR A.SITE_CODE IS NULL))
+		  OR (#{workPlace} = '2' AND (E.LOCAL_DIV = '1' OR E.LOCAL_DIV IS NULL) 
+		  AND E.SITE_CODE <> 'AAAAAA' AND E.SITE_CODE IS NOT NULL)
+		  OR (#{workPlace} = '3' AND E.LOCAL_DIV = '2' ))
+			 AND DVALUE IS NOT NULL
+			 AND dbo.FN_SM_GET_SITENAMEFULL(A.COMPANY_CODE,A.SITE_CODE) LIKE '%' || #{siteName} || '%'
+			ORDER BY WORK_PLACE_NUM,  A.DEPT_CODE, D.DEPT_CODE,  POST_CD2 ,A.EMP_YMD
+	
+		]]>
+		<!-- <update_table>IF_EMPLOYE_MST</update_table>
+
+		<column name='COMPANY_CODE'					type='char' updatable='N' iskeycol='Y' />
+		<column name='DEPT_NAME'						type='char' updatable='N' iskeycol='N' />
+		<column name='DEPT_NAME2'						type='char' updatable='N' iskeycol='N' />
+		<column name='EMP_NM'								type='char' updatable='N' iskeycol='N' />
+		<column name='WORK_LOC_ID'  				type='char' updatable='N' iskeycol='N' />
+		<column name='POST_NM2'							type='char' updatable='N' iskeycol='N' />
+		<column name='SITE_CODE'						type='char' updatable='Y' iskeycol='N' />
+		<column name='WORK_PART'						type='char' updatable='Y' iskeycol='N' />
+		<column name='WORK_GROUP'						type='char' updatable='Y' iskeycol='N' />
+		<column name='WORK_LOC_TEL_NO'			type='char' updatable='N' iskeycol='N' />
+		<column name='MOBILE_NO'						type='char' updatable='N' iskeycol='N' />
+		<column name='MAIL_ADDR'						type='char' updatable='N' iskeycol='N' />
+		<column name='EMP_STATUS'						type='char' updatable='N' iskeycol='N' />
+		<column name='EMP_YMD'							type='char' updatable='N' iskeycol='N' />
+		<column name='REMARK1'							type='char' updatable='Y' iskeycol='N' />
+		<column name='REMARK2' 							type='char' updatable='Y' iskeycol='N' />
+		<column name='DEPT_CODE'						type='char' updatable='N' iskeycol='N' />
+		<column name='WORK_PLACE_NUM'				type='char' updatable='N' iskeycol='N' />
+		<column name='WORK_PLACE'					  type='char' updatable='N' iskeycol='N' />
+		<column name='EMP_ID'								type='char' updatable='N' iskeycol='Y' />
+		<column name='EMP_ID7'							type='char' updatable='N' iskeycol='N' />
+		<column name='POST_CD2'							type='char' updatable='N' iskeycol='N' /> -->
+	</select>
+
+	<!-- S_0218_02 -->
+	<select id="S021802" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0218">
+	/* com.neofect.gts.services.sm.repository.SM0218Repository.S021802*/
+		<![CDATA[
+			SELECT 
+				POST_CD2 AS CODE
+  		  		,POST_NM2 AS LABEL
+		  	FROM IF_EMPLOYE_MST
+		  	
+		  	WHERE POST_CD2 IS NOT NULL
+		  	
+		  	AND COMPANY_CODE = #{companyCode}
+		  	AND POST_NM2 IS NOT NULL
+		  	AND REPLACE(nvl(POST_NM2,''),' ', '') <> ''
+		    
+		    GROUP BY POST_CD2,POST_NM2
+	
+		]]>
+		
+	</select>
+
+	<!-- S_0218_03 -->
+	<select id="S021803" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0218">
+	/* com.neofect.gts.services.sm.repository.SM0218Repository.S021803*/
+		<![CDATA[
+			SELECT DISTINCT 
+					A.WORK_LOC_ID AS CODE,
+                    B.DEPT_NAME   AS LABEL 
+      		FROM 
+      				IF_EMPLOYE_MST A INNER JOIN IF_CODE_DEPT B
+    	            ON A.COMPANY_CODE = B.COMPANY_CODE
+    				AND A.WORK_LOC_ID  = B.DEPT_CODE
+     		WHERE 
+     				A.COMPANY_CODE = #{companyCode}
+       		AND 
+       				A.WORK_LOC_ID IS NOT NULL
+	
+		]]>
+		
+	</select>
+
+	<!-- S_0218_04 -->
+	<select id="S021804" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0218">
+	/* com.neofect.gts.services.sm.repository.SM0218Repository.S021804*/
+		<![CDATA[
+			SELECT 
+				WORK_LOC_ID AS CODE,
+           		B.DEPT_NAME AS LABEL
+      		FROM 
+      				IF_EMPLOYE_MST A INNER JOIN IF_CODE_DEPT B
+    				ON A.COMPANY_CODE = B.COMPANY_CODE
+    				AND A.WORK_LOC_ID  = B.DEPT_CODE
+     		WHERE 
+     				A.COMPANY_CODE = #{comp}
+	
+		]]>
+		
+	</select>
+
+</mapper>

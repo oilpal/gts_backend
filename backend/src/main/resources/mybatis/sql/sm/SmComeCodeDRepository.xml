@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SmComeCodeDRepository">
+
+	<!-- SM011900_dg_1 -->
+	<select id="SM011900dg1" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmComeCodeD">
+	/* com.neofect.gts.services.sm.repository.SmComeCodeDRepository.SM011900dg1*/
+		<![CDATA[
+			SELECT 
+					DCODE,
+		            DNAME,
+		            DNAME1,
+		            DVALUE,
+		            DVALUE2
+     	    FROM SM_COMCODE_D
+      		/*WHERE HCODE = 'MCPAUTH' AND SYS_ID = 'SM' AND USE_YN = 'Y' AND DVALUE2 = '3'*/
+      		WHERE 
+      				HCODE = #{hcode}
+	      	AND 
+	      			SYS_ID = #{sysid}
+	      	AND 
+	      			USE_YN = #{useyn}
+	      	AND 
+	      			DVALUE2 = #{value2}
+			ORDER BY DVALUE
+		]]>
+	</select>
+
+	<!-- SM_COMCODE_D -->
+	<select id="SMCOMCODED" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmComeCodeD">
+	/* com.neofect.gts.services.sm.repository.SmComeCodeDRepository.SMCOMCODED */
+		<![CDATA[
+			SELECT 
+					A.DCODE AS CODE,
+             		A.DNAME AS LABEL
+	        FROM 	
+	        		SM_COMCODE_D A
+	        WHERE 
+	        		A.USE_YN = 'Y'
+	        AND 
+	        		A.SYS_ID = #{sysid}
+	        AND 
+	        		A.HCODE  = #{hcode}
+	        ORDER BY A.DVALUE, A.DCODE
+		]]>
+	</select>
+
+	<!-- dddw_code -->
+	<select id="dddwcode" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmComeCodeD">
+	/* com.neofect.gts.services.sm.repository.SmComeCodeDRepository.dddwcode */
+		<![CDATA[
+			SELECT 
+					A.DCODE AS CODE,
+             		A.DNAME AS LABEL
+        	FROM 
+        			SM_COMCODE_D A
+       		WHERE 
+       				A.USE_YN = 'Y'
+         	AND 
+         			A.SYS_ID = #{sysId}
+         	AND 
+         			A.HCODE  = #{hcode}
+       		ORDER BY A.DCODE
+		]]>
+	</select>
+
+	<!-- SM_COMCODE_D_W01 -->
+	<select id="SMCOMCODEDW01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmComeCodeD">
+	/* com.neofect.gts.services.sm.repository.SmComeCodeDRepository.SMCOMCODEDW01 */
+		<![CDATA[
+			SELECT 
+					DCODE as code,
+    		        DNAME as label
+   			FROM 
+   					SM_COMCODE_D
+	  		ORDER BY DCODE
+		]]>
+	</select>
+
+	<!-- SM_COMCODE_D_R01 SM010100|공통코드 -->
+	<select id="SMCOMCODEDR01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmComeCodeD">
+	/* com.neofect.gts.services.sm.repository.SmComeCodeDRepository.SMCOMCODEDR01 */
+		<![CDATA[
+			SELECT 
+					A.DCODE as code,
+			        A.DNAME as label
+			FROM 
+					SM_COMCODE_D A
+			WHERE 
+					A.USE_YN = 'Y'
+			AND 
+					A.HCODE = #{fieldValue}
+			AND 
+					A.SYS_ID = #{sysId}
+       		ORDER BY A.DVALUE, A.DCODE
+		]]>
+	</select>
+
+	<!-- SM_COMCODE_D_D01 SM010100|공통코드 -->
+	<delete id="SMCOMCODEDD01" parameterType="com.neofect.gts.services.sm.domain.SmComeCodeD">
+	/* com.neofect.gts.services.sm.repository.SmComeCodeDRepository.SMCOMCODEDD01 */
+		<![CDATA[
+			DELETE
+			FROM 
+					SM_COMCODE_D
+			WHERE 
+					HCODE  = #{lsHcode}
+			AND 
+					SYS_ID = #{lsSysid}
+		]]>
+	</delete>
+
+	<!-- DDLB_BANK_CODE 은행코드 -->
+	<select id="DDLBBANKCODE" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmComeCodeD">
+	/* com.neofect.gts.services.sm.repository.SmComeCodeDRepository.DDLBBANKCODE */
+		<![CDATA[
+			SELECT 
+					A.BANK_CODE AS CODE,
+             		A.BANK_NAME AS LABEL
+        	FROM 
+        			SM_CODE_BANK A
+       		WHERE 
+       				A.USING_TAG = 'Y'
+         	AND 
+         			A.CM_USE_YN = 'Y'
+    		ORDER BY LABEL ASC
+		]]>
+	</select>
+
+	
+</mapper>

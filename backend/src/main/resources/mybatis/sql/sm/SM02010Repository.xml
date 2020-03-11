@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM02010Repository">
+	
+    <select id="SM02010_C01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM02010">
+
+        SELECT  COMPANY_CODE
+            ,   COMPANY_NAME
+            ,   VENDOR_NO
+            ,   USE_YN
+            ,   BDGT_RESULT_YN
+            ,   HR_USE_YN
+            ,   GROUP_DIV
+            ,   VENDOR_NAME
+            ,   REPRESENT_NAME
+            ,   REPRESENT_RRN
+            ,   LEGAL_NO   
+            ,   BIZ_STATUS
+            ,   BIZ_TYPE
+            ,   PHONE
+            ,   ZIP_CODE
+            ,   ADDR1 
+            ,   ADDR2
+            ,   FIRST_S_DATE
+            ,   AM_START_MONTH
+            ,   AM_S_DATE
+            ,   AM_E_DATE
+            ,   SLIP_EVID_CNT_YN
+            ,   TAX_EVID_ISSUE_YN
+            ,   SLIP_PRINT_NAME
+            ,   CHI_ADDR
+            ,   CHI_NAME
+            ,   CHI_REPRESENT
+            ,   INPUT_DUTY_ID
+            ,   INPUT_DATE
+            ,   CHG_DUTY_ID
+            ,   CHG_DATE
+            ,   GROUP_ORDER
+            ,   COMP_ORDER
+            ,   OUTSOURCE_YN
+            ,   COMP_ENAME
+            ,   ADDR1_ENG
+            ,   ADDR2_ENG
+            ,   REPRESENT_ENAME
+            ,   SITE_ADDR
+            ,   GENERAL_ACNT_USE_YN
+            ,   CREDITCARD_VAT_YN
+            ,   PROJECT_COST_YN
+        FROM    SM_CODE_COMPANY
+        WHERE   COMPANY_CODE    LIKE    #{companyCode}
+        AND     COMPANY_NAME    LIKE    #{companyName}
+        ORDER BY    COMPANY_CODE, VENDOR_NO
+
+    </select>
+
+
+
+</mapper>

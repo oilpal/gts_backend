@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM0103Repository">
+
+	<!-- BM_COMM_MASTER_C01 -->
+	<select id="BMCOMMMASTERC01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0103">
+	/* com.neofect.gts.services.sm.repository.SM0103Repository.BMCOMMMASTERC01 */
+	<![CDATA[
+      SELECT  
+      		COMP_CODE
+          	,HCODE
+          	,HNAME
+          	,REMARKS
+      FROM    BM_COMM_MASTER
+      WHERE   COMP_CODE   =     #{comp}
+      AND     HNAME       LIKE  '%' || #{hname} || '%'
+
+    ]]>
+     <!-- <update_table>BM_COMM_MASTER</update_table>
+
+    <column name='COMP_CODE'    type='char' updatable='Y' iskeycol='Y' />
+    <column name='HCODE'        type='char' updatable='Y' iskeycol='Y' />
+    <column name='HNAME'        type='char' updatable='Y' iskeycol='N' />
+    <column name='REMARKS'      type='char' updatable='Y' iskeycol='N' /> -->
+	</select>
+
+	<!-- BM_COMM_DETAIL_C01 -->
+	<select id="BMCOMMDETAILC01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM0103">
+	/* com.neofect.gts.services.sm.repository.SM0103Repository.BMCOMMDETAILC01 */
+	<![CDATA[
+      SELECT  COMP_CODE
+          ,   HCODE
+          ,   DCODE
+          ,   DNAME
+          ,   VALUE1
+          ,   VALUE2
+          ,   VALUE3
+          ,   USE_YN
+          ,   REMARKS
+      FROM    BM_COMM_DETAIL
+      WHERE   COMP_CODE   = #{comp}
+      AND     HCODE       = #{hcode}
+      ORDER BY VALUE3, DCODE
+
+    ]]>
+     <!-- <update_table>BM_COMM_DETAIL</update_table>
+
+    <column name='COMP_CODE'   type='char' updatable='Y' iskeycol='Y' />
+    <column name='HCODE'       type='char' updatable='Y' iskeycol='Y' />
+    <column name='DCODE'       type='char' updatable='Y' iskeycol='Y' />
+    <column name='DNAME'       type='char' updatable='Y' iskeycol='N' />
+    <column name='VALUE1'      type='char' updatable='Y' iskeycol='N' />
+    <column name='VALUE2'      type='char' updatable='Y' iskeycol='N' />
+    <column name='VALUE3'      type='char' updatable='Y' iskeycol='N' />
+    <column name='USE_YN'      type='char' updatable='Y' iskeycol='N' />
+    <column name='REMARKS'     type='char' updatable='Y' iskeycol='N' />
+	 -->
+	</select>
+
+
+</mapper>

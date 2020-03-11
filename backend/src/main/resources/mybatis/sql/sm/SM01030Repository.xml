@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.sm.repository.SM01030Repository">
+
+	<!-- SM01030_01 -->
+	<select id="SM0103001" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SM01030">
+	/* com.neofect.gts.services.sm.repository.SM01030Repository.SM0103001 */
+	<![CDATA[
+      SELECT 
+      						COMPANY_CODE				-- N	VARCHAR2 (15 Byte)		회사코드	None	1	0	1				      	        
+			 			,	VENDOR_NO						-- N	VARCHAR2 (13 Byte)		사업자번호	None	1	0	1				                
+						,	VENDOR_NAME					-- N	VARCHAR2 (30 Byte)		사업자명칭	None	1	0	1				                
+						,	COMPANY_NAME				-- N	VARCHAR2 (30 Byte)		사업장명칭	None	1	0	1				                
+						,	REPRESENT_NAME			-- N	VARCHAR2 (20 Byte)		대표자명	None	1	0	1				                
+						,	REPRESENT_RRN				-- Y	VARCHAR2 (13 Byte)		대표자주민번호	None	0	1	0				              
+						,	BIZ_STATUS					-- Y	VARCHAR2 (30 Byte)		업태	None	0	1	0				                  
+						,	BIZ_TYPE						-- Y	VARCHAR2 (30 Byte)		업종	None	0	1	0				                  
+						,	PHONE								-- Y	VARCHAR2 (12 Byte)		전화번호	None	0	1	0				                
+						,	ZIP_CODE						-- Y	VARCHAR2 (6 Byte)			우편번호	None	0	1	0				                
+						,	ADDR1								-- Y	VARCHAR2 (100 Byte)		주소	None	1	0	1				                  
+						,	ADDR2								-- Y	VARCHAR2 (50 Byte)		번지	None	0	1	0				                  
+						,	FIRST_S_DATE				-- Y	VARCHAR2 (8 Byte)			최초회계시작일자	None	0	1	0				            
+						,	AM_START_MONTH			-- Y	VARCHAR2 (2 Byte)			회계개시월	None	0	1	0				                
+						,	AM_S_DATE						-- Y	VARCHAR2 (8 Byte)			당기회계시작일자	None	0	1	0				            
+						,	AM_E_DATE						-- Y	VARCHAR2 (8 Byte)			당기회계종료일자	None	0	1	0				            
+						,	USE_YN							-- Y	VARCHAR2 (1 Byte)	'Y'	사용여부	None	1	0	1				                
+						,	SLIP_EVID_CNT_YN		-- Y	VARCHAR2 (1 Byte)	'N'	전표:증빙1건여부	None	1	0	1				            
+						,	TAX_EVID_ISSUE_YN		-- Y	VARCHAR2 (1 Byte)	'N'	매출증빙발행관리여부	None	1	0	1				          
+						,	BDGT_RESULT_YN			-- Y	VARCHAR2 (1 Byte)	'N'	예산실적관리여부	None	1	0	1				            
+						,	HR_USE_YN						-- Y	VARCHAR2 (1 Byte)	'Y'	인사사용여부	None	1	0	1				              
+						,	SLIP_PRINT_NAME			-- Y	VARCHAR2 (30 Byte)		전표출력명칭	None	0	1	0				              
+						,	CHI_ADDR						-- Y	VARCHAR2 (100 Byte)		한자_회사주소	None	0	1	0				              
+						,	CHI_NAME						-- Y	VARCHAR2 (100 Byte)		한자_회사명칭	None	0	1	0				              
+						,	CHI_REPRESENT				-- Y	VARCHAR2 (100 Byte)		한자_대표이사	None	0	1	0				              
+						,	PROJECT_YESNO				-- Y	VARCHAR2 (1 Byte)	'Y'	사업코드 사용여부	None	1	0	1				            
+						,	GROUP_DIV						-- Y	VARCHAR2 (3 Byte)			그룹구분	None	0	1	0				                
+						,	INPUT_DUTY_ID				-- Y	VARCHAR2 (12 Byte)		입력담당	None	0	1	0				                
+						,	INPUT_DATE					-- Y	VARCHAR2 (14 Byte)		입력일시	None	0	1	0				                
+						,	CHG_DUTY_ID					-- Y	VARCHAR2 (12 Byte)		변경담당	None	0	1	0				                
+						,	CHG_DATE						-- Y	VARCHAR2 (14 Byte)		변경일시	None	0	1	0				                
+						,	LEGAL_NO						-- Y	VARCHAR2 (13 Byte)		??????	None	0	1	0				              
+						,	COMPANY_CODE2				-- Y	VARCHAR2 (15 Byte)		회사코드2	None	0	1	0				                
+						,	GROUP_ORDER					-- Y	VARCHAR2 (2 Byte)			그룹정렬	None	0	1	0				                
+						,	COMP_ORDER					-- Y	VARCHAR2 (2 Byte)			회사정렬	None	0	1	0				                
+						,	OUTSOURCE_YN				-- Y	VARCHAR2 (1 Byte)	'Y'	급여아웃소싱여부	None	1	0	1				            
+						,	COMP_ENAME					-- Y	VARCHAR2 (200 Byte)		회사명_영문	None	0	1	0				              
+						,	REPRESENT_ENAME			-- Y	VARCHAR2 (50 Byte)		대표자_영문	None	0	1	0				              
+						,	ADDR1_ENG						-- Y	VARCHAR2 (200 Byte)		주소1_영문	None	0	1	0				              
+						,	ADDR2_ENG						-- Y	VARCHAR2 (200 Byte)		주소2_영문	None	0	1	0				              
+						,	GENERAL_ACNT_USE_YN	-- Y	VARCHAR2 (1 Byte)	'Y'	원가부서판관비사용	None	1	0	1				            
+						,	SITE_ADDR						-- Y	VARCHAR2 (300 Byte)		홈사이트주소	None	0	1	0				              
+						,	CREDITCARD_VAT_YN		-- Y	VARCHAR2 (1 Byte)	'Y'	신용카드부가세신고	None	1	0	1				            
+						,	PROJECT_COST_YN			-- Y	VARCHAR2 (1 Byte)	'N'	프로젝트별원가관리	None	1	0	1				            
+						,	GENERAL_TAX_TYPE		-- Y	VARCHAR2 (2 Byte)	'0'		None	1	0	1				                                     
+			FROM SM_CODE_COMPANY                            
+			 WHERE (COMPANY_CODE LIKE #{ccode}
+				 	 OR COMPANY_NAME LIKE '%' || #{ccode} || '%')
+		ORDER BY COMPANY_CODE
+
+    ]]>
+
+<!-- 	<update_table>SM_CODE_COMPANY</update_table>
+		<column name='COMPANY_CODE'					type='char'	updatable='Y' iskeycol='Y' />
+		<column name='VENDOR_NO'						type='char'	updatable='Y' iskeycol='N' />
+		<column name='VENDOR_NAME'					type='char'	updatable='Y' iskeycol='N' />
+		<column name='COMPANY_NAME'					type='char'	updatable='Y' iskeycol='N' />
+		<column name='REPRESENT_NAME'				type='char'	updatable='Y' iskeycol='N' />
+		<column name='REPRESENT_RRN'				type='char'	updatable='Y' iskeycol='N' />
+		<column name='BIZ_STATUS'						type='char'	updatable='Y' iskeycol='N' />
+		<column name='BIZ_TYPE'							type='char'	updatable='Y' iskeycol='N' />
+		<column name='PHONE'								type='char' updatable='Y' iskeycol='N' />
+		<column name='ZIP_CODE'							type='char' updatable='Y' iskeycol='N' />
+		<column name='ADDR1'								type='char' updatable='Y' iskeycol='N' />
+		<column name='ADDR2' 								type='char'	updatable='Y' iskeycol='N' />
+		<column name='FIRST_S_DATE'					type='char' updatable='Y' iskeycol='N' />
+		<column name='AM_START_MONTH'				type='char'	updatable='Y' iskeycol='N' />
+		<column name='AM_S_DATE'						type='char' updatable='Y' iskeycol='N' />
+		<column name='AM_E_DATE'						type='char' updatable='Y' iskeycol='N' />
+		<column name='USE_YN'								type='char'	updatable='Y' iskeycol='N' />
+		<column name='SLIP_EVID_CNT_YN'			type='char'	updatable='Y' iskeycol='N' />
+		<column name='TAX_EVID_ISSUE_YN'		type='char'	updatable='Y' iskeycol='N' />
+		<column name='BDGT_RESULT_YN'				type='char' updatable='Y' iskeycol='N' />
+		<column name='HR_USE_YN'						type='char'	updatable='Y' iskeycol='N' />
+		<column name='SLIP_PRINT_NAME'			type='char' updatable='Y' iskeycol='N' />
+		<column name='CHI_ADDR'							type='char' updatable='Y' iskeycol='N' />
+		<column name='CHI_NAME'							type='char'	updatable='Y' iskeycol='N' />
+		<column name='CHI_REPRESENT'				type='char'	updatable='Y' iskeycol='N' />
+		<column name='PROJECT_YESNO'				type='char'	updatable='Y' iskeycol='N' />
+		<column name='GROUP_DIV'						type='char' updatable='Y' iskeycol='N' />
+		<column name='INPUT_DUTY_ID'				type='char'	updatable='Y' iskeycol='N' />
+		<column name='INPUT_DATE'						type='char' updatable='Y' iskeycol='N' />
+		<column name='CHG_DUTY_ID'					type='char' updatable='Y' iskeycol='N' />
+		<column name='CHG_DATE'							type='char'	updatable='Y' iskeycol='N' />
+		<column name='LEGAL_NO'							type='char'	updatable='Y' iskeycol='N' />
+		<column name='COMPANY_CODE2'				type='char'	updatable='Y' iskeycol='N' />
+		<column name='GROUP_ORDER'					type='char' updatable='Y' iskeycol='N' />
+		<column name='COMP_ORDER'						type='char'	updatable='Y' iskeycol='N' />
+		<column name='OUTSOURCE_YN'					type='char' updatable='Y' iskeycol='N' />
+		<column name='COMP_ENAME'						type='char' updatable='Y' iskeycol='N' />
+		<column name='REPRESENT_ENAME'			type='char'	updatable='Y' iskeycol='N' />
+		<column name='ADDR1_ENG'						type='char'	updatable='Y' iskeycol='N' />
+		<column name='ADDR2_ENG' 						type='char'	updatable='Y' iskeycol='N' />
+		<column name='GENERAL_ACNT_USE_YN' 	type='char' updatable='Y' iskeycol='N' />
+		<column name='SITE_ADDR' 						type='char'	updatable='Y' iskeycol='N' />
+		<column name='CREDITCARD_VAT_YN' 		type='char'	updatable='Y' iskeycol='N' />
+		<column name='PROJECT_COST_YN' 			type='char'	updatable='Y' iskeycol='N' />
+		<column name='GENERAL_TAX_TYPE' 		type='char'	updatable='Y' iskeycol='N' /> -->
+
+	</select>
+
+</mapper>
