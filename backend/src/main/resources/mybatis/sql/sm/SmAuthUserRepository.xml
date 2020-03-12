@@ -312,7 +312,7 @@
 	
 	</select>
 
-	<!-- R_SM0905_02-->
+	<!-- R_SM0905_02 중복으로 인한 주석처리
 	<select id="RSM090502" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser">
 	/* com.neofect.gts.services.sm.repository.SmAuthUserRepository.RSM090502*/
 		<![CDATA[
@@ -328,6 +328,7 @@
 		]]>
 	
 	</select>
+	-->
 
 	<!-- R_SM0905_03-->
 	<select id="RSM090503" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmAuthUser">

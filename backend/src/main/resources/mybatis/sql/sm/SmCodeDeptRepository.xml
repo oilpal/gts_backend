@@ -117,8 +117,8 @@
 		
 	</select>
 
-	<!-- SM_CODE_DEPT_C01 -->
-	<select id="SMCODEDEPTC01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCodeDept">
+	<!-- SM_CODE_DEPT_C01 중복으로 인한 주석처리 -->
+	<!-- <select id="SMCODEDEPTC01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCodeDept">
 	/* com.neofect.gts.services.sm.repository.SmCodeDeptRepository.SMCODEDEPTC01*/
 		<![CDATA[
 		SELECT COMPANY_CODE        
@@ -188,10 +188,10 @@
 			/*ORDER BY NVL(A.LEVEL1,'0'),NVL(A.LEVEL2,'0'), NVL(A.LEVEL3,'0'), A.SORT_ORDER*/
 			ORDER BY SORT_ORDER
 		]]>
-		<!-- <update_table>SM_CODE_DEPT</update_table>
+		<update_table>SM_CODE_DEPT</update_table>
      
     <column name='COMPANY_CODE' 	type='char' updatable='Y' iskeycol='Y' />
-    <column name='DEPT_CODE'			type='char' updatable='Y' iskeycol='Y' /> -->
+    <column name='DEPT_CODE'			type='char' updatable='Y' iskeycol='Y' />
 	</select>
-
+ -->
 </mapper>

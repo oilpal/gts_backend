@@ -468,7 +468,7 @@
 						AND			
 								SITE_CODE LIKE #{site}
 						AND			
-								WORK_DATE BETWEEN CONVERT(DATE, #{date# + '0101') 
+								WORK_DATE BETWEEN CONVERT(DATE, #{date} + '0101') 
 						AND 
 								CONVERT(DATE, #{date} + '1231')
 						
