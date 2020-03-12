@@ -20,6 +20,8 @@ import com.neofect.gts.services.common.domain.Code;
 import com.neofect.gts.services.common.service.CodeService;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @CrossOrigin(origins="*")
@@ -39,14 +41,16 @@ public class CodeResource {
 	 * @throws URISyntaxException
 	 */
 	@ApiOperation(value = "공통 코드 목록" ,notes = "이것은 공통코드를 불러온다.")
+	@ApiImplicitParams({
+        @ApiImplicitParam(name = "sysId", value = "해당코드", required = true, dataType = "string", paramType = "query", defaultValue = ""),
+        @ApiImplicitParam(name = "hcode", value = "그룹코드", required = true, dataType = "string", paramType = "query", defaultValue = ""),
+	})
 	@GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Code>> listCode(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
         if (q == null) {
             q = new HashMap<String,Object>();
         }
         q.put("useYn", "Y");	//사용여부
-        q.put("hcode", "DAY");
-        q.put("sysId", "SM");
         List<Code> codeList = codeService.getSmCommonCodeList(q);
 
         HttpHeaders headers = new HttpHeaders();
