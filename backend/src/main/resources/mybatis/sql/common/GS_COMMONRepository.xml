@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.GS_COMMONRepository">
+	
+	<!-- 최근 계약번호 가져오기 -->
+	<select id="GET_MAX_CONTSEQ" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		<![CDATA[
+
+		SELECT  NVL(MAX(CONT_SEQ),0)
+		FROM    SERVICE_CONTRACT
+		WHERE   CUST_ID     =   #{custId}
+		AND     DEPT_ID     LIKE  #{deptId}
+		AND     CONT_SDATE  <=  LAST_DAY(TO_DATE(#{yymm}||'01'))
+		AND     CONT_EDATE  >=  TO_DATE(#{yymm}||'01')
+		AND     ( CANCEL_DATE IS NULL OR  CANCEL_DATE > TO_DATE(#{yymm}||'01') )
+
+		]]>
+	</select>
+
+
+	<!-- 고객 지사별 비고 수정 -->
+	<update id="CODE_CUSTINDEPT_U01" parameterType="java.util.HashMap">
+
+		UPDATE  CODE_CUSTINDEPT
+		SET     REMARK  = #{remark}
+		WHERE   DEPT_ID = #{deptId}
+		AND     CUST_ID = #{custId}
+
+	</update>
+
+	<!-- 고객 지사별 비고 -->
+	<select id="CODE_CUSTINDEPT_R01" parameterType="java.util.HashMap" resultType="java.lang.String">
+		SELECT  REMARK
+		FROM    CODE_CUSTINDEPT
+		WHERE   DEPT_ID = #{deptId}
+		AND     CUST_ID = #{custId}
+	</select>
+
+
+	<!-- 다음 순번의 고객ID를 반환 -->
+	<select id="NEXT_CUST_ID">
+
+		SELECT SEQ_CUST_ID.NEXTVAL FROM DUAL
+
+	</select>
+
+
+	<!-- 재가요양서비스 월 한도금액 가져오기 ( 등급 입력용 ) -->
+	<select id="GET_CARE_BASIC_AMT" parameterType="com.neofect.gts.services.common.domain.GS_COMMON" resultType="com.neofect.gts.services.common.domain.GS_COMMON">
+
+		SELECT  
+			A.M_LIMIT_AMT,
+			A.REQ_LIMIT_AMT
+		FROM
+			TABLE(FN_GS_GET_CARE_BASIC_AMT(#{level}, #{rate})) A
+
+	</select>
+
+
+	<!-- 각종 마감 체크 -->
+	<select id="CHK_CLOSING" parameterType="com.neofect.gts.services.common.domain.GS_COMMON" resultType="java.lang.Integer">
+
+	  SELECT  COUNT(*)
+	  FROM    CODE_CLOSING
+	  WHERE   YYYYMM  = #{yymm}
+	  AND     DEPT_ID = #{deptId}
+	  AND     (     ( #{col}  = 'gongcloseyn'     AND ( GONGCLOSEYN 		= 'Y' OR  DEPT_GONGCLOSEYN  	= 'Y' )  )
+	            OR  ( #{col}  = 'servicecloseyn'  AND ( SERVICECLOSEYN	= 'Y' OR  DEPT_SERVICECLOSEYN	= 'Y' )  )
+	            OR  ( #{col}  = 'paycloseyn'     	AND ( PAYCLOSEYN			= 'Y' OR  DEPT_PAYCLOSEYN  		= 'Y' )  )
+	            OR  ( #{col}  = 'acntcloseyn'    	AND ( ACNTCLOSEYN			= 'Y' OR  DEPT_ACNTCLOSEYN  	= 'Y' )  )
+	            OR  ( #{col}  = 'sellcloseyn'   	AND ( SELLCLOSEYN			= 'Y' OR  DEPT_SELLCLOSEYN  	= 'Y' )  )
+	            OR  ( #{col}  = 'specialcloseyn'	AND ( SPECIALCLOSEYN	= 'Y' OR  DEPT_SPECIALCLOSEYN	= 'Y' )  )
+	          )
+
+	</select>
+
+
+	<!-- 각종 마감 처리 -->
+	<update id="CODE_CLOSING_U01" parameterType="com.neofect.gts.services.common.domain.GS_COMMON">
+
+		UPDATE	CODE_CLOSING
+		SET			DEPT_GONGCLOSEYN			=	CASE WHEN #{col} = 'gongcloseyn' 		THEN 'Y' 			ELSE DEPT_GONGCLOSEYN END
+					,	DEPT_GONGCLOSEDATE		=	CASE WHEN #{col} = 'gongcloseyn' 		THEN SYSDATE 	ELSE DEPT_GONGCLOSEDATE END
+					,	DEPT_SERVICECLOSEYN		=	CASE WHEN #{col} = 'servicecloseyn' THEN 'Y' 			ELSE DEPT_SERVICECLOSEYN END
+					,	DEPT_SERVICECLOSEDATE	=	CASE WHEN #{col} = 'servicecloseyn' THEN SYSDATE 	ELSE DEPT_SERVICECLOSEDATE END
+					,	DEPT_PAYCLOSEYN				=	CASE WHEN #{col} = 'paycloseyn' 		THEN 'Y' 			ELSE DEPT_PAYCLOSEYN END
+					,	DEPT_PAYCLOSEDATE			=	CASE WHEN #{col} = 'paycloseyn' 		THEN SYSDATE 	ELSE DEPT_PAYCLOSEDATE END
+					,	DEPT_ACNTCLOSEYN			=	CASE WHEN #{col} = 'acntcloseyn' 		THEN 'Y' 			ELSE DEPT_ACNTCLOSEYN END
+					,	DEPT_ACNTCLOSEDATE		=	CASE WHEN #{col} = 'acntcloseyn' 		THEN SYSDATE 	ELSE DEPT_ACNTCLOSEDATE END
+					,	DEPT_SELLCLOSEYN			=	CASE WHEN #{col} = 'sellcloseyn' 		THEN 'Y' 			ELSE DEPT_SELLCLOSEYN END
+					,	DEPT_SELLCLOSEDATE		=	CASE WHEN #{col} = 'sellcloseyn' 		THEN SYSDATE 	ELSE DEPT_SELLCLOSEDATE END
+					,	DEPT_SPECIALCLOSEYN		=	CASE WHEN #{col} = 'specialcloseyn' THEN 'Y' 			ELSE DEPT_SPECIALCLOSEYN END
+					,	DEPT_SPECIALCLOSEDATE	=	CASE WHEN #{col} = 'specialcloseyn' THEN SYSDATE 	ELSE DEPT_SPECIALCLOSEDATE END
+	  WHERE   YYYYMM  = #{yymm}
+	  AND     DEPT_ID = #{deptId}
+
+	</update>
+
+
+	<!-- 서비스 product_id 가져오기 -->
+	<select id="GET_PRODUCT_ID" parameterType="com.neofect.gts.services.common.domain.GS_COMMON" resultType="com.neofect.gts.services.common.domain.GS_COMMON">
+
+		SELECT	NVL(Max(product_id),'')
+		FROM		CODE_PRODUCT
+		WHERE		USE_YN				=	'Y'
+		AND			PRODUCT_CODE	=	#{productCode}
+
+	</select>
+
+
+	<!-- 다음 순번의 서비스ID를 반환 -->
+	<select id="GET_SEQ_S_ID" parameterType="com.neofect.gts.services.common.domain.GS_COMMON" resultType="java.lang.String">
+
+		SELECT SEQ_S_ID.NEXTVAL FROM DUAL
+
+	</select>
+
+
+
+	<!-- SetRemainAmtCalc 사용 -->
+	<select id="SetRemainAmtCalc_R01" parameterType="com.neofect.gts.services.common.domain.GS_COMMON" resultType="com.neofect.gts.services.common.domain.GS_COMMON">
+		SELECT 
+			PROOFFI_DIV 
+		FROM 
+			CODE_PRODUCT 
+		WHERE 
+			PRODUCT_ID = #{productCode}
+	</select>
+
+	<select id="SetRemainAmtCalc_R02" parameterType="com.neofect.gts.services.common.domain.GS_COMMON" resultType="com.neofect.gts.services.common.domain.GS_COMMON">
+		SELECT
+			APP_RATE_DIV 
+		FROM 
+			SERVICE_CONTRACT 
+		WHERE 
+			CUST_ID = #{custId} 
+			AND #{date} BETWEEN CONT_SDATE 
+			AND NVL(CANCEL_DATE, CONT_EDATE)
+	</select>
+
+	<select id="SetRemainAmtCalc_R03" parameterType="com.neofect.gts.services.common.domain.GS_COMMON" resultType="com.neofect.gts.services.common.domain.GS_COMMON">
+		SELECT 
+			COMDIV_NAME 
+		FROM 
+			CODE_COMDIV 
+		WHERE 
+			COMSEC_CODE = '0111' 
+			AND COMDIV_CODE = #{comdivCode}
+	</select>
+
+
+</mapper>
