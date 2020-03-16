@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.neofect.gts.services.gs.repository.GS01060Repository">
-	<select id="GS01060_R01" parameterType="com.neofect.gts.services.gs.domain.GS01060" resultType="com.neofect.gts.services.gs.domain.GS01060">
+	<select id="GS01060_R01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.gs.domain.ChargeStatus">
         SELECT 
             A.DEPT_ID,
             A.CUST_ID,
@@ -34,11 +34,10 @@
         WHERE 
             A.DEPT_ID like #{deptId}
             AND A.YYYYMM like #{yyyymm}
-            AND (B.CUST_CODE like #{custCode} or b.CUST_NAME like #{custCode})
         ORDER BY E.DEPT_NAME, B.CUST_NAME
     </select>
 
-    <select id="GS01060_C02" parameterType="com.neofect.gts.services.gs.domain.GS01060" resultType="com.neofect.gts.services.gs.domain.GS01060">
+    <select id="GS01060_C02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.gs.domain.ChargeStatus">
         SELECT  
             A.S_ID,
             A.DEPT_ID,
