@@ -1,0 +1,627 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.CommonRepository">
+
+	<!-- SM_COMCODE_D 공통코드 -->
+	<select id="SM_COMCODE_D" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.SM_COMCODE_D */
+	<![CDATA[
+      SELECT 
+      		A.DCODE AS CODE,
+            A.DNAME AS LABEL
+      FROM 
+      		SM_COMCODE_D A
+      WHERE 
+      		A.SYS_ID = #{sysId}
+      AND 
+      		A.HCODE = #{hcode}
+      AND 
+      		A.USE_YN = 'Y'
+      ORDER BY 
+      		A.DVALUE, A.DCODE
+    ]]>
+	</select>
+
+	<!-- SM_COMCODE_D_DV2 DVALUE2로 데이타 구분 -->
+	<select id="SM_COMCODE_D_DV2" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.SM_COMCODE_D_DV2 */
+	<![CDATA[
+		SELECT 
+				DVALUE2 AS CODE
+           		, DNAME AS LABEL
+        FROM 
+        		SM_COMCODE_D
+        WHERE 
+        		SYS_ID = #{sysId}
+        AND 
+        		HCODE = #{hcode}
+        ORDER BY CODE
+    ]]>
+	</select>
+
+	<!-- SM_COMCODE_D_W 공통코드 -->
+	<select id="SM_COMCODE_D_W" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.SM_COMCODE_D_W */
+	<![CDATA[
+		 SELECT 
+		 		A.DCODE AS CODE,
+             	A.DNAME AS LABEL
+         FROM 
+         		SM_COMCODE_D A
+       	 WHERE 
+       	 		A.SYS_ID = #{sysId}
+         AND 
+         		A.HCODE = #{hcode}
+         AND 
+         		A.USE_YN LIKE #{useyn}
+         AND 
+         		NVL(A.RELATE_CODE1,'%') LIKE #{rcode1}
+         AND 
+         		NVL(A.RELATE_CODE2,'%') LIKE #{rcode2}
+         AND 
+         		NVL(A.RELATE_CODE3,'%') LIKE #{rcode3}
+         ORDER BY A.DVALUE, A.DCODE
+    ]]>
+	</select>
+
+	<!-- SM_CUST_SETCOMBO 거래처 이름 SETCOMBO 용 쿼리-->
+	<select id="SM_CUST_SETCOMBO" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.SM_CUST_SETCOMBO */
+	<![CDATA[
+		SELECT 
+				A.CUST_CODE AS CODE,
+                A.CUST_NAME AS LABEL
+        FROM 
+        		SM_CODE_CUST A
+        WHERE 
+        		USE_YN = 'Y'
+        ORDER BY CUST_ID
+    ]]>
+	</select>
+
+	<!-- W_COMMON_01 공통에서 사용하는 공통코드-->
+	<select id="W_COMMON_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.W_COMMON_01 */
+	<![CDATA[
+		SELECT 
+				DCODE   AS CODE,
+             	DNAME   AS LABEL
+        FROM 
+        		SM_COMCODE_D
+        WHERE 
+        		SYS_ID    = #{sysid}
+        AND 
+        		HCODE     = #{hcode}
+        AND 
+        		USE_YN = 'Y'
+    	ORDER BY DVALUE
+    ]]>
+	</select>
+
+	<!-- W_COMMON_02 공통에서 사용하는 공통코드(사용유무)-->
+	<select id="W_COMMON_02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.W_COMMON_02 */
+	<![CDATA[
+		SELECT 
+				DCODE   AS CODE,
+             	DNAME   AS LABEL
+        FROM 
+        		SM_COMCODE_D
+        WHERE 
+        		SYS_ID = #{sysid}
+        AND 
+        		HCODE = #{hcode}
+        AND 
+        		nvl(USE_YN,'') LIKE #{useyn}
+    	ORDER BY DVALUE
+    ]]>
+	</select>
+
+	<!-- SM_COMM_FILE_COUNT 첨부파일 갯수 -->
+	<select id="SM_COMM_FILE_COUNT" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.SM_COMM_FILE_COUNT */
+	<![CDATA[
+	   SELECT 
+	   		TO_CHAR(COUNT(*))||' 건' AS CNT
+       FROM 
+       		SM_COMM_FILE_DETAIL
+       WHERE 
+       		ATCH_FILE_ID = #{fileId}
+    ]]>
+	</select>
+
+	<!-- DAYS_FOR_MONTH 월의 일자 가져오기 -->
+	<select id="DAYS_FOR_MONTH" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.DAYS_FOR_MONTH */
+	<![CDATA[
+		SELECT CODE, LABEL FROM FN_DAYS_FOR_MONTH(#as_yyyymm#)
+    ]]>
+	</select>
+
+	<!-- MENU_RECENT -->
+	<select id="MENU_RECENT" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.MENU_RECENT */
+	<![CDATA[
+		SELECT 
+				M.SYS_ID,
+		        , M.PGM_CODE,
+		        , M.PGM_NAME,
+		        , M.OPEN_DATE,
+		        , M.OPEN_CNT,
+		        , M.PGM_URL,
+		        , M.PAGE_LINK
+	   FROM (
+	    SELECT A.SYS_ID
+	        ,  A.PGM_CODE
+	        ,  B.PGM_NAME
+	        ,  A.OPEN_DATE
+	        ,  A.OPEN_CNT
+	        ,  B.PGM_URL
+	        ,  B.PAGE_LINK
+	        , A.MENU_SEQ
+	      FROM SM_AUTH_USER_MENU_RECENT A
+	           INNER JOIN SM_AUTH_PGMCODE B
+	              ON (A.COMPANY_CODE = B.COMPANY_CODE AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE)
+	     WHERE A.COMPANY_CODE = #as_company#
+	       AND A.USER_ID = #as_user# ) M
+	  WHERE ROWNUM <= 20
+	ORDER BY M.MENU_SEQ DESC
+    ]]>
+	</select>
+
+	<!-- SM_CUST_VENDOR 협력업체 SETCOMBO 용 쿼리 -->
+	<select id="SM_CUST_VENDOR" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.SM_CUST_VENDOR */
+	<![CDATA[
+		SELECT 
+				B.PROC_CLASS
+                , A.CUST_ID
+                , A.CUST_NAME
+		FROM SM_CODE_CUST A, VW_C_PROC_DIV B
+        WHERE A.CUST_PROC_DIV IS NOT NULL
+        AND A.CUST_PROC_DIV LIKE '%'+B.PROC_DIV+'%'
+        AND B.PROC_CLASS IN ('P40', 'P10','P21','P50','P60','P70','P80','P00')
+        
+        UNION ALL
+        SELECT DISTINCT 
+        		'ALL'
+                , A.CUST_ID
+                , A.CUST_NAME
+		FROM SM_CODE_CUST A
+        WHERE A.CUST_PROC_DIV IS NOT NULL
+        ORDER BY PROC_CLASS, CUST_NAME
+    ]]>
+	</select>
+
+	<!-- SM_CUST_VENDOR_PROC 협력업체 SETCOMBO 용 쿼리 -->
+	<select id="SM_CUST_VENDOR_PROC" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.SM_CUST_VENDOR_PROC */
+	<![CDATA[
+		SELECT 
+				A.CUST_ID AS CODE
+                , A.CUST_NAME AS LABEL
+		FROM 
+				SM_CODE_CUST A, VW_C_PROC_DIV B
+        WHERE 
+        		A.CUST_PROC_DIV IS NOT NULL
+        AND 
+        		A.CUST_PROC_DIV LIKE '%'+B.PROC_DIV+'%'
+        AND 
+        		B.PROC_CLASS LIKE #{procdiv}
+    ]]>
+	</select>
+
+	<!-- AC_ACNT_CODE_FIND 계정과목 찾기 팝업 조회용 쿼리 -->
+	<select id="AC_ACNT_CODE_FIND" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.AC_ACNT_CODE_FIND */
+	<![CDATA[
+		SELECT 
+				A.ACNT_CODE,
+				A.ACNT_NAME,
+				A.ACNT_LEVEL,
+				A.ACNT_GROUP,
+				A.MM_USE_TAG,
+				A.CM_USE_TAG
+		FROM 
+				AC_CODE_ACNT A
+		WHERE 
+				(A.MM_USE_TAG = #{mmUseTag} OR A.CM_USE_TAG = #{cmUseTag})
+		AND 
+				(A.ENTRY_TAG = 'Y')
+		AND 
+				(A.ACNT_NAME LIKE '%' || #{find} || '%'
+		OR 
+				A.ACNT_CODE LIKE #{find} || '%')
+		ORDER BY A.ACNT_CODE
+    ]]>
+	</select>
+
+	<!-- HR_CODE_BANK 공통코드 -->
+	<select id="HR_CODE_BANK" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.HR_CODE_BANK */
+	<![CDATA[
+	  SELECT BANK_CODE CODE, BANK_NAME LABEL
+      FROM SM_CODE_BANK
+      ORDER BY BANK_CODE
+    ]]>
+	</select>
+
+	<!-- CheckSysMaster -->
+	<select id="CheckSysMaster" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.CheckSysMaster */
+	<![CDATA[
+	  SELECT 
+	  		NVL(B.MASTER_YN, 'N') AS MASTER_YN
+      FROM 
+      		SM_AUTH_USER A INNER JOIN SM_AUTH_USER_MENU B
+      ON A.COMPANY_CODE = B.COMPANY_CODE
+      AND A.USER_ID = B.USER_ID
+      WHERE 
+      		A.COMPANY_CODE = #{comp}
+      AND 
+      		A.USER_ID  = #{emp}
+      AND 
+      		B.PGM_CODE = #{sys}
+    ]]>
+	</select>
+
+	<!-- EXCEL_FILE_NUM -->
+	<select id="EXCEL_FILE_NUM" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.EXCEL_FILE_NUM */
+	<![CDATA[
+		SELECT 
+			NVL(MAX(A.FILE_NUM),0) as FILE_NUM,
+	        COUNT(*) AS UPLOAD_CNT
+	    FROM  
+	    	XM_EXCEL_DATA A
+	  	WHERE 
+	  		A.PGM_ID  = #{pgmId}
+	    AND 
+	    	A.USER_ID = #{userId}
+	    AND ROWNUM <= 1
+    ]]>
+	</select>
+
+	<!-- GET_EMAIL -->
+	<select id="GET_EMAIL" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.GET_EMAIL */
+	<![CDATA[
+		 SELECT 
+		 		EMAIL
+	     FROM 
+	     		SM_CODE_CUST
+	   	 WHERE 
+	   	 		CUST_CODE = #{custCode}
+    ]]>
+	</select>
+
+	<!-- SM_USERINFO 공통코드 -->
+	<select id="SM_USERINFO" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.SM_USERINFO */
+	<![CDATA[
+		 SELECT 
+		 		A.COMPANY_CODE,
+             	A.USER_ID,
+             	A.USER_NAME,
+             	A.POS_CODE,
+             	A.USE_YN,
+             	A.USER_TAG,
+             	A.DEPT_CODE,
+             	A.VENDOR_CODE,
+             	A.MOBILE_NO,
+             	A.E_MAIL
+        FROM 
+        		SM_AUTH_USER A
+ 	    WHERE 
+ 	    		A.USER_ID = #{user}
+    ]]>
+	</select>
+
+	<!-- AUTH_ACT_01 -->
+	<select id="AUTH_ACT_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.AUTH_ACT_01 */
+	<![CDATA[
+		 SELECT  
+		 		A.ACT_CODE AS CODE,
+              	A.ACT_NAME AS LABEL
+         FROM  
+         		SM_AUTH_ACT A
+  		 WHERE 
+  		 		A.COMPANY_CODE = #{companyCode}
+    	 AND 
+    	 		A.ACT_TAG1 LIKE #{actTag1}
+     	 ORDER BY A.ACT_CODE
+    ]]>
+	</select>
+
+	<!-- FIRST_SUNDAY -->
+	<select id="FIRST_SUNDAY" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.FIRST_SUNDAY */
+	<![CDATA[
+		SELECT TO_NUMBER(TO_CHAR(FN_SM_GET_FIRST_DAY(#AS_YYYYMM#,'일요일') ,'DD'))
+         FROM DUAL
+    ]]>
+	</select>
+
+	<!-- SM_COMM_FILE_PATH 첨부파일 갯수 -->
+	<select id="SM_COMM_FILE_PATH" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.SM_COMM_FILE_PATH */
+	<![CDATA[
+		SELECT 
+				FILE_STRE_COURS || '\' || STRE_FILE_NM AS FILE_PATH
+         		, FILE_STRE_COURS
+         		, STRE_FILE_NM
+         		, ORIGNL_FILE_NM
+      	FROM 
+      			SM_COMM_FILE_DETAIL
+     	WHERE 
+     			ATCH_FILE_ID = #{fileId}
+        AND 
+        		FILE_SN = #{fileSn}
+    ]]>
+	</select>
+
+	<!-- BM_COMM_DETAIL 원주용 -->
+	<select id="BM_COMM_DETAIL" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.BM_COMM_DETAIL */
+	<![CDATA[
+		SELECT 
+				A.DCODE AS CODE,
+             	A.DNAME AS LABEL
+        FROM 
+        		BM_COMM_DETAIL A
+        WHERE 
+        		A.HCODE = #{hcode}
+        AND 
+        		A.DCODE LIKE #{dcode}
+        AND 
+        		A.USE_YN LIKE #{use}
+        ORDER BY A.DCODE
+    ]]>
+	</select>
+
+	<!-- CODE_COMDIV 그린케어용 -->
+	<select id="CODE_COMDIV" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.CODE_COMDIV */
+	<![CDATA[
+		SELECT 
+				A.COMDIV_CODE AS CODE,
+             	A.COMDIV_NAME AS LABEL
+        FROM 
+        		CODE_COMDIV A
+        WHERE 
+        		A.COMSEC_CODE = #{hcode}
+        AND 
+        		A.USE_YN LIKE #{use}
+        ORDER BY A.PRINT_SEQ, A.COMDIV_CODE
+    ]]>
+	</select>
+
+	<!-- CODE_COMDIV4 그린케어용 -->
+	<select id="CODE_COMDIV4" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.CODE_COMDIV4 */
+	<![CDATA[
+		SELECT 
+				A.COMDIV_CODE AS CODE,
+             	A.COMDIV_NAME AS LABEL
+        FROM 
+        		CODE_COMDIV A
+        WHERE 
+        		A.COMSEC_CODE = #{hcode}
+        AND 
+        		A.USE_YN LIKE #{use}
+        AND ( 
+        		A.COMDIV_CODE = #{in1} OR A.COMDIV_CODE = #{in2} OR A.COMDIV_CODE = #{in3} 
+        	)
+        ORDER BY A.PRINT_SEQ, A.COMDIV_CODE
+    ]]>
+	</select>
+
+	<!-- XM_EXCEL_DATA_D01 엑셀임시파일삭제-->
+	<delete id="XM_EXCEL_DATA_D01" parameterType="com.neofect.gts.services.common.domain.Common" >
+	/* com.neofect.gts.services.common.repository.CommonRepository.XM_EXCEL_DATA_D01 */
+	<![CDATA[
+		DELETE
+	    FROM    
+	    		XM_EXCEL_DATA
+	    WHERE   
+	    		PGM_ID  = #{pgmid}
+	    AND     
+	    		USER_ID = #{userid}
+    ]]>
+	</delete>
+
+	<!-- CODE_DEPT_AUTHORITY_R01 사용자별지사코드 -->
+	<select id="CODE_DEPT_AUTHORITY_R01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.CODE_DEPT_AUTHORITY_R01 */
+	<![CDATA[
+		SELECT  
+				P.DEPT_ID   AS CODE
+      			, DECODE(USE_YN,'N','[미사용]'||P.DEPT_NAME,P.DEPT_NAME)   AS LABEL
+    	FROM  
+    			CODE_DEPT_AUTHORITY   T
+        INNER JOIN  CODE_DEPT P
+        ON  P.DEPT_ID = T.DEPT_ID
+    	WHERE 
+    			T.MEMBER_ID = #{userid}
+    	ORDER BY  
+    			P.USE_YN DESC, 
+    			P.DEPT_NAME
+    ]]>
+	</select>
+
+	<!-- GET_DEPT_NAME 부서명 -->
+	<select id="GET_DEPT_NAME" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.GET_DEPT_NAME */
+	<![CDATA[
+		SELECT  
+				DEPT_NAME
+	    FROM    
+	    		CODE_DEPT
+	    WHERE   
+	    		DEPT_ID = #{dept}
+    ]]>
+	</select>
+
+	<!-- GET_ENC_RRN 주민등록번호 인코딩 -->
+	<select id="GET_ENC_RRN" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.GET_ENC_RRN */
+	<![CDATA[
+		SELECT	X_ENCRYPT(#{rrn}) AS ENC_RRN_NO FROM DUAL
+    ]]>
+	</select>
+
+	<!-- MONTH_INFO 해당월날짜정보 -->
+	<select id="MONTH_INFO" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.MONTH_INFO */
+	<![CDATA[
+		SELECT  
+				TO_CHAR(TO_DATE(#{yymm}||'01'),'d'),
+				TO_CHAR(LAST_DAY(TO_DATE(#{yymm}||'01')),'DD')
+		FROM
+				DUAL
+    ]]>
+	</select>
+
+	<!-- DDLB_CODE_PRODUCT 서비스코드 -->
+	<select id="DDLB_CODE_PRODUCT" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.DDLB_CODE_PRODUCT */
+	<![CDATA[
+		SELECT 
+				PRODUCT_CODE AS CODE,
+				PRODUCT_NAME AS LABEL
+		FROM 
+				CODE_PRODUCT
+		WHERE 
+				PRODUCT_DIV like #{comsec}
+		AND 
+				PSEP_DIV = 'S'
+		AND 
+				USE_YN LIKE #{use}
+    ]]>
+	</select>
+
+	<!-- DDLB_CODE_PRODUCT2 이동서비스명-->
+	<select id="DDLB_CODE_PRODUCT2" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.DDLB_CODE_PRODUCT2 */
+	<![CDATA[
+		SELECT	
+				PRODUCT_CODE AS CODE,
+				PRODUCT_NAME AS LABEL,
+				SALE_AMT
+		FROM	
+				CODE_PRODUCT
+		WHERE	
+				PRODUCT_DIV LIKE #{comsec}
+		AND		
+				PRODUCT_CODE LIKE #{code}
+		AND		
+				USE_YN LIKE	#{use}
+		AND		
+				PSEP_DIV = 'S'
+		ORDER BY PRODUCT_CODE
+    ]]>
+	</select>
+
+	<!-- DDLB_DEPT_DEPOSITNO 무통장입금계좌-->
+	<select id="DDLB_DEPT_DEPOSITNO" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.DDLB_DEPT_DEPOSITNO */
+	<![CDATA[
+		SELECT  
+				A.DEPOSITNO   AS CODE,
+		    	'['||C1.COMDIV_NAME||'] '||A.DEPOSITNO||'('||C2.COMDIV_NAME||')' AS LABEL
+		FROM  
+				CODE_DEPOSITNO    A
+		INNER JOIN  
+				CODE_DEPT B
+		ON  
+				B.DEPT_ID = A.DEPT_ID
+		LEFT JOIN 
+				CODE_COMDIV   C1
+		ON  
+				C1.COMSEC_CODE  = '0100'
+		AND 
+				C1.COMDIV_CODE  = A.BANK_DIV
+		LEFT JOIN CODE_COMDIV   C2
+		ON  
+				C2.COMSEC_CODE  = '0101'
+		AND 
+				C2.COMDIV_CODE  = A.DEPOSIT_DIV
+		WHERE 
+				A.DEPT_ID LIKE  #{dept}
+		AND   ( 
+				A.DEPOSITNO   LIKE  '%'||#{find}||'%'
+		        OR  C1.COMDIV_NAME  LIKE  '%'||#{find}||'%'
+		        )
+    ]]>
+	</select>
+
+	<!-- DDLB_CUST_DEPOSITNO 고객 가상계좌 번호-->
+	<select id="DDLB_CUST_DEPOSITNO" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.DDLB_CUST_DEPOSITNO */
+	<![CDATA[
+		SELECT	CASE	B.RNO 
+						WHEN 1 THEN A.VDEPOSIT_NO1
+						WHEN 2 THEN A.VDEPOSIT_NO2
+						WHEN 3 THEN A.VDEPOSIT_NO3 
+						ELSE NULL 
+				END		AS CODE
+			,	CASE	WHEN	(A.VDEPOSIT_NO1 IS NOT NULL AND B.RNO = 1) OR (A.VDEPOSIT_NO2 IS NOT NULL AND B.RNO = 2) OR (A.VDEPOSIT_NO3 IS NOT NULL AND B.RNO = 3)
+						THEN	'[' || C.COMDIV_NAME ||'] '|| 
+								CASE	B.RNO 
+										WHEN 1 THEN A.VDEPOSIT_NO1
+										WHEN 2 THEN A.VDEPOSIT_NO2
+										WHEN 3 THEN A.VDEPOSIT_NO3 
+										ELSE NULL 
+								END
+						ELSE	NULL
+				END		AS LABEL
+		FROM	CODE_CUST	A
+				CROSS JOIN	(	SELECT	ROWNUM	AS RNO
+								FROM	SM_CODE_CALENDAR
+								WHERE	ROWNUM	<=	3
+							)	B 
+				LEFT JOIN	CODE_COMDIV	C
+					ON	B.RNO	=	C.COMDIV_CODE
+					AND	C.COMSEC_CODE	=	'0330'
+		WHERE	A.CUST_ID	=	#{cust}
+		AND		(A.VDEPOSIT_NO1 IS NOT NULL OR A.VDEPOSIT_NO2 IS NOT NULL OR A.VDEPOSIT_NO3 IS NOT NULL)
+		ORDER BY	B.RNO
+    ]]>
+	</select>
+
+	<!-- GET_AUTHORITY_DIV 프로그램권한 -->
+	<select id="GET_AUTHORITY_DIV" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.GET_AUTHORITY_DIV */
+	<![CDATA[
+		SELECT  
+				AUTHORITY_DIV
+	    FROM  
+	    		CODE_MEMBER
+	    WHERE 
+	    		MEMBER_ID = #{memberid}
+    ]]>
+	</select>
+
+	<!-- GET_ENCRYPT ENCRYPT(주민등록번호) -->
+	<select id="GET_ENCRYPT" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.GET_ENCRYPT */
+	<![CDATA[
+		 SELECT X_ENCRYPT(#{rrn}) AS ENC_NO FROM DUAL
+    ]]>
+	</select>
+
+	<!-- CHK_CUR_PASS 현재비밀번호체크 -->
+	<select id="CHK_CUR_PASS" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Common">
+	/* com.neofect.gts.services.common.repository.CommonRepository.CHK_CUR_PASS */
+	<![CDATA[
+		 SELECT CASE
+		 WHEN F_MD5(#{pass}) = (SELECT B.PWD FROM CODE_MEMBER B WHERE B.MEMBER_ID = #{cust}) THEN 'OK'
+         ELSE 'NOTOK'
+             END  AS RESULT
+        FROM DUAL
+    ]]>
+	</select>
+
+
+</mapper>

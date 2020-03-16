@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.CommRepository">
+
+	<!-- SysDate_Ora -->
+	<select id="SysDateOra" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Comm">
+	/* com.neofect.gts.services.common.repository.CommRepository.SysDateOra */
+	 	SELECT to_char(sysdate,'yyyy-MM-dd hh24:mi:ss') FROM DUAL
+	</select>
+
+	<!-- SysDate_Mss -->
+	<select id="SysDateMss" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Comm">
+	/* com.neofect.gts.services.common.repository.CommRepository.SysDateMss */
+	 	SELECT convert(varchar, GETDATE(), 120)
+	</select>
+
+	<!-- ButtonAuth -->
+	<select id="ButtonAuth" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Comm">
+	/* com.neofect.gts.services.common.repository.CommRepository.ButtonAuth */
+	 	<![CDATA[
+
+			SELECT 
+					A.PGM_CODE,
+					A.MENU_NAME AS PGM_NAME,
+					CASE LENGTH(B.PGM_CODE)
+					WHEN 2 THEN 1
+					WHEN 4 THEN 2
+					WHEN 6 THEN 3 ELSE 4 end as menuLevel,
+		            A.MENU_CODE as menuOrder,
+					B.SYS_ID as SYS_DIV,
+					B.PGM_URL as TEMP_TYPE,
+					CASE WHEN LENGTH(A.PGM_CODE)>=6 THEN 'Y' ELSE 'N' END as END_MENU_YN,
+					B.SHOW_YESNO as SHOW_YN,
+					'N' as POPUP_YN,
+		            B.DUPLICATE_YESNO as MULTI_YN,
+					B.RETRIEVE_YESNO as QUERY_YN,
+					B.APPEND_YESNO as APPEND_YN,
+					B.INSERT_YESNO as INSERT_YN,
+					B.DELETE_YESNO as DELETE_YN,
+					B.UPDATE_YESNO as UPDATE_YN,
+					B.PRINT_YESNO as PRINT_YN,
+					B.EXCEL_YESNO as EXCEL_YN,
+					A.AUTH_I,
+					A.AUTH_D,
+					A.AUTH_I,
+					A.AUTH_P,
+					A.AUTH_E,
+					B.PGM_URL   as CONN_URL
+				FROM (SELECT 
+							X.COMPANY_CODE, X.SYS_ID, MAX(X.PGM_CODE) AS PGM_CODE, MAX(X.MENU_CODE) AS MENU_CODE, MAX(X.MENU_NAME) AS MENU_NAME,
+					  		MAX(X.AUTH_I) AS AUTH_I,MAX(X.AUTH_R) AS AUTH_R,MAX(X.AUTH_D) AS AUTH_D,MAX(X.AUTH_P) AS AUTH_P,MAX(X.AUTH_E) AS AUTH_E
+					  FROM (
+					  		SELECT DISTINCT 
+					  				A.COMPANY_CODE, A.SYS_ID, A.PGM_CODE, A.MENU_CODE, A.MENU_NAME, A.AUTH_I,A.AUTH_R,A.AUTH_D,A.AUTH_P,A.AUTH_E
+							FROM 
+									SM_AUTH_GROUP_MENU  A INNER JOIN SM_AUTH_GROUP_USERS B
+							ON 
+									A.COMPANY_CODE = B.COMPANY_CODE AND A.USER_GROUP_CODE = B.USER_GROUP_CODE
+					 		WHERE 
+					 				A.COMPANY_CODE = #{comp}
+				   			AND 
+				   					A.PGM_CODE = #{pgm}
+					   		AND 
+					   				A.USER_GROUP_CODE IN (SELECT B.USER_GROUP_CODE FROM SM_AUTH_GROUP_USERS B WHERE B.COMPANY_CODE = #{comp} AND B.USER_ID = #{user})
+							UNION ALL
+								
+							SELECT  
+									A.COMPANY_CODE, A.SYS_ID, A.PGM_CODE, A.PGM_CODE,A.PGM_NAME, 'Y','Y','Y','Y','Y'
+							FROM 
+									SM_AUTH_PGMCODE A
+					 		WHERE 
+					 				A.COMPANY_CODE = #{comp}
+				   			AND 
+				   					A.PGM_CODE = #{pgm}
+							AND 
+									A.SHOW_YESNO = 'N'
+							UNION ALL
+							
+							SELECT DISTINCT 
+									A.COMPANY_CODE, A.SYS_ID, A.PGM_CODE, A.MENU_CODE, A.MENU_NAME, A.AUTH_I,A.AUTH_R,A.AUTH_D,A.AUTH_P,A.AUTH_E
+							FROM 
+									SM_AUTH_USER_MENU	A
+							WHERE 
+									A.COMPANY_CODE = #{comp}
+							AND 
+									A.USER_ID = #{user}
+				   			AND 
+				   					A.PGM_CODE = #{pgm}
+								) X
+						GROUP BY X.COMPANY_CODE, X.SYS_ID
+					  ) A
+					  INNER JOIN SM_AUTH_PGMCODE B ON (A.COMPANY_CODE = B.COMPANY_CODE AND A.SYS_ID = B.SYS_ID AND A.PGM_CODE = B.PGM_CODE)
+				 	  INNER JOIN SM_AUTH_SYS C ON (B.SYS_ID = C.SYS_ID)
+			   WHERE ((B.SHOW_YESNO='Y') AND (A.AUTH_I='Y' OR A.AUTH_R='Y' OR A.AUTH_D='Y' OR A.AUTH_P='Y' OR A.AUTH_E='Y')) OR (B.SHOW_YESNO='N')
+			   <!-- AND ROWNUM = 1 -->
+		]]>
+	</select>
+
+	<!-- FileNum 엑셀업로드 번호 -->
+	<select id="FileNum" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Comm">
+	/* com.neofect.gts.services.common.repository.CommRepository.FileNum */
+	
+		<![CDATA[
+			SELECT SEQ_FILE_NUM.NextVal as A_NUM from dual
+		]]>
+
+	</select>
+
+	<!-- EXCEL_UPLOAD_CNT 엑셀업로드 갯수 -->
+	<select id="EXCELUPLOADCNT" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Comm">
+	/* com.neofect.gts.services.common.repository.CommRepository.EXCELUPLOADCNT */
+	
+		<![CDATA[
+			SELECT COUNT(*) AS CNT
+ 			FROM XM_EXCEL_DATA
+ 			WHERE FILE_NUM = #{num}
+		]]>
+
+	</select>
+
+</mapper>
