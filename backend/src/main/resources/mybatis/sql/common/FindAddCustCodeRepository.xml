@@ -334,7 +334,7 @@
 	</select>
 	
 	<!-- 거래처등록 --> 
-	<select id="R_NEWCUST_INSERT" resultMap="custmemb" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindAddCustCode">
+	<select id="R_NEWCUST_INSERT" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindAddCustCode">
 		<![CDATA[
 		EXEC USP_CUSTMEMBER_INSERT_FOR_POP 
 		#{pCustId},
