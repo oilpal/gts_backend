@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.account.info.repository.AccountInfoRepository">
+
+	<select id="GS01010_C01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.account.info.domain.AccountInfo">
+		<![CDATA[
+	
+		SELECT  
+			A.CUST_ID,
+			A.CLIENT_DIV,
+			A.DEPT_ID,
+			B.DEPT_NAME,
+			A.CUST_CODE,
+			A.CUST_NAME,
+			A.BIZ_REGNO,
+			A.BIZ_OWNER,
+			A.BIZ_UPTAE,
+			A.BIZ_UPJONG,
+			A.ZIP_CODE,
+			A.ADDR1,
+			A.ADDR2,
+			A.DM_ZIP_CODE,
+			A.DM_ADDR1,
+			A.DM_ADDR2,
+			A.PHONE,
+			A.FAX,
+			A.HP,
+			A.EMAIL,
+			A.MANAGER_NAME,
+			A.MANAGER_PHONE,
+			A.MANAGER_HP,
+			A.VAT_DIV,
+			A.REMAIN_AMT,
+			A.DEPOSITNO,
+			A.BANK_DIV,
+			A.CUST_GUBUN_DIV,
+			A.CUST_LEVEL_DIV,
+			A.APP_RATE_DIV,
+			A.REDUCTION_DIV,
+			A.MANAGE_NO,
+			A.START_DATE,
+			A.END_DATE,
+			A.MANAGE_OFFICE_DIV,
+			C.NAME1   AS MANAGE_OFFICE_DIV_NAME,
+			A.BIRTH_DATE,
+			A.MOON_YN,
+			A.WED_DATE,
+			A.REG_DATE,
+			A.CHK_ADDR,
+			A.RRN_NO,
+			A.MANAGE_YN,
+			A.RRN_NO AS INPUT_RRN_NO,
+			A.MANAGE_NO1,
+			A.MANAGE_NO2,
+			A.MEMBER_ID,
+			A.PRO_SEQ,
+			A.M_LIMIT_AMT,
+			A.REQ_LIMIT_AMT,
+			A.OFFICE_AMT,
+			A.JIRO_NO,
+			A.CONT_DEPT_DIV,
+			P.PRO_NAME,
+			P.RELATION_DIV,
+			TO_CHAR(TO_DATE(P.BIRTH_DATE),'YYYY-MM-DD') AS PRO_BIRTH,
+			P.EMAIL AS PRO_EMAIL,
+			P.PHONE AS PRO_PHONE,
+			P.HP AS PRO_HP,
+			P.ZIP_CODE AS PRO_ZIP_CODE,
+			P.ADDR1 AS PRO_ADDR1,
+			P.ADDR2 AS PRO_ADDR2,
+			H.CANCEL_DATE,
+			H.CONT_EDATE - TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD')) AS CONT_EDATE_DDAY,
+			H.CANCEL_DATE - TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD')) AS CANCEL_DATE_DDAY,
+			A.END_DATE - TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD')) AS CARE_EDATE_DDAY,
+			A.CASH_RECEIPT_NO,
+			V.VDEPOSIT_BANK1||'-'||A.VDEPOSIT_NO1||', '||V.VDEPOSIT_BANK2||'-'||A.VDEPOSIT_NO2||', '||V.VDEPOSIT_BANK3||'-'||A.VDEPOSIT_NO3 AS VIRTUAL_DEPOSIT,
+			A.SEX,
+			A.MAIN_DIS,
+			(CASE WHEN H.CANCEL_DATE IS NULL AND (A.END_DATE - TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD'))) >=0 THEN 0 ELSE 1 END) AS SORT_ORDER,
+			'L'||NVL(A.MANAGE_NO1,'')||'-'||NVL(A.MANAGE_NO2,'') AS COPY_MANAGE_NO,
+			CASE  WHEN  A.END_DATE IS NULL
+					THEN  ''
+					ELSE  CASE  WHEN  A.END_DATE - TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD')) >= 0
+									THEN  A.END_DATE - TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD'))||'일 남았습니다'
+									ELSE  (A.END_DATE - TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD')))*-1||'일 지났습니다'
+							END
+			END   AS MANAGE_STATUS,
+			'Y'     AS JUMIN_CHK_YN
+		FROM CODE_CUST A
+		LEFT OUTER JOIN CODE_DEPT B ON A.DEPT_ID = B.DEPT_ID
+		LEFT OUTER JOIN CODE_COMDIV C ON A.MANAGE_OFFICE_DIV = C.COMDIV_CODE AND C.COMSEC_CODE = '0001'
+		LEFT OUTER JOIN ( SELECT S.CUST_ID, S.DEPT_ID, S.CONT_SDATE, S.CONT_EDATE, S.CARE_SDATE, S.CARE_EDATE, S.CONT_SEQ, S.CANCEL_DATE
+							FROM SERVICE_CONTRACT S
+							WHERE   S.CONT_SEQ = (SELECT MAX(T.CONT_SEQ) FROM SERVICE_CONTRACT T WHERE T.CUST_ID = S.CUST_ID )  ) H ON (A.CUST_ID = H.CUST_ID)
+		LEFT OUTER JOIN CODE_CUSTPROTECTOR P ON (A.CUST_ID = P.CUST_ID AND A.PRO_SEQ = P.PRO_SEQ)
+		CROSS JOIN (SELECT
+						MAX(CASE WHEN COMDIV_CODE='1' THEN COMDIV_NAME ELSE NULL END) AS VDEPOSIT_BANK1,
+						MAX(CASE WHEN COMDIV_CODE='2' THEN COMDIV_NAME ELSE NULL END) AS VDEPOSIT_BANK2,
+						MAX(CASE WHEN COMDIV_CODE='3' THEN COMDIV_NAME ELSE NULL END) AS VDEPOSIT_BANK3
+					FROM
+						CODE_COMDIV
+					WHERE
+						COMSEC_CODE='0330') V
+		WHERE (A.CUST_ID = #{custId} OR A.CUST_CODE like '%'||#{custCode}||'%' or A.CUST_NAME like '%'||#{custCode}||'%')
+		AND A.CLIENT_DIV = 'O'
+		AND A.CONT_DEPT_DIV = #{contDeptDiv}
+		AND EXISTS (SELECT 1 FROM CODE_CUSTINDEPT D WHERE A.CUST_ID = D.CUST_ID AND D.DEPT_ID like #{deptId} )
+		AND (#{custCode} <> '%%' OR #{alldate} = 'Y'
+			OR ((H.CANCEL_DATE IS NULL OR H.CANCEL_DATE > #{startDate}) AND (NVL(A.START_DATE,TO_DATE('19000101')) <= #{endDate} AND NVL(A.END_DATE,TO_DATE('29991231')) >= #{startDate}) AND (H.CONT_SDATE <= #{endDate} AND H.CONT_EDATE >= #{startDate}))
+			OR	H.CUST_ID IS NULL)
+		ORDER BY SORT_ORDER ASC, A.CUST_NAME
+	
+		]]>
+	</select>
+	
+	<!-- 담당센터정보 -->
+	<select id="GS01010_U02" parameterType="com.neofect.gts.services.account.info.domain.AccountInfo" resultType="com.neofect.gts.services.account.info.domain.AccountInfo">
+		SELECT  A.SEQ
+			, A.DEPT_ID
+			, D.DEPT_NAME
+			, A.USE_YN
+			, A.REMARK
+		FROM  CODE_CUSTINDEPT A
+		INNER JOIN  CODE_DEPT D	ON D.DEPT_ID = A.DEPT_ID
+		WHERE A.CUST_ID = #{custId}
+		ORDER BY  D.DEPT_NAME
+	</select>
+	
+	<delete id="DEL_CODE_CUSTINDEPT" parameterType="com.neofect.gts.services.account.info.domain.AccountInfo">
+		DELETE  CODE_CUSTINDEPT
+		WHERE   DEPT_ID = #{deptId}
+		AND     CUST_ID = #{custId}
+	</delete>
+	
+	<select id="CHK_CODE_CUST" parameterType="com.neofect.gts.services.account.info.domain.AccountInfo" resultType="java.lang.Integer">
+		SELECT  
+			SUM(CASE WHEN B.DEPT_ID=#{deptId} THEN 1 ELSE 0 END)  AS IN_CNT,
+			SUM(CASE WHEN B.DEPT_ID=#{deptId} THEN 0 ELSE 1 END)  AS OUT_CNT
+		FROM
+			CODE_CUST A
+		INNER JOIN
+			CODE_CUSTINDEPT B ON B.CUST_ID = A.CUST_ID
+		WHERE   
+			A.CLIENT_DIV  = 'O'
+			AND     A.CUST_NAME		=	#{custName}
+			AND		A.BIRTH_DATE	=	#{birthDate}
+			<![CDATA[
+			AND		A.CUST_ID		>	FN_GET_MIN_ID('CODE_CUST')
+			]]>
+	</select>
+	
+	<select id="CODE_CUST_R01" parameterType="com.neofect.gts.services.account.info.domain.AccountInfo" resultType="com.neofect.gts.services.account.info.domain.AccountInfo">
+		<![CDATA[
+
+			SELECT	
+				A.CUST_ID,
+				B.DEPT_NAME,
+				A.CUST_NAME,
+				TO_CHAR(A.BIRTH_DATE, 'YYYY.MM.DD')	AS BIRTH,
+				CASE WHEN LENGTH(A.HP) > 10 THEN '***-****-'||SUBSTR(A.HP,LENGTH(A.HP)-3,4) ELSE '' END,
+				A.ADDR1
+			FROM
+				CODE_CUST A
+			LEFT JOIN	
+				CODE_DEPT B ON A.DEPT_ID = B.DEPT_ID
+			WHERE
+			A.CLIENT_DIV = 'O'
+			AND A.CUST_NAME = #{custName}
+			AND A.BIRTH_DATE = #{birthDate}
+			AND A.CUST_ID > FN_GET_MIN_ID('CODE_CUST')
+		]]>
+	</select>
+
+
+	<insert id="CODE_CUSTINDEPT_C01" parameterType="com.neofect.gts.services.account.info.domain.AccountInfo">
+		INSERT INTO CODE_CUSTINDEPT
+		(	
+			SEQ,
+			DEPT_ID,
+			CUST_ID,
+			ROW_INPUT_DATE,
+			ROW_INPUT_EMP_NO,
+			ROW_INPUT_IP
+		)
+		VALUES	
+		(
+			SEQ_CODE_CUSTINDEPT.NEXTVAL,
+			#{deptId},
+			#{custId},
+			SYSDATE,
+			#{rowInputEmpNo},
+			#{rowInputIp}
+		)
+	</insert>
+
+	<select id="GS01010_R01" parameterType="com.neofect.gts.services.account.info.domain.AccountInfo" resultType="com.neofect.gts.services.account.info.domain.AccountInfo">
+		<![CDATA[
+
+		SELECT  
+			A.CUST_ID,
+			A.CUST_NAME,
+			CASE WHEN A.MANAGE_NO1 IS NULL THEN NULL ELSE 'L'||NVL(A.MANAGE_NO1,'')||'-'||NVL(A.MANAGE_NO2,'') END	AS MANAGE_NO,
+			A.CUST_LEVEL_DIV,
+			L.COMDIV_NAME AS CUST_LAEVEL_NAME,
+			A.REDUCTION_DIV,
+			L.COMDIV_NAME AS REDUCTION_DIV_NAME,
+			A.HP,
+			A.PHONE,
+			A.ZIP_CODE,
+			A.ADDR1,
+			A.ADDR2,
+			A.DM_ZIP_CODE,
+			A.DM_ADDR1,
+			A.DM_ADDR2,
+			(CASE WHEN H.CANCEL_DATE IS NULL AND (A.END_DATE - TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD'))) >=0 THEN 0 ELSE 1 END) AS SORT_ORDER
+		FROM	
+			CODE_CUST	A
+		LEFT JOIN (
+			SELECT 
+				S.CUST_ID,
+				S.CONT_SDATE,
+				S.CONT_EDATE,
+				S.CANCEL_DATE
+			FROM
+				SERVICE_CONTRACT S
+			WHERE
+				S.CONT_SEQ = (SELECT MAX(T.CONT_SEQ) FROM SERVICE_CONTRACT T WHERE T.CUST_ID = S.CUST_ID)
+		) H ON A.CUST_ID = H.CUST_ID
+		LEFT JOIN 
+			CODE_COMDIV	L ON L.COMSEC_CODE = '0125' AND L.COMDIV_CODE = A.CUST_LEVEL_DIV
+		LEFT JOIN 
+			CODE_COMDIV R ON R.COMSEC_CODE = '0110' AND R.COMDIV_CODE = A.REDUCTION_DIV
+		WHERE
+			(A.CUST_ID = #{custId} OR A.CUST_CODE LIKE '%'||#{custCode}||'%' OR A.CUST_NAME LIKE '%'||#{custCode}||'%')
+			AND A.CLIENT_DIV = 'O'
+			AND EXISTS (SELECT 1 FROM CODE_CUSTINDEPT D WHERE A.CUST_ID = D.CUST_ID AND D.DEPT_ID LIKE #{deptId})
+			AND (#{custCode} <> '%%' OR #{alldate} = 'Y' OR
+					(	
+						(H.CANCEL_DATE IS NULL OR H.CANCEL_DATE > #{startDate})
+						AND	(NVL(A.START_DATE,TO_DATE('19000101')) <= #{endDate} AND NVL(A.END_DATE,TO_DATE('29991231')) >= #{startDate})
+						AND	((H.CONT_SDATE <= #{endDate} AND H.CONT_EDATE >= #{startDate}) OR (H.CUST_ID IS NULL))
+					)
+				)
+		ORDER BY SORT_ORDER ASC, A.CUST_NAME
+
+		]]>
+	</select>
+	
+	<select id="GS01012_C01" parameterType="com.neofect.gts.services.account.info.domain.AccountInfo" resultType="com.neofect.gts.services.account.info.domain.AccountInfo">
+		SELECT    
+			A.CUST_ID,
+            A.PRO_SEQ,
+            A.PRO_NAME,
+            A.RELATION_DIV,
+            A.BIRTH_DATE,
+            A.EMAIL,
+            A.PHONE,
+            A.HP,
+            A.ZIP_CODE,
+            A.ADDR1,
+            A.ADDR2,
+            CASE WHEN B.CUST_ID IS NOT NULL THEN 'Y' ELSE 'N' END AS SELECTED
+		FROM 
+			CODE_CUSTPROTECTOR A
+		LEFT JOIN 
+			CODE_CUST B ON (A.CUST_ID = B.CUST_ID AND A.PRO_SEQ = B.PRO_SEQ)
+		WHERE 
+			A.CUST_ID = #{custId}
+	</select>
+</mapper>
