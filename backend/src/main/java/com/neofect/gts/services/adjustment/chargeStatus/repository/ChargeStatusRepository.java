@@ -7,7 +7,7 @@ import com.neofect.gts.services.gs.domain.ChargeStatus;
 
 
 /**
- * (구)이용계약서 Repository
+ * 고객청구현황 Repository
  * @author jd
  *
  */
@@ -26,4 +26,12 @@ public interface ChargeStatusRepository {
 	* @return
 	*/
 	List<ChargeStatus> GS01060_C02(Map<String, Object> param);
+
+	/**
+	*
+	* 가산율 추가
+	* @param q
+	* @return
+	*/
+	int updateAdditionRate(Map<String, Object> q);
 }

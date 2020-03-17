@@ -14,7 +14,7 @@ public class ChargeStatus implements Serializable {
 	private static final long serialVersionUID = -2305856416197091917L;
 	
 	private String deptId;
-	private String custId;
+	private Integer custId;
 	private String yyyymm;
 	private String custCode;
 	private String deptName;
@@ -23,7 +23,11 @@ public class ChargeStatus implements Serializable {
 	private String reductionName;
 	private String appRate;
 	private String grdName;
-	private String reqAmt;
+	private Integer reqAmt;
+	private Integer useAmt; // 이용료
+	private Integer moveAmt; // 이동료
+	private Integer bathAmt; // 목욕료
+	private Integer workAmt; // 인력가산
 	private String payAmt;
 	private String paySum;
 	private String bpayAmt;

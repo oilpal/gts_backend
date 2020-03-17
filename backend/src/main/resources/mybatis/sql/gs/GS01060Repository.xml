@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.neofect.gts.services.gs.repository.GS01060Repository">
+<mapper namespace="com.neofect.gts.services.adjustment.chargeStatus.repository.ChargeStatusRepository">
 	<select id="GS01060_R01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.gs.domain.ChargeStatus">
         SELECT 
             A.DEPT_ID,
@@ -14,6 +14,10 @@
             C.COMDIV_NAME AS APP_RATE,
             SUBSTR(D.COMDIV_NAME,1,2) || ' ('||C.COMDIV_NAME||'%)' AS GRD_NAME,
             A.REQ_AMT,       -- 공단청구금A
+            A.USE_AMT,       -- 이용료
+            A.MOVE_AMT,       -- 이동
+            A.BATH_AMT,       -- 목욕
+            A.WORK_AMT,       -- 인력가산
             A.PAY_AMT,       -- 본인부담금B
             A.REQ_AMT + A.PAY_AMT  AS PAY_SUM, -- 총수가A+B
             A.B_AMT      AS BPAY_AMT,          -- 비급여D
@@ -62,6 +66,10 @@
             A.SERVICE_AMT * (CASE WHEN A.SERVICE_YN = 1 THEN 1 ELSE FN_GS_GET_NO_RATE() END) AS SERVICE_AMT,
             A.PAY_AMT,
             A.REQ_AMT,
+            A.USE_AMT,       -- 이용료
+            A.MOVE_AMT,       -- 이동
+            A.BATH_AMT,       -- 목욕
+            A.WORK_AMT,       -- 인력가산
             A.REMAIN_AMT,
             A.REMARK,
             A.SERVICE_YN,
@@ -107,4 +115,32 @@
             AND A.DUPLISERVICE_SEQ = 1
         ORDER BY D.CUST_NAME, A.CUST_ID, A.PLAN_DATE, A.START_TIME_DIV, A.START_MIN_DIV
     </select>
+    
+    <update id="updateAdditionRate" parameterType="map">
+       UPDATE SERVICE_SUMMARY_SUM_TOT
+	   <set>
+			<if test="reqAmt != null">
+	   			REQ_AMT = #{reqAmt},
+			</if>
+			<if test="useAmt != null">
+	   			USE_AMT = #{useAmt},
+			</if>
+			<if test="moveAmt != null">
+	   			MOVE_AMT = #{moveAmt},
+			</if>
+			<if test="bathAmt != null">
+	   			BATH_AMT = #{bathAmt},
+			</if>
+			<if test="workAmt != null">
+	   			WORK_AMT = #{workAmt},
+			</if>
+	   </set>			   	
+			   
+       WHERE 
+	   		CUST_ID like #{custId}
+       AND 
+       		DEPT_ID like #{deptId}
+       AND 
+       		YYYYMM like #{yyyymm}
+    </update>
 </mapper>

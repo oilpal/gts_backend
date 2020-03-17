@@ -44,12 +44,12 @@ public class ChargeStatusService {
 	}
 
 	/**
-	 * SysDataOra
-	 * @param param
+	 * 가산율 추가
+	 * @param q
 	 * @return
 	 */
-	public List<Comm> SysDataOra(Map<String, Object> param) {
-		return commRepository.SysDataOra(param);
+	public int updateAdditionRate(Map<String, Object> q) {
+		return chargeStatusRepository.updateAdditionRate(q);
 	}
 
 }

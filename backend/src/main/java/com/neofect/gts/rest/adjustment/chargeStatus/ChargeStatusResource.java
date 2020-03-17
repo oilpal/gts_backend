@@ -84,22 +84,32 @@ public class ChargeStatusResource {
 	}
 
 	/**
-	 * SysData_Ora
+	 * 가산율 input
 	 * @param q
 	 * @param code
 	 * @return
 	 * @throws URISyntaxException
 	 */
-	@ApiOperation(value = "엑셀 다운로드?" ,notes = "이것은 엑셀 다운로드를 불러온다.")
-	@GetMapping(value = "/excelDown", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<Comm>> excelDown(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
+	@ApiOperation(value = "가산율 추가" ,notes = "이것은 가산율 추가를 진행한다.")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "deptId", value = "회사코드번호", required = true, dataType = "string", paramType = "query", defaultValue = ""),
+		@ApiImplicitParam(name = "yyyymm", value = "날짜", required = true, dataType = "string", paramType = "query", defaultValue = ""),
+		@ApiImplicitParam(name = "custId", value = "고객번호", required = true, dataType = "string", paramType = "query", defaultValue = ""),
+		@ApiImplicitParam(name = "useAmt", value = "이용료", required = true, dataType = "string", paramType = "query", defaultValue = ""),
+		@ApiImplicitParam(name = "moveAmt", value = "이동료", required = true, dataType = "string", paramType = "query", defaultValue = ""),
+		@ApiImplicitParam(name = "bathAmt", value = "목욕료", required = true, dataType = "string", paramType = "query", defaultValue = ""),
+		@ApiImplicitParam(name = "workAmt", value = "인력가산", required = true, dataType = "string", paramType = "query", defaultValue = ""),
+	})
+	@GetMapping(value = "/reqAmt", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Integer> reqAmt(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
 		if (q == null) {
 			q = new HashMap<String,Object>();
 		}
 		
-		List<Comm> list = chargeStatusService.SysDataOra(q);
+//		reqAmt (전) 공단 청구금 세분화된 이용료, 이동료, 목욕료, 인력가산을 합한 값을 저장 시킬 예정
+		int reqAmt = chargeStatusService.updateAdditionRate(q);
 		
 		HttpHeaders headers = new HttpHeaders();
-		return new ResponseEntity<>(list, headers, HttpStatus.OK);
+		return new ResponseEntity<>(reqAmt, headers, HttpStatus.OK);
 	}
 }
