@@ -38,7 +38,7 @@
 
 
 	<!-- 다음 순번의 고객ID를 반환 -->
-	<select id="NEXT_CUST_ID">
+	<select id="NEXT_CUST_ID" parameterType="java.util.HashMap" resultType="java.lang.Integer">
 
 		SELECT SEQ_CUST_ID.NEXTVAL FROM DUAL
 
@@ -46,7 +46,7 @@
 
 
 	<!-- 재가요양서비스 월 한도금액 가져오기 ( 등급 입력용 ) -->
-	<select id="GET_CARE_BASIC_AMT" parameterType="com.neofect.gts.services.common.domain.GS_COMMON" resultType="com.neofect.gts.services.common.domain.GS_COMMON">
+	<select id="GET_CARE_BASIC_AMT" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.GS_COMMON">
 
 		SELECT  
 			A.M_LIMIT_AMT,
@@ -58,7 +58,7 @@
 
 
 	<!-- 각종 마감 체크 -->
-	<select id="CHK_CLOSING" parameterType="com.neofect.gts.services.common.domain.GS_COMMON" resultType="java.lang.Integer">
+	<select id="CHK_CLOSING" parameterType="java.util.HashMap" resultType="java.lang.Integer">
 
 	  SELECT  COUNT(*)
 	  FROM    CODE_CLOSING
@@ -76,7 +76,7 @@
 
 
 	<!-- 각종 마감 처리 -->
-	<update id="CODE_CLOSING_U01" parameterType="com.neofect.gts.services.common.domain.GS_COMMON">
+	<update id="CODE_CLOSING_U01" parameterType="java.util.HashMap">
 
 		UPDATE	CODE_CLOSING
 		SET			DEPT_GONGCLOSEYN			=	CASE WHEN #{col} = 'gongcloseyn' 		THEN 'Y' 			ELSE DEPT_GONGCLOSEYN END
@@ -98,7 +98,7 @@
 
 
 	<!-- 서비스 product_id 가져오기 -->
-	<select id="GET_PRODUCT_ID" parameterType="com.neofect.gts.services.common.domain.GS_COMMON" resultType="com.neofect.gts.services.common.domain.GS_COMMON">
+	<select id="GET_PRODUCT_ID" parameterType="java.util.HashMap" resultType="java.lang.String">
 
 		SELECT	NVL(Max(product_id),'')
 		FROM		CODE_PRODUCT
@@ -109,7 +109,7 @@
 
 
 	<!-- 다음 순번의 서비스ID를 반환 -->
-	<select id="GET_SEQ_S_ID" parameterType="com.neofect.gts.services.common.domain.GS_COMMON" resultType="java.lang.String">
+	<select id="GET_SEQ_S_ID" parameterType="java.util.HashMap" resultType="java.lang.String">
 
 		SELECT SEQ_S_ID.NEXTVAL FROM DUAL
 
@@ -118,7 +118,7 @@
 
 
 	<!-- SetRemainAmtCalc 사용 -->
-	<select id="SetRemainAmtCalc_R01" parameterType="com.neofect.gts.services.common.domain.GS_COMMON" resultType="com.neofect.gts.services.common.domain.GS_COMMON">
+	<select id="SetRemainAmtCalc_R01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.GS_COMMON">
 		SELECT 
 			PROOFFI_DIV 
 		FROM 
@@ -127,7 +127,7 @@
 			PRODUCT_ID = #{productCode}
 	</select>
 
-	<select id="SetRemainAmtCalc_R02" parameterType="com.neofect.gts.services.common.domain.GS_COMMON" resultType="com.neofect.gts.services.common.domain.GS_COMMON">
+	<select id="SetRemainAmtCalc_R02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.GS_COMMON">
 		SELECT
 			APP_RATE_DIV 
 		FROM 
@@ -138,7 +138,7 @@
 			AND NVL(CANCEL_DATE, CONT_EDATE)
 	</select>
 
-	<select id="SetRemainAmtCalc_R03" parameterType="com.neofect.gts.services.common.domain.GS_COMMON" resultType="com.neofect.gts.services.common.domain.GS_COMMON">
+	<select id="SetRemainAmtCalc_R03" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.GS_COMMON">
 		SELECT 
 			COMDIV_NAME 
 		FROM 

@@ -52,7 +52,7 @@ public class GS_COMMONService {
 	 * @param gs
 	 * @return
 	 */
-	public List<GS_COMMON> NEXT_CUST_ID(GS_COMMON gs) {
+	public int NEXT_CUST_ID(Map<String, Object> gs) {
 		return gs_commonRepository.NEXT_CUST_ID(gs);
 	}
 
@@ -61,7 +61,7 @@ public class GS_COMMONService {
 	 * @param gs
 	 * @return
 	 */
-	public List<GS_COMMON> GET_CARE_BASIC_AMT(GS_COMMON gs) {
+	public GS_COMMON GET_CARE_BASIC_AMT(Map<String, Object> gs) {
 		return gs_commonRepository.GET_CARE_BASIC_AMT(gs);
 	}
 
@@ -70,7 +70,7 @@ public class GS_COMMONService {
 	 * @param gs
 	 * @return
 	 */
-	public int CHK_CLOSING(GS_COMMON gs) {
+	public int CHK_CLOSING(Map<String, Object> gs) {
 		return gs_commonRepository.CHK_CLOSING(gs);
 	}
 
@@ -79,7 +79,7 @@ public class GS_COMMONService {
 	 * @param gs
 	 * @return
 	 */
-	public int CODE_CLOSING_U01(GS_COMMON gs) {
+	public int CODE_CLOSING_U01(Map<String, Object> gs) {
 		return gs_commonRepository.CODE_CLOSING_U01(gs);
 	}
 
@@ -88,7 +88,7 @@ public class GS_COMMONService {
 	 * @param gs
 	 * @return
 	 */
-	public List<GS_COMMON> GET_PRODUCT_ID(GS_COMMON gs) {
+	public String GET_PRODUCT_ID(Map<String, Object> gs) {
 		return gs_commonRepository.GET_PRODUCT_ID(gs);
 	}
 
@@ -97,7 +97,7 @@ public class GS_COMMONService {
 	 * @param gs
 	 * @return
 	 */
-	public String GET_SEQ_S_ID(GS_COMMON gs) {
+	public String GET_SEQ_S_ID(Map<String, Object> gs) {
 		return gs_commonRepository.GET_SEQ_S_ID(gs);
 	}
 
@@ -106,7 +106,7 @@ public class GS_COMMONService {
 	 * @param gs
 	 * @return
 	 */
-	public List<GS_COMMON> SetRemainAmtCalc_R01(GS_COMMON gs) {
+	public List<GS_COMMON> SetRemainAmtCalc_R01(Map<String, Object> gs) {
 		return gs_commonRepository.SetRemainAmtCalc_R01(gs);
 	}
 
@@ -115,7 +115,7 @@ public class GS_COMMONService {
 	 * @param gs
 	 * @return
 	 */
-	public List<GS_COMMON> SetRemainAmtCalc_R02(GS_COMMON gs) {
+	public List<GS_COMMON> SetRemainAmtCalc_R02(Map<String, Object> gs) {
 		return gs_commonRepository.SetRemainAmtCalc_R02(gs);
 	}
 
@@ -124,7 +124,7 @@ public class GS_COMMONService {
 	 * @param gs
 	 * @return
 	 */
-	public List<GS_COMMON> SetRemainAmtCalc_R03(GS_COMMON gs) {
+	public List<GS_COMMON> SetRemainAmtCalc_R03(Map<String, Object> gs) {
 		return gs_commonRepository.SetRemainAmtCalc_R03(gs);
 	}
 }
