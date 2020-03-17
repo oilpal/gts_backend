@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.FindAddCustCodeRepository">
+
+		
+  <select id="FindAddRqst_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindAddRqst">
+    <![CDATA[
+			SELECT A.COMPANY_CODE			   								<!--  회사코드 -->
+				    ,A.PROJECT_CODE			   								<!--  현장코드 -->
+				    ,B.PROJ_NAME      		 								<!--  현장명 -->
+				    ,A.REQUEST_YYMM||TO_CHAR(A.REQUEST_NO, '000') PROJ_REQUEST_NO <!--  현장코드 -->
+				    ,A.REQUEST_YYMM			   <!--  청구년월 -->
+				    ,A.REQUEST_NO				   <!--  청구번호 -->
+				    ,A.REQUEST_TYPE			   <!--  진행상태 -->
+				    ,A.STATUS_CODE				   <!--  진행상태 -->
+				    ,A.REQUEST_DATE			   <!--  청구일 -->
+				    ,A.REQUEST_EMPLOYEE	   <!--  청구자 -->
+				    ,A.REQUEST_REF				   <!--  특기사항 -->
+				    ,A.TRIGGER_TAG				   <!--  트리거여부 -->
+				    ,A.APPROVAL_DATE			   <!--  승인일 -->
+				    ,A.APPROVAL_EMPLOYEE	   <!--  승인자 -->
+				    ,A.CONFIRM_DATE			   <!--  확정일 -->
+				    ,A.CONFIRM_EMPLOYEE	   <!--  확정자 -->
+				    ,A.DECISION_DATE			   <!--  확인일 -->
+				    ,A.DECISION_EMPLOYEE	   <!--  확인자 -->
+				    ,A.APPROVAL_TAG			   <!--  전결여부 -->
+				    ,A.CONFIRM_TAG				   <!--  검토여부 -->
+				    ,A.DECISION_TAG			   <!--  확인여부 -->
+				    ,A.FACMAT_YN					   <!--  제조원자재여부 -->
+				    ,A.NAPPRONO					   <!--  결재상신번호 -->
+				    ,A.PSTMAT_YN					   <!--  현장수불자재여부 -->
+				    ,A.PST_CODE					   <!--  현장수불관리창고 -->
+				    ,A.DESTINATION				   <!--  납품장소 -->/연락처
+				    ,A.RECIPIENT_EMPNO		   <!--  발주요청자코드 -->
+				    ,A.CONST_CODE				   <!--  관련공종 -->
+				    ,A.CUST_CODE					   <!--  납품처 -->
+				    ,FN_SM_CUSTNM(A.CUST_CODE) CUST_NAME	<!--  거래처명 -->
+				    ,A.REMARKS							 <!--  비고 -->
+				    ,A.MANAGER_ACCEPT_DATE  <!-- 	청구승인일자 -->
+				    ,A.MANAGER_ACCEPT_EMPNO <!--  청구승인소장ID -->
+				FROM PM_RQST_MASTER A INNER JOIN SM_CODE_PROJECT B
+			                                 ON A.COMPANY_CODE = B.COMPANY_CODE AND A.PROJECT_CODE = B.PROJ_CODE
+			 WHERE A.STATUS_CODE >= #{statusCode}
+			   AND A.REMARKS LIKE '%' || #{search} || '%'
+  			 AND A.COMPANY_CODE = #{companyCode}
+  			 AND A.PROJECT_CODE = #{projectCode}
+  	ORDER BY A.REQUEST_YYMM
+
+    ]]>
+    
+  </select>
+
+	 <select id="FindAddRqst_02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindAddRqst">
+    <![CDATA[
+		  SELECT A.COMPANY_CODE,
+		         A.PROJECT_CODE,
+		         A.REQUEST_YYMM,
+		         A.REQUEST_NO,
+		         A.REQUEST_SEQ,
+		         A.STATUS_CODE,
+		         A.ITEM_CODE,
+		         A.ITEM_NAME,
+		         A.ITEM_STD,
+		         A.ITEM_UNIT,
+		         A.ITEM_MAKER,
+		         NVL(V.DNAME,'') MAKER_NAME,
+		         A.NEW_TAG,
+		         A.DEMAND_DATE,
+		         A.REQUEST_QTY,
+		         A.REMARKS,
+		         A.AREA,
+		         A.WIDTH,
+		         A.HEIGHT,
+		         A.DIAMETER,
+		         A.ITEM_STD2,
+             A.ATCH_FILE_ID,
+             B.FILE_SN,
+             B.ORIGNL_FILE_NM,
+             0 CONTRACT_QTY,
+             (SELECT SUM(REQUEST_QTY) FROM PM_RQST_DETAIL WHERE COMPANY_CODE = A.COMPANY_CODE AND PROJECT_CODE = A.PROJECT_CODE AND ITEM_CODE = A.ITEM_CODE) PRE_REQUEST_QTY
+		    FROM PM_RQST_DETAIL A  LEFT JOIN VW_C_PM_MATMAKER V
+		                                  ON A.ITEM_MAKER = V.DCODE
+                               LEFT OUTER JOIN SM_COMM_FILE_DETAIL B
+                                  ON B.ATCH_FILE_ID = A.ATCH_FILE_ID
+                                 AND B.FILE_SN = '1'
+		   WHERE A.COMPANY_CODE = #{compcode}
+		     AND A.PROJECT_CODE = #{projcode}
+		     AND A.REQUEST_YYMM = #{asYymm}
+		     AND A.REQUEST_NO = #{aiRqstno}
+		ORDER BY A.ITEM_CODE
+    ]]>
+ 
+
+  </select>
+
+	<select id="FindAddRqst_07" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindAddRqst">
+    <![CDATA[
+          SELECT ROWID,
+               '100' COMPANY_CODE,
+               PROJECT_CODE,
+               FN_GET_PROJNAME('100', PROJECT_CODE) PROJ_NAME,
+               REQUEST_NO,
+               PRODUCT_TYPE,
+               REQUEST_DATE,
+               STATE_CODE,
+               REQUEST_PERSON,
+               FN_GET_EMPNAME('100', REQUEST_PERSON)  AS PERSON_NAME,
+               REQUEST_REF
+          FROM MM_RQST_DUCT M
+         WHERE STATE_CODE = '2'
+           AND NOT EXISTS (SELECT 1 FROM PM_RQST_DETAIL WHERE M.PROJECT_CODE = PROJECT_CODE AND M.REQUEST_NO = DUCT_NO AND  M.PRODUCT_TYPE = DUCT_TYPE)
+		   AND M.PROJECT_CODE LIKE #{projectCode}
+	   AND NVL(REQUEST_REF,' ') LIKE '%' || #{search} || '%'
+      ORDER BY REQUEST_DATE DESC
+
+    ]]>
+   </select>
+
+	<select id="FindAddRqst_08" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindAddRqst">
+    <![CDATA[
+		SELECT '100' COMPANY_CODE,
+		       M.PROJECT_CODE,
+		       M.REQUEST_NO,
+		       M.PRODUCT_TYPE,
+		       M.REQUEST_DATE,
+		       M.REQUEST_PERSON,
+		       M.DEMAND_DATE,
+		       M.ACCEPT_DATE,
+		       M.ACCEPT_PERSON,
+		       M.STATE_CODE,
+		       D.PRODUCT_TAG,
+		       D.MATERIAL,
+		       D.FITTINGS,
+		       D.SEQ,
+		       D.THK,
+		       D.L1,
+		       D.EA,
+		       D.M2,
+		       S.ITEM_CODE,
+		       S1.ITEM_NAME,
+		       S1.ITEM_STD,
+		       S1.ITEM_UNIT
+		  FROM MM_RQST_DUCT M 
+		  				INNER JOIN MM_RQST_DUCTDET D ON M.PROJECT_CODE = D.PROJECT_CODE
+                                    AND M.PRODUCT_TYPE = D.PRODUCT_TYPE
+                                    AND M.REQUEST_NO = D.REQUEST_NO
+        LEFT JOIN MM_CODE_DUCTITEM S ON S.PRODUCT_TYPE = D.PRODUCT_TYPE
+                                     AND S.MATERIAL = D.MATERIAL
+                                     AND S.THK = D.THK
+                                     --AND S.L1 = D.L1
+        LEFT JOIN SM_CODE_MATERIAL S1 ON S1.ITEM_CODE = S.ITEM_CODE
+   WHERE M.PROJECT_CODE = #{proj}
+     AND M.REQUEST_NO   = #{req}
+     AND M.PRODUCT_TYPE = #{type}
+
+		UNION ALL
+
+		SELECT '100' COMPANY_CODE,
+		       M.PROJECT_CODE,
+		       M.REQUEST_NO,
+		       M.PRODUCT_TYPE,
+		       M.REQUEST_DATE,
+		       M.REQUEST_PERSON,
+		       M.DEMAND_DATE,
+		       M.ACCEPT_DATE,
+		       M.ACCEPT_PERSON,
+		       M.STATE_CODE,
+		       NULL PRODUCT_TAG,
+		       NULL MATERIAL,
+		       NULL FITTINGS,
+		       9999 SEQ,
+		       NULL THK,
+		       NULL L1,
+		       ITEM_QTY EA,
+		       NULL M2,
+		       I.ITEM_CODE,
+		       S.ITEM_NAME,
+		       S.ITEM_STD,
+		       S.ITEM_UNIT
+		  FROM MM_RQST_DUCT M 
+		  				INNER JOIN MM_RQST_DUCTMAT I ON M.PROJECT_CODE = I.PROJECT_CODE
+                                    AND M.PRODUCT_TYPE = I.PRODUCT_TYPE
+                                    AND M.REQUEST_NO = I.REQUEST_NO
+        INNER JOIN SM_CODE_MATERIAL S ON I.ITEM_CODE = S.ITEM_CODE
+   WHERE M.PROJECT_CODE = #{proj}
+     AND M.REQUEST_NO   = #{req}
+     AND M.PRODUCT_TYPE = #{type}
+ ORDER BY ITEM_NAME, ITEM_STD, THK, L1, SEQ
+    ]]>
+  
+  </select>
+
+	<select id="FindAddRqst_09" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindAddRqst">
+    <![CDATA[
+        SELECT M.REQUEST_NO,
+               M.PRODUCT_TYPE,
+               S1.ITEM_CODE,
+               S1.ITEM_NAME,
+               S1.ITEM_STD,
+               S1.ITEM_UNIT,
+               SUM(D.M2) ITEM_QTY,
+               '0000' ITEM_MAKER,
+               'N/A' MAKER_NAME
+          FROM MM_RQST_DUCT M 
+          		LEFT JOIN MM_RQST_DUCTDET D ON M.PROJECT_CODE = D.PROJECT_CODE
+                            AND M.PRODUCT_TYPE = D.PRODUCT_TYPE
+                            AND M.REQUEST_NO = D.REQUEST_NO
+            LEFT JOIN MM_CODE_DUCTITEM S ON S.PRODUCT_TYPE = D.PRODUCT_TYPE
+                           AND S.MATERIAL = D.MATERIAL
+                           AND S.THK = D.THK
+                           --AND S.L1 = D.L1
+            LEFT JOIN SM_CODE_MATERIAL S1 ON S1.ITEM_CODE = S.ITEM_CODE
+         WHERE M.PROJECT_CODE = #{proj}
+           AND M.REQUEST_NO   = #{req}
+           AND M.PRODUCT_TYPE = #{type}
+       GROUP BY M.REQUEST_NO,M.PRODUCT_TYPE,ITEM_CODE,ITEM_NAME,ITEM_STD,ITEM_UNIT
+       UNION ALL
+        SELECT NULL REQUEST_NO,
+               NULL PRODUCT_TYPE,
+               S.ITEM_CODE,
+               S.ITEM_NAME,
+               S.ITEM_STD,
+               S.ITEM_UNIT,
+               I.ITEM_QTY,
+               '0000' ITEM_MAKER,
+               'N/A' MAKER_NAME
+          FROM MM_RQST_DUCT M INNER JOIN MM_RQST_DUCTMAT I ON M.PROJECT_CODE = I.PROJECT_CODE
+                                                          AND M.PRODUCT_TYPE = I.PRODUCT_TYPE
+                                                          AND M.REQUEST_NO = I.REQUEST_NO
+                              INNER JOIN SM_CODE_MATERIAL S ON I.ITEM_CODE = S.ITEM_CODE
+         WHERE M.PROJECT_CODE = #{proj}
+           AND M.REQUEST_NO   = #{req}
+           AND M.PRODUCT_TYPE = #{type}
+	  ORDER BY ITEM_NAME, ITEM_STD, ITEM_UNIT
+    ]]>
+  
+  </select>
+
+	<select id="FindAddRqst_06" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindAddRqst">
+		<![CDATA[
+		  SELECT A.ITEM_CODE,
+		         A.LARGE_CODE,
+		         A.MIDDLE_CODE,
+		         A.SMALL_CODE,
+		         L.LARGE_NAME,
+		         M.MIDDLE_NAME,
+		         S.SMALL_NAME,
+		         SUBSTR(A.ITEM_CODE, 8,3) CODE,
+		         A.EST_USE_TAG,
+		         A.ITEM_NAME,
+		         A.ITEM_STD,
+		         A.ITEM_STD2,
+		         A.ITEM_UNIT,
+		         A.UP_ITEM_CODE,
+		         A.MASTER_COST,
+		         A.ORDER_COST,
+		         A.ETC_COST,
+		         A.REMARKS,
+		         A.STD_TAG,
+		         A.GUBUN_TAG,
+		         A.ACC_GB,
+		         A.ETC_ATT1,
+		         A.ETC_ATT2,
+		         A.ETC_ATT3,
+		         A.TEMPCODE_YN,
+		         A.NEW_YN,
+		         B.ITEM_NAME UP_ITEM_NAME,
+		         A.ACNT_CODE,
+		         C.ACNT_NAME,
+		         #AS_MODIFY# CALC_MODIFY,
+		         A.COST_MODIFY,
+                 A.WIDTH WIDTH_YN,
+                 A.HEIGHT HEIGHT_YN,
+                 A.AREA AREA_YN,
+                 A.DIAMETER DIAMETER_YN,
+                 DECODE(A.WIDTH, 'Y', 0, NULL) WIDTH,
+                 DECODE(A.HEIGHT, 'Y', 0, NULL) HEIGHT,
+                 DECODE(A.AREA, 'Y', 0, NULL) AREA,
+                 DECODE(A.DIAMETER, 'Y', 0, NULL) DIAMETER,
+                 NULL ITEM_NAME2,
+                 A.WIDTH||A.HEIGHT||A.AREA WHA_YN,
+                 '0000' ITEM_MAKER,
+                 'N/A' MAKER_NAME,
+                 0 AS ITEM_QTY
+		    FROM TABLE (TF_MY_MATERIAL(#{search}, #{large}, #{middle}, #{small})) T
+		         INNER JOIN SM_CODE_MATERIAL A ON T.ITEM_CODE = A.ITEM_CODE
+		         							  AND A.USE_YN ='Y'
+		                            INNER JOIN SM_CODE_MATERIAL_LARGE L
+		                                  ON A.LARGE_CODE = L.LARGE_CODE
+		                            INNER JOIN SM_CODE_MATERIAL_MIDDLE M
+		                                  ON A.LARGE_CODE = M.LARGE_CODE AND A.MIDDLE_CODE = M.MIDDLE_CODE
+		                            INNER JOIN SM_CODE_MATERIAL_SMALL S
+		                                  ON A.LARGE_CODE = S.LARGE_CODE AND A.MIDDLE_CODE = S.MIDDLE_CODE AND A.SMALL_CODE = S.SMALL_CODE
+		          LEFT JOIN SM_CODE_MATERIAL B
+		                                  ON A.UP_ITEM_CODE = B.ITEM_CODE
+		                                 AND B.USE_YN ='Y'
+		                            LEFT JOIN AC_CODE_ACNT C
+		                                   ON A.ACNT_CODE = C.ACNT_CODE
+		                            LEFT JOIN AC_CODE_ACNT D
+		                                   ON A.GACNT_CODE = D.ACNT_CODE
+		WHERE A.ITEM_CODE NOT LIKE '999%'		                                   
+		ORDER BY L.LARGE_NAME,
+		       M.MIDDLE_NAME,
+		       S.SMALL_NAME,
+		       A.ITEM_NAME,
+		       A.ITEM_STD,
+		       A.ITEM_STD2
+		]]>
+		
+	</select>
+
+	<!-- 조회조건1 대분류 -->
+	<select id="FindAddRqst_03" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindAddRqst">
+		<![CDATA[
+		  SELECT LARGE_CODE AS CODE,
+		         LARGE_NAME AS LABEL
+		    FROM SM_CODE_MATERIAL_LARGE
+		ORDER BY LARGE_CODE ASC
+		]]>
+	</select>
+
+	<select id="FindAddRqst_04" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindAddRqst">
+		<![CDATA[
+		  SELECT LARGE_CODE,
+		         MIDDLE_CODE AS CODE,
+		         MIDDLE_NAME AS LABEL
+		    FROM SM_CODE_MATERIAL_MIDDLE
+		   WHERE LARGE_CODE LIKE #{large}
+		ORDER BY LARGE_CODE
+					 , MIDDLE_CODE
+		]]>
+		
+	</select>
+
+	<select id="FindAddRqst_05" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindAddRqst">
+		<![CDATA[
+		  SELECT A.LARGE_CODE,
+		         A.MIDDLE_CODE,
+		         A.SMALL_CODE AS CODE ,
+		         A.SMALL_NAME AS LABEL,
+		         A.ACCOUNT_CODE,
+		         NVL(A.ATT_INPUT_YN,'N') ATT_INPUT_YN,
+		         B.ACNT_NAME
+		    FROM SM_CODE_MATERIAL_SMALL A LEFT JOIN AC_CODE_ACNT B
+		                                         ON A.ACCOUNT_CODE = B.ACNT_CODE
+		   WHERE A.LARGE_CODE LIKE #{large}
+		     AND A.MIDDLE_CODE LIKE #{middle}
+		ORDER BY A.LARGE_CODE, A.MIDDLE_CODE
+					 , A.SMALL_CODE
+		]]>
+		
+	</select>
+
+</mapper>
