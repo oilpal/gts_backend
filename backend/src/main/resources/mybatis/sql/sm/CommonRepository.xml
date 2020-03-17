@@ -3,7 +3,7 @@
 <mapper namespace="com.neofect.gts.services.sm.repository.CommonRepository">
 
 	<!-- SM_COMCODE_D -->
-	<select id="SMCOMCODED" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	<select id="SMCOMCODED" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCommon">
 	/* com.neofect.gts.services.sm.repository.CommonRepository.SMCOMCODED*/
 		<![CDATA[
 				SELECT 
@@ -22,7 +22,7 @@
 	</select>
 
 	<!-- SM_COMCODE_D_EM -->
-	<select id="SMCOMCODEDEM" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	<select id="SMCOMCODEDEM" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCommon">
 	/* com.neofect.gts.services.sm.repository.CommonRepository.SMCOMCODEDEM*/
 		<![CDATA[
 				SELECT 
@@ -43,7 +43,7 @@
 	</select>
 
 	<!-- 프로그램 사용여부 조회 (년도) S_SM0709_01 -->
-	<select id="SSM070901" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	<select id="SSM070901" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCommon">
 	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070901*/
 		<![CDATA[
 				SELECT --	
@@ -571,7 +571,7 @@
 	</select>
 
 	<!-- 프로그램 사용여부 조회 (월) S_SM0709_02 -->
-	<select id="SSM070902" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	<select id="SSM070902" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCommon">
 	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070902*/
 		<![CDATA[
 		SELECT --	
@@ -977,7 +977,7 @@
 	</select>
 
 	<!-- TEXTAREA 변환 C_SM0708_01 -->
-	<select id="CSM070801" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	<select id="CSM070801" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCommon">
 	/* com.neofect.gts.services.sm.repository.CommonRepository.CSM070801 */
 		<![CDATA[
 			PROC_FM_TEXTAREA_CHANGE_TEMP
@@ -985,7 +985,7 @@
 	</select>
 
 	<!-- S_SM0709_03 -->
-	<select id="SSM070903" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	<select id="SSM070903" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCommon">
 	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070903 */
 		<![CDATA[
 			EXEC PROC_WORK_RSLT_ALL #{date}
@@ -993,7 +993,7 @@
 	</select>
 
 	<!-- 일별 집계 S_SM0709_04 -->
-	<select id="SSM070904" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	<select id="SSM070904" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCommon">
 	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070904 */
 		<![CDATA[
 			SELECT 
@@ -1095,7 +1095,7 @@
 	</select>
 
 	<!-- 월별 집계 S_SM0709_05 -->
-	<select id="SSM070905" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	<select id="SSM070905" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCommon">
 	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070905 */
 		<![CDATA[
 					SELECT CASE WHEN	
@@ -1178,7 +1178,7 @@
 	</select>
 
 	<!-- NFC 매핑 수 조회 -> 전체 COUNT S_SM0706_01 -->
-	<select id="SSM070601" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	<select id="SSM070601" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCommon">
 	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070601 */
 		<![CDATA[
 			SELECT (
@@ -1205,7 +1205,7 @@
 	</select>
 
 	<!-- NFC 매핑 수 조회 -> 설비 매핑 수 S_SM0706_02 -->
-	<select id="SSM070602" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	<select id="SSM070602" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCommon">
 	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070602 */
 		<![CDATA[
 					SELECT	
@@ -1224,7 +1224,7 @@
 	</select>
 
 	<!-- NFC 매핑 수 조회 -> 장비 매핑 수 S_SM0706_03 -->
-	<select id="SSM070603" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	<select id="SSM070603" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCommon">
 	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070603 */
 		<![CDATA[
 					SELECT	
@@ -1243,7 +1243,7 @@
 	</select>
 
 	<!-- NFC 매핑 수 조회 -> 검침기 매핑 수 S_SM0706_04 -->
-	<select id="SSM070604" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	<select id="SSM070604" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCommon">
 	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070604 */
 		<![CDATA[
 					SELECT	
@@ -1262,7 +1262,7 @@
 	</select>
 
 	<!-- NFC 매핑 수 조회 -> 점검위치 매핑 수 S_SM0706_05 -->
-	<select id="SSM070605" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	<select id="SSM070605" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCommon">
 	/* com.neofect.gts.services.sm.repository.CommonRepository.SSM070605 */
 		<![CDATA[
 					SELECT	
@@ -1281,7 +1281,7 @@
 	</select>
 
 	<!-- 마감일 설정 GET_CLOSE_CONFIG -->
-	<select id="GETCLOSECONFIG" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.Common">
+	<select id="GETCLOSECONFIG" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.sm.domain.SmCommon">
 	/* com.neofect.gts.services.sm.repository.CommonRepository.GETCLOSECONFIG */
 		<![CDATA[
 			SELECT 
