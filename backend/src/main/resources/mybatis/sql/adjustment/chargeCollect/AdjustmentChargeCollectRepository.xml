@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.neofect.gts.services.adjustment.chargeCollect.repository.ChargeCollectRepository">
+<mapper namespace="com.neofect.gts.services.adjustment.chargeCollect.repository.AdjustmentChargeCollectRepository">
 	<!-- 미수금현황 GS01080_R01 -->
-	<select id="getCARList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.gs.domain.ChargeCollect">
+	<select id="getCARList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.adjustment.chargeCollect.domain.AdjustmentChargeCollect">
 		<![CDATA[
 
 		SELECT	
@@ -43,7 +43,7 @@
 
 
 	<!-- 월별정산내역  GS01080_R02-->
-	<select id="getMSHList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.gs.domain.ChargeCollect">
+	<select id="getMSHList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.adjustment.chargeCollect.domain.AdjustmentChargeCollect">
 		<![CDATA[
 
 		SELECT 
@@ -83,7 +83,7 @@
 
 
 	<!-- 입급내역 GS01080_C03-->
-	<select id="getDHList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.gs.domain.ChargeCollect">
+	<select id="getDHList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.adjustment.chargeCollect.domain.AdjustmentChargeCollect">
 		SELECT	
 			A.DEPT_ID,
 			A.CUST_ID,
@@ -118,7 +118,7 @@
 
 
 	<!-- 급여비용명세서엑셀 GUBYEBIYONGXLS_R01 -->
-	<select id="getSESList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.gs.domain.ChargeCollect">
+	<select id="getSESList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.adjustment.chargeCollect.domain.AdjustmentChargeCollect">
 		SELECT 
 			FN_GS_GET_PRINT_DEPTNAME(B.DEPT_NAME) AS DEPT_NAME,
 			B.SERVICE_CODE,

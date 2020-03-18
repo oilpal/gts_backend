@@ -6,12 +6,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.neofect.gts.services.adjustment.chargeCollect.repository.ChargeCollectRepository;
-import com.neofect.gts.services.adjustment.chargeStatus.repository.ChargeStatusRepository;
+import com.neofect.gts.services.adjustment.chargeCollect.domain.AdjustmentChargeCollect;
+import com.neofect.gts.services.adjustment.chargeCollect.repository.AdjustmentChargeCollectRepository;
+import com.neofect.gts.services.adjustment.chargeStatus.repository.AdjustmentChargeStatusRepository;
 import com.neofect.gts.services.common.domain.Comm;
 import com.neofect.gts.services.common.repository.CommRepository;
-import com.neofect.gts.services.gs.domain.ChargeCollect;
-import com.neofect.gts.services.gs.domain.ChargeStatus;
 
 /**
  * 본인 부담금 수금
@@ -19,10 +18,10 @@ import com.neofect.gts.services.gs.domain.ChargeStatus;
  *
  */
 @Service
-public class ChargeCollectService {
+public class AdjustmentChargeCollectService {
 
 	@Autowired
-	ChargeCollectRepository chargeCollectRepository;
+	AdjustmentChargeCollectRepository chargeCollectRepository;
 
 	
 	/**
@@ -30,7 +29,7 @@ public class ChargeCollectService {
 	 * @param param
 	 * @return
 	 */
-	public List<ChargeCollect> getCARList(Map<String, Object> param) {
+	public List<AdjustmentChargeCollect> getCARList(Map<String, Object> param) {
 		return chargeCollectRepository.getCARList(param);
 	}
 
@@ -40,7 +39,7 @@ public class ChargeCollectService {
 	 * @param param
 	 * @return
 	 */
-	public List<ChargeCollect> getMSHList(Map<String, Object> param) {
+	public List<AdjustmentChargeCollect> getMSHList(Map<String, Object> param) {
 		return chargeCollectRepository.getMSHList(param);
 	}
 
@@ -50,7 +49,7 @@ public class ChargeCollectService {
 	 * @param param
 	 * @return
 	 */
-	public List<ChargeCollect> getDHList(Map<String, Object> param) {
+	public List<AdjustmentChargeCollect> getDHList(Map<String, Object> param) {
 		return chargeCollectRepository.getDHList(param);
 	}
 
@@ -60,7 +59,7 @@ public class ChargeCollectService {
 	 * @param param
 	 * @return
 	 */
-	public List<ChargeCollect> getSESList(Map<String, Object> param) {
+	public List<AdjustmentChargeCollect> getSESList(Map<String, Object> param) {
 		return chargeCollectRepository.getSESList(param);
 	}
 
