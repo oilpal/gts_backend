@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.neofect.gts.services.common.repository.GS_COMMONRepository">
+<mapper namespace="com.neofect.gts.services.common.repository.GsCommonRepository">
 	
 	<!-- 최근 계약번호 가져오기 -->
 	<select id="GET_MAX_CONTSEQ" parameterType="java.util.HashMap" resultType="java.lang.Integer">
@@ -46,7 +46,7 @@
 
 
 	<!-- 재가요양서비스 월 한도금액 가져오기 ( 등급 입력용 ) -->
-	<select id="GET_CARE_BASIC_AMT" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.GS_COMMON">
+	<select id="GET_CARE_BASIC_AMT" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.GsCommon">
 
 		SELECT  
 			A.M_LIMIT_AMT,
@@ -118,7 +118,7 @@
 
 
 	<!-- SetRemainAmtCalc 사용 -->
-	<select id="SetRemainAmtCalc_R01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.GS_COMMON">
+	<select id="SetRemainAmtCalc_R01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.GsCommon">
 		SELECT 
 			PROOFFI_DIV 
 		FROM 
@@ -127,7 +127,7 @@
 			PRODUCT_ID = #{productCode}
 	</select>
 
-	<select id="SetRemainAmtCalc_R02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.GS_COMMON">
+	<select id="SetRemainAmtCalc_R02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.GsCommon">
 		SELECT
 			APP_RATE_DIV 
 		FROM 
@@ -138,7 +138,7 @@
 			AND NVL(CANCEL_DATE, CONT_EDATE)
 	</select>
 
-	<select id="SetRemainAmtCalc_R03" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.GS_COMMON">
+	<select id="SetRemainAmtCalc_R03" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.GsCommon">
 		SELECT 
 			COMDIV_NAME 
 		FROM 

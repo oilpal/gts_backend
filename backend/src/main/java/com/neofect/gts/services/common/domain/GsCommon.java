@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Alias("GS_COMMON")
 @Data
-public class GS_COMMON implements Serializable {
+public class GsCommon implements Serializable {
 
 	private static final long serialVersionUID = -5386646392215727749L;
 	

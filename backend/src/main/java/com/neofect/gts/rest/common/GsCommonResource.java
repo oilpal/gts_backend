@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.neofect.gts.services.common.domain.Code;
-import com.neofect.gts.services.common.domain.GS_COMMON;
-import com.neofect.gts.services.common.service.GS_COMMONService;
+import com.neofect.gts.services.common.domain.GsCommon;
+import com.neofect.gts.services.common.service.GsCommonService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -27,12 +27,12 @@ import io.swagger.annotations.ApiOperation;
 
 @CrossOrigin(origins="*")
 @RestController
-@Api(value = "GS_COMMONResource")
+@Api(value = "GsCommonResource")
 @RequestMapping("/api/gs/common")
-public class GS_COMMONResource {
+public class GsCommonResource {
 
 	@Autowired 
-	GS_COMMONService gs_CommonService;
+	GsCommonService gsCommonService;
 	
 	/**
 	 * 최근 계약번호 가져오기
@@ -52,7 +52,7 @@ public class GS_COMMONResource {
             q = new HashMap<String,Object>();
         }
         
-        int result = gs_CommonService.GET_MAX_CONTSEQ(q);
+        int result = gsCommonService.GET_MAX_CONTSEQ(q);
         
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(result, headers, HttpStatus.OK);
@@ -76,7 +76,7 @@ public class GS_COMMONResource {
             q = new HashMap<String,Object>();
         }
         
-        int result = gs_CommonService.CODE_CUSTINDEPT_U01(q);
+        int result = gsCommonService.CODE_CUSTINDEPT_U01(q);
         
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(result, headers, HttpStatus.OK);
@@ -99,7 +99,7 @@ public class GS_COMMONResource {
             q = new HashMap<String,Object>();
         }
         
-        String result = gs_CommonService.CODE_CUSTINDEPT_R01(q);
+        String result = gsCommonService.CODE_CUSTINDEPT_R01(q);
         
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(result, headers, HttpStatus.OK);
@@ -117,12 +117,12 @@ public class GS_COMMONResource {
 		@ApiImplicitParam(name = "rate", value = "", required = true, dataType = "string", paramType = "query", defaultValue = "")
 	})
 	@GetMapping(value = "/getCareBasicAmt", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GS_COMMON> selectCareBasicAmt(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
+    public ResponseEntity<GsCommon> selectCareBasicAmt(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
         if (q == null) {
             q = new HashMap<String,Object>();
         }
         
-        GS_COMMON result = gs_CommonService.GET_CARE_BASIC_AMT(q);
+        GsCommon result = gsCommonService.GET_CARE_BASIC_AMT(q);
         
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(result, headers, HttpStatus.OK);
@@ -145,7 +145,7 @@ public class GS_COMMONResource {
             q = new HashMap<String,Object>();
         }
         
-        int result = gs_CommonService.CHK_CLOSING(q);
+        int result = gsCommonService.CHK_CLOSING(q);
         
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(result, headers, HttpStatus.OK);
@@ -169,7 +169,7 @@ public class GS_COMMONResource {
             q = new HashMap<String,Object>();
         }
         
-        int result = gs_CommonService.CODE_CLOSING_U01(q);
+        int result = gsCommonService.CODE_CLOSING_U01(q);
         
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(result, headers, HttpStatus.OK);
@@ -191,7 +191,7 @@ public class GS_COMMONResource {
             q = new HashMap<String,Object>();
         }
         
-        String result = gs_CommonService.GET_PRODUCT_ID(q);
+        String result = gsCommonService.GET_PRODUCT_ID(q);
         
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(result, headers, HttpStatus.OK);
@@ -208,12 +208,12 @@ public class GS_COMMONResource {
 		@ApiImplicitParam(name = "productCode", value = "품목코드", required = true, dataType = "string", paramType = "query", defaultValue = "")
 	})
 	@GetMapping(value = "/getRemainAmtCalc01", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<GS_COMMON>> selectRemainAmtCalc01(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
+    public ResponseEntity<List<GsCommon>> selectRemainAmtCalc01(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
         if (q == null) {
             q = new HashMap<String,Object>();
         }
         
-        List<GS_COMMON> result = gs_CommonService.SetRemainAmtCalc_R01(q);
+        List<GsCommon> result = gsCommonService.SetRemainAmtCalc_R01(q);
         
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(result, headers, HttpStatus.OK);
@@ -231,12 +231,12 @@ public class GS_COMMONResource {
 		@ApiImplicitParam(name = "date", value = "계약일", required = true, dataType = "string", paramType = "query", defaultValue = "")
 	})
 	@GetMapping(value = "/getRemainAmtCalc02", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<GS_COMMON>> selectRemainAmtCalc02(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
+    public ResponseEntity<List<GsCommon>> selectRemainAmtCalc02(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
         if (q == null) {
             q = new HashMap<String,Object>();
         }
         
-        List<GS_COMMON> result = gs_CommonService.SetRemainAmtCalc_R02(q);
+        List<GsCommon> result = gsCommonService.SetRemainAmtCalc_R02(q);
         
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(result, headers, HttpStatus.OK);
@@ -253,12 +253,12 @@ public class GS_COMMONResource {
 		@ApiImplicitParam(name = "comdivCode", value = "구분코드", required = true, dataType = "string", paramType = "query", defaultValue = "")
 	})
 	@GetMapping(value = "/getRemainAmtCalc03", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<GS_COMMON>> selectRemainAmtCalc03(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
+    public ResponseEntity<List<GsCommon>> selectRemainAmtCalc03(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
         if (q == null) {
             q = new HashMap<String,Object>();
         }
         
-        List<GS_COMMON> result = gs_CommonService.SetRemainAmtCalc_R03(q);
+        List<GsCommon> result = gsCommonService.SetRemainAmtCalc_R03(q);
         
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(result, headers, HttpStatus.OK);

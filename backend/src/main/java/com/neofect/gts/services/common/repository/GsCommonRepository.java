@@ -3,7 +3,7 @@ package com.neofect.gts.services.common.repository;
 import java.util.List;
 import java.util.Map;
 
-import com.neofect.gts.services.common.domain.GS_COMMON;
+import com.neofect.gts.services.common.domain.GsCommon;
 
 
 /**
@@ -11,7 +11,7 @@ import com.neofect.gts.services.common.domain.GS_COMMON;
  * @author jd
  *
  */
-public interface GS_COMMONRepository {
+public interface GsCommonRepository {
 	
 	/**
 	 * 최근 계약번호 가져오기
@@ -46,7 +46,7 @@ public interface GS_COMMONRepository {
 	 * @param gs
 	 * @return
 	 */
-	GS_COMMON GET_CARE_BASIC_AMT(Map<String, Object> gs);
+	GsCommon GET_CARE_BASIC_AMT(Map<String, Object> gs);
 
 	/**
 	 * 각종 마감 체크
@@ -81,20 +81,20 @@ public interface GS_COMMONRepository {
 	 * @param gs
 	 * @return
 	 */
-	List<GS_COMMON> SetRemainAmtCalc_R01(Map<String, Object> gs);
+	List<GsCommon> SetRemainAmtCalc_R01(Map<String, Object> gs);
 
 	/**
 	 * 
 	 * @param gs
 	 * @return
 	 */
-	List<GS_COMMON> SetRemainAmtCalc_R02(Map<String, Object> gs);
+	List<GsCommon> SetRemainAmtCalc_R02(Map<String, Object> gs);
 
 	/**
 	 * 
 	 * @param gs
 	 * @return
 	 */
-	List<GS_COMMON> SetRemainAmtCalc_R03(Map<String, Object> gs);
+	List<GsCommon> SetRemainAmtCalc_R03(Map<String, Object> gs);
 
 }

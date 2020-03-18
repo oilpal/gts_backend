@@ -6,8 +6,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.neofect.gts.services.common.domain.GS_COMMON;
-import com.neofect.gts.services.common.repository.GS_COMMONRepository;
+import com.neofect.gts.services.common.domain.GsCommon;
+import com.neofect.gts.services.common.repository.GsCommonRepository;
 
 /**
  * GS_COMMON 서비스 
@@ -15,10 +15,10 @@ import com.neofect.gts.services.common.repository.GS_COMMONRepository;
  *
  */
 @Service
-public class GS_COMMONService {
+public class GsCommonService {
 
 	@Autowired
-	GS_COMMONRepository gs_commonRepository;
+	GsCommonRepository gs_commonRepository;
 	
 	/**
 	 * 최근 계약번호 가져오기
@@ -61,7 +61,7 @@ public class GS_COMMONService {
 	 * @param gs
 	 * @return
 	 */
-	public GS_COMMON GET_CARE_BASIC_AMT(Map<String, Object> gs) {
+	public GsCommon GET_CARE_BASIC_AMT(Map<String, Object> gs) {
 		return gs_commonRepository.GET_CARE_BASIC_AMT(gs);
 	}
 
@@ -106,7 +106,7 @@ public class GS_COMMONService {
 	 * @param gs
 	 * @return
 	 */
-	public List<GS_COMMON> SetRemainAmtCalc_R01(Map<String, Object> gs) {
+	public List<GsCommon> SetRemainAmtCalc_R01(Map<String, Object> gs) {
 		return gs_commonRepository.SetRemainAmtCalc_R01(gs);
 	}
 
@@ -115,7 +115,7 @@ public class GS_COMMONService {
 	 * @param gs
 	 * @return
 	 */
-	public List<GS_COMMON> SetRemainAmtCalc_R02(Map<String, Object> gs) {
+	public List<GsCommon> SetRemainAmtCalc_R02(Map<String, Object> gs) {
 		return gs_commonRepository.SetRemainAmtCalc_R02(gs);
 	}
 
@@ -124,7 +124,7 @@ public class GS_COMMONService {
 	 * @param gs
 	 * @return
 	 */
-	public List<GS_COMMON> SetRemainAmtCalc_R03(Map<String, Object> gs) {
+	public List<GsCommon> SetRemainAmtCalc_R03(Map<String, Object> gs) {
 		return gs_commonRepository.SetRemainAmtCalc_R03(gs);
 	}
 }
