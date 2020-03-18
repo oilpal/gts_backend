@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.neofect.gts.services.gs.repository.GS01080Repository">
-	<!-- 미수금현황 -->
-	<select id="GS01080_R01" parameterType="com.neofect.gts.services.gs.domain.GS01080" resultType="com.neofect.gts.services.gs.domain.GS01080">
+<mapper namespace="com.neofect.gts.services.adjustment.chargeCollect.repository.ChargeCollectRepository">
+	<!-- 미수금현황 GS01080_R01 -->
+	<select id="getCARList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.gs.domain.ChargeCollect">
 		<![CDATA[
 
 		SELECT	
@@ -10,10 +10,10 @@
 			A.CUST_ID,
 			B.CUST_CODE,
 			B.CUST_NAME,
-			B.BIRTH_DAT,
+			B.BIRTH_DATE,
 			SUM(A.PAY_AMT) AS PAY_AM,
 			SUM(A.PAY_AMT) - F_GS_GET_SERVICE_PAID_AMT2(A.DEPT_ID,A.CUST_ID) AS MISU_AM,
-			SUM(CASE WHEN A.YYYYMM=#{yymm} THEN A.PAY_AMT + A.BPAY_AMT ELSE 0 END) AS THIS_PAY_AM,
+			SUM(CASE WHEN A.YYYYMM=#{yyyymm} THEN A.PAY_AMT + A.BPAY_AMT ELSE 0 END) AS THIS_PAY_AM,
 			SUM(A.REQ_AMT) AS REQ_AM,
 			F_GS_GET_SERVICE_PAID_AMT2(A.DEPT_ID,A.CUST_ID)	AS PAIDAMT 
 		FROM
@@ -22,7 +22,7 @@
 			CODE_CUST B ON B.CUST_ID = A.CUST_ID
 		WHERE	
 			A.DEPT_ID LIKE #{deptId}
-			AND A.YYYYMM <= #{yymm}
+			AND A.YYYYMM <= #{yyyymm}
 			AND (B.CUST_CODE LIKE #{custCode} OR B.CUST_NAME LIKE #{custCode})
 			AND (
 				#{reductionDiv} = '%'
@@ -32,9 +32,9 @@
 		GROUP BY	
 			A.DEPT_ID, A.CUST_ID, B.CUST_CODE, B.CUST_NAME, B.BIRTH_DATE 
 		HAVING
-			SUM(CASE WHEN A.YYYYMM=#{yymm} THEN A.PAY_AMT ELSE 0 END) > 0 
+			SUM(CASE WHEN A.YYYYMM=#{yyyymm} THEN A.PAY_AMT ELSE 0 END) > 0 
 			OR (SUM(A.PAY_AMT) > F_GS_GET_SERVICE_PAID_AMT2(A.DEPT_ID,A.CUST_ID))
-			OR SUM(CASE WHEN A.YYYYMM=#{yymm} THEN A.REQ_AMT ELSE 0 END) > 0
+			OR SUM(CASE WHEN A.YYYYMM=#{yyyymm} THEN A.REQ_AMT ELSE 0 END) > 0
 		ORDER BY
 			A.DEPT_ID, B.CUST_NAME 
 
@@ -42,8 +42,8 @@
 	</select>
 
 
-	<!-- 월별정산내역 -->
-	<select id="GS01080_R02" parameterType="com.neofect.gts.services.gs.domain.GS01080" resultType="com.neofect.gts.services.gs.domain.GS01080">
+	<!-- 월별정산내역  GS01080_R02-->
+	<select id="getMSHList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.gs.domain.ChargeCollect">
 		<![CDATA[
 
 		SELECT 
@@ -72,7 +72,7 @@
 		LEFT OUTER JOIN 
 			SERVICE_PAY_RECEIPT C ON A.DEPT_ID = C.DEPT_ID AND A.CUST_ID = C.CUST_ID AND A.YYYYMM = C.REQ_YYMM
 		WHERE 
-			A.YYYYMM <= #{yymm}
+			A.YYYYMM <= #{yyyymm}
 		GROUP BY 
 			A.DEPT_ID, A.YYYYMM, A.PAY_AMT, A.REQ_AMT 
 		ORDER BY 
@@ -82,29 +82,29 @@
 	</select>
 
 
-	<!-- 입급내역 -->
-	<select id="GS01080_C03" parameterType="com.neofect.gts.services.gs.domain.GS01080" resultType="com.neofect.gts.services.gs.domain.GS01080">
+	<!-- 입급내역 GS01080_C03-->
+	<select id="getDHList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.gs.domain.ChargeCollect">
 		SELECT	
 			A.DEPT_ID,
 			A.CUST_ID,
-			A.CHECK_Y,
-			A.REQ_YYM,
+			A.CHECK_YN,
+			A.REQ_YYMM,
 			A.PAY_DATE,
-			A.CARD_AM,
-			A.BANK_AM,
-			A.VBANK_AM,
-			A.JIRO_AM,
+			A.CARD_AMT,
+			A.BANK_AMT,
+			A.VBANK_AMT,
+			A.JIRO_AMT,
 			A.DEPOSITNO,
-			A.DEPOSIT_NAM,
-			A.VBANK_DEPOSI,
-			A.REMAR,
+			A.DEPOSIT_NAME,
+			A.VBANK_DEPOSIT,
+			A.REMARK,
 			A.PAY_AMT,
-			A.CASH_AM,
-			A.REQ_AM,
+			A.CASH_AMT,
+			A.REQ_AMT,
 			A.ENTER_ID,
 			A.ENTER_DATE,
-			A.EDIT_I,
-			A.EDIT_DATE 
+			A.EDIT_ID,
+			A.EDIT_DATE  
 		FROM 
 			SERVICE_PAY_RECEIPT A 
 		WHERE 
@@ -117,8 +117,8 @@
 
 
 
-	<!-- 급여비용명세서엑셀 -->
-	<select id="GUBYEBIYONGXLS_R01" parameterType="com.neofect.gts.services.gs.domain.GS01080" resultType="com.neofect.gts.services.gs.domain.GS01080">
+	<!-- 급여비용명세서엑셀 GUBYEBIYONGXLS_R01 -->
+	<select id="getSESList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.gs.domain.ChargeCollect">
 		SELECT 
 			FN_GS_GET_PRINT_DEPTNAME(B.DEPT_NAME) AS DEPT_NAME,
 			B.SERVICE_CODE,
@@ -150,7 +150,7 @@
 		WHERE
 			M.DEPT_ID = #{deptId}
 			AND M.CUST_ID = #{custId}
-			AND M.YYYYMM = #{yymm}
+			AND M.YYYYMM = #{yyyymm}
 		GROUP BY 
 			B.DEPT_NAME, B.SERVICE_CODE, B.ADDR1, B.ADDR2, B.BIZ_NO, B.OWNER_NAME, M.CUST_ID, A.CUST_NAME, A.MANAGE_NO1, A.MANAGE_NO2, M.DEPT_ID, M.YYYYMM
 	</select>
