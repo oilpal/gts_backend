@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.neofect.gts.services.adjustment.chargeStatus.service.ChargeStatusService;
+import com.neofect.gts.services.adjustment.chargeStatus.domain.AdjustmentChargeStatus;
+import com.neofect.gts.services.adjustment.chargeStatus.service.AdjustmentChargeStatusService;
 import com.neofect.gts.services.common.domain.Comm;
-import com.neofect.gts.services.gs.domain.ChargeStatus;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -29,10 +29,10 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @Api(value = "ChargeStatusResource")
 @RequestMapping("/api/chargeStatus")
-public class ChargeStatusResource {
+public class AdjustmentChargeStatusResource {
 
 	@Autowired 
-	ChargeStatusService chargeStatusService;
+	AdjustmentChargeStatusService chargeStatusService;
 	
 	/**
 	 * 고객 청구현황 목록
@@ -47,12 +47,12 @@ public class ChargeStatusResource {
         @ApiImplicitParam(name = "yyyymm", value = "날짜", required = true, dataType = "string", paramType = "query", defaultValue = ""),
    })
 	@GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ChargeStatus>> listCode(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
+    public ResponseEntity<List<AdjustmentChargeStatus>> listCode(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
         if (q == null) {
             q = new HashMap<String,Object>();
         }
         
-        List<ChargeStatus> list = chargeStatusService.GS01060_R01(q);
+        List<AdjustmentChargeStatus> list = chargeStatusService.GS01060_R01(q);
 
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(list, headers, HttpStatus.OK);
@@ -72,12 +72,12 @@ public class ChargeStatusResource {
 		@ApiImplicitParam(name = "custId", value = "고객번호", required = true, dataType = "string", paramType = "query", defaultValue = ""),
 	})
 	@GetMapping(value = "/detail", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<ChargeStatus>> serviceDetail(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
+	public ResponseEntity<List<AdjustmentChargeStatus>> serviceDetail(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
 		if (q == null) {
 			q = new HashMap<String,Object>();
 		}
 		
-		List<ChargeStatus> list = chargeStatusService.GS01060_C02(q);
+		List<AdjustmentChargeStatus> list = chargeStatusService.GS01060_C02(q);
 		
 		HttpHeaders headers = new HttpHeaders();
 		return new ResponseEntity<>(list, headers, HttpStatus.OK);

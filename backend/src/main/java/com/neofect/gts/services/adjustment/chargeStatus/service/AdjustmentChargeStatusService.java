@@ -6,10 +6,10 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.neofect.gts.services.adjustment.chargeStatus.repository.ChargeStatusRepository;
+import com.neofect.gts.services.adjustment.chargeStatus.domain.AdjustmentChargeStatus;
+import com.neofect.gts.services.adjustment.chargeStatus.repository.AdjustmentChargeStatusRepository;
 import com.neofect.gts.services.common.domain.Comm;
 import com.neofect.gts.services.common.repository.CommRepository;
-import com.neofect.gts.services.gs.domain.ChargeStatus;
 
 /**
  * (구)이용계약서 서비스 
@@ -17,10 +17,10 @@ import com.neofect.gts.services.gs.domain.ChargeStatus;
  *
  */
 @Service
-public class ChargeStatusService {
+public class AdjustmentChargeStatusService {
 
 	@Autowired
-	ChargeStatusRepository chargeStatusRepository;
+	AdjustmentChargeStatusRepository chargeStatusRepository;
 
 	@Autowired
 	CommRepository commRepository;
@@ -30,7 +30,7 @@ public class ChargeStatusService {
 	 * @param param
 	 * @return
 	 */
-	public List<ChargeStatus> GS01060_R01(Map<String, Object> param) {
+	public List<AdjustmentChargeStatus> GS01060_R01(Map<String, Object> param) {
 		return chargeStatusRepository.GS01060_R01(param);
 	}
 
@@ -39,7 +39,7 @@ public class ChargeStatusService {
 	 * @param param
 	 * @return
 	 */
-	public List<ChargeStatus> GS01060_C02(Map<String, Object> param) {
+	public List<AdjustmentChargeStatus> GS01060_C02(Map<String, Object> param) {
 		return chargeStatusRepository.GS01060_C02(param);
 	}
 

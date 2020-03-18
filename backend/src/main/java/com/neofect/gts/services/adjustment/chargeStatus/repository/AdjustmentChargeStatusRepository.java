@@ -3,7 +3,8 @@ package com.neofect.gts.services.adjustment.chargeStatus.repository;
 import java.util.List;
 import java.util.Map;
 
-import com.neofect.gts.services.gs.domain.ChargeStatus;
+import com.neofect.gts.services.adjustment.chargeStatus.domain.AdjustmentChargeStatus;
+
 
 
 /**
@@ -11,21 +12,21 @@ import com.neofect.gts.services.gs.domain.ChargeStatus;
  * @author jd
  *
  */
-public interface ChargeStatusRepository {
+public interface AdjustmentChargeStatusRepository {
 	
 	/**
 	*
 	* @param param
 	* @return
 	*/
-	List<ChargeStatus> GS01060_R01(Map<String, Object> param);
+	List<AdjustmentChargeStatus> GS01060_R01(Map<String, Object> param);
 
 	/**
 	*
 	* @param param
 	* @return
 	*/
-	List<ChargeStatus> GS01060_C02(Map<String, Object> param);
+	List<AdjustmentChargeStatus> GS01060_C02(Map<String, Object> param);
 
 	/**
 	*

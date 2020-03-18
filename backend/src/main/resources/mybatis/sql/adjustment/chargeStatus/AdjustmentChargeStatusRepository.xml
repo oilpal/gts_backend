@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.neofect.gts.services.adjustment.chargeStatus.repository.ChargeStatusRepository">
-	<select id="GS01060_R01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.gs.domain.ChargeStatus">
+<mapper namespace="com.neofect.gts.services.adjustment.chargeStatus.repository.AdjustmentChargeStatusRepository">
+	<select id="GS01060_R01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.adjustment.chargeStatus.domain.AdjustmentChargeStatus">
         SELECT 
             A.DEPT_ID,
             A.CUST_ID,
@@ -41,7 +41,7 @@
         ORDER BY E.DEPT_NAME, B.CUST_NAME
     </select>
 
-    <select id="GS01060_C02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.gs.domain.ChargeStatus">
+    <select id="GS01060_C02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.adjustment.chargeStatus.domain.AdjustmentChargeStatus">
         SELECT  
             A.S_ID,
             A.DEPT_ID,
