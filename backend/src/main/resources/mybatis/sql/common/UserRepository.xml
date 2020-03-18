@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.UserRepository">
+
+	<!-- 공통코드 목록 -->
+	<select id="findByUsername" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.LoginUser">
+	/* com.neofect.gts.services.common.repository.UserRepository.findByUsername */
+	 	SELECT	A.MEMBER_ID			AS USER_ID
+				,	A.MEMBER_ID				AS USER_NAME
+				,	A.PWD				AS USER_PASSWORD
+				, 	A.PWD				AS PASSWORD
+				,	A.WORK_YN			AS USE_YN
+				,	D.COMPANY_CODE		AS COMPANY_CODE
+				,	D.COMPANY_NAME		AS COMPANY_NAME
+				,	A.DEPT_ID			AS DEPT_CODE
+				,	A.LOGIN_TIME
+				,	A.LOGOUT_TIME
+				,	A.IP_ADDR			AS IP_ADDR
+				,	NVL(A.LOGIN_COUNT,0)			AS LOGIN_COUNT
+				,	NVL(A.LOGIN_LOCK_YESNO,'N')		AS LOGIN_LOCK_YESNO
+				,	C.DEPT_NAME			AS DEPT_NAME
+				,	A.EMAIL				AS E_MAIL
+				,	A.HP				AS MOBILE_NO
+				,	A.MEMBER_DIV		AS USER_TAG
+				,	A.PASSWORD_UPDATE
+				,	SYSDATE - A.PASSWORD_UPDATE - 90	AS PASSWORD_EXPIRE
+				<if test='encPassword!="" and encPassword != null'>
+				,	F_MD5(#{encPassword})	AS ENC_PASSWORD
+				</if>
+				,	A.MEMBER_ID			AS LOGIN_ID
+				,	A.REG_CODE			AS GRADE_CODE
+				,	NVL(A.PAGE_TAG,'N')	AS PAGE_TAG
+			FROM	CODE_MEMBER A
+					LEFT OUTER JOIN CODE_DEPT C ON (A.DEPT_ID = C.DEPT_ID)
+					LEFT OUTER JOIN SM_CODE_COMPANY D ON (#{companyCode} = D.COMPANY_CODE)
+			WHERE	A.MEMBER_ID	=	#{userId}
+	</select>
+	
+	<select id="selectPasswordEncode" parameterType="java.lang.String" resultType="java.lang.String">
+	/* com.neofect.gts.services.common.repository.UserRepository.selectPasswordEncode */
+		SELECT F_MD5(#{encPassword}) FROM DUAL
+	</select>
+</mapper>
