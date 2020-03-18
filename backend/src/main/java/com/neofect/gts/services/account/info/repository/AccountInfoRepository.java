@@ -32,41 +32,41 @@ public interface AccountInfoRepository {
 	 * @param gs
 	 * @return
 	 */
-	int DEL_CODE_CUSTINDEPT(AccountInfo gs);
+	int DEL_CODE_CUSTINDEPT(Map<String, Object> gs);
 	
 	/**
 	 * 
 	 * @param gs
 	 * @return
 	 */
-	List<AccountInfo> CHK_CODE_CUST(AccountInfo gs);
+	List<AccountInfo> CHK_CODE_CUST(Map<String, Object> gs);
 	
 	/**
 	 * 
 	 * @param gs
 	 * @return
 	 */
-	List<AccountInfo> CODE_CUST_R01(AccountInfo gs);
+	List<AccountInfo> CODE_CUST_R01(Map<String, Object> gs);
 	
 	/**
 	 * 
 	 * @param gs
 	 * @return
 	 */
-	int CODE_CUSTINDEPT_C01(AccountInfo gs);
+	int CODE_CUSTINDEPT_C01(Map<String, Object> gs);
 	
 	/**
 	 * 
 	 * @param gs
 	 * @return
 	 */
-	List<AccountInfo> GS01010_R01(AccountInfo gs);
+	List<AccountInfo> GS01010_R01(Map<String, Object> gs);
 	
 	/**
 	 * 
 	 * @param gs
 	 * @return
 	 */
-	List<AccountInfo> GS01012_C01(AccountInfo gs);
+	List<AccountInfo> GS01012_C01(Map<String, Object> gs);
 
 }

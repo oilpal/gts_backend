@@ -114,7 +114,7 @@
 	</select>
 	
 	<!-- 담당센터정보 -->
-	<select id="GS01010_U02" parameterType="com.neofect.gts.services.account.info.domain.AccountInfo" resultType="com.neofect.gts.services.account.info.domain.AccountInfo">
+	<select id="GS01010_U02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.account.info.domain.AccountInfo">
 		SELECT  A.SEQ
 			, A.DEPT_ID
 			, D.DEPT_NAME
@@ -126,13 +126,13 @@
 		ORDER BY  D.DEPT_NAME
 	</select>
 	
-	<delete id="DEL_CODE_CUSTINDEPT" parameterType="com.neofect.gts.services.account.info.domain.AccountInfo">
+	<delete id="DEL_CODE_CUSTINDEPT" parameterType="java.util.HashMap">
 		DELETE  CODE_CUSTINDEPT
 		WHERE   DEPT_ID = #{deptId}
 		AND     CUST_ID = #{custId}
 	</delete>
 	
-	<select id="CHK_CODE_CUST" parameterType="com.neofect.gts.services.account.info.domain.AccountInfo" resultType="java.lang.Integer">
+	<select id="CHK_CODE_CUST" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.account.info.domain.AccountInfo">
 		SELECT  
 			SUM(CASE WHEN B.DEPT_ID=#{deptId} THEN 1 ELSE 0 END)  AS IN_CNT,
 			SUM(CASE WHEN B.DEPT_ID=#{deptId} THEN 0 ELSE 1 END)  AS OUT_CNT
@@ -149,7 +149,7 @@
 			]]>
 	</select>
 	
-	<select id="CODE_CUST_R01" parameterType="com.neofect.gts.services.account.info.domain.AccountInfo" resultType="com.neofect.gts.services.account.info.domain.AccountInfo">
+	<select id="CODE_CUST_R01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.account.info.domain.AccountInfo">
 		<![CDATA[
 
 			SELECT	
@@ -172,7 +172,7 @@
 	</select>
 
 
-	<insert id="CODE_CUSTINDEPT_C01" parameterType="com.neofect.gts.services.account.info.domain.AccountInfo">
+	<insert id="CODE_CUSTINDEPT_C01" parameterType="java.util.HashMap">
 		INSERT INTO CODE_CUSTINDEPT
 		(	
 			SEQ,
@@ -193,7 +193,7 @@
 		)
 	</insert>
 
-	<select id="GS01010_R01" parameterType="com.neofect.gts.services.account.info.domain.AccountInfo" resultType="com.neofect.gts.services.account.info.domain.AccountInfo">
+	<select id="GS01010_R01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.account.info.domain.AccountInfo">
 		<![CDATA[
 
 		SELECT  
@@ -246,7 +246,7 @@
 		]]>
 	</select>
 	
-	<select id="GS01012_C01" parameterType="com.neofect.gts.services.account.info.domain.AccountInfo" resultType="com.neofect.gts.services.account.info.domain.AccountInfo">
+	<select id="GS01012_C01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.account.info.domain.AccountInfo">
 		SELECT    
 			A.CUST_ID,
             A.PRO_SEQ,
