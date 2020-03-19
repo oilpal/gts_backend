@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.FindBankCodeRepository">
+
+	<!-- FindBankCode -->
+	<select id="FindBankCode" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindBankCodeVO">
+	 	SELECT 
+	 			A.BANK_CODE AS BANK_CODE,
+        		A.BANK_NAME AS BANK_NAME
+        FROM 
+        		SM_CODE_BANK A
+        WHERE 
+        		A.USING_TAG = 'Y'
+        AND 
+        		A.CM_USE_YN = 'Y'
+		AND 
+				A.BANK_NAME LIKE '%' || #{find} || '%'
+		ORDER BY A.BANK_NAME ASC
+	</select>
+
+</mapper>

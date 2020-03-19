@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.FindMatrCustRepository">
+
+	<!-- FindMatrCust_01 -->
+	<select id="FindMatrCust_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindMatrCust">
+	 	<![CDATA[
+
+			 SELECT DISTINCT A.ITEM_CODE,
+							A.ITEM_NAME,
+							A.ITEM_STD,
+							A.ITEM_UNIT,
+							B.ESTIMATE_COST,
+							B.ITEM_MAKER,
+							NVL(V.DNAME,'') MAKER_NAME
+				 FROM TABLE(TF_MY_MATERIAL(#{search})) A
+				INNER JOIN PM_UNPR_MASTER B ON A.ITEM_CODE = B.ITEM_CODE AND B.CUST_CODE = #{custcode}
+				LEFT JOIN VW_C_PM_MATMAKER V ON B.ITEM_MAKER = V.DCODE
+				WHERE A.LARGE_CODE LIKE #{largecode}
+					AND A.MIDDLE_CODE LIKE #{middlecode}
+					AND A.SMALL_CODE LIKE #{smallcode}
+				ORDER BY A.ITEM_CODE
+
+    ]]>
+	</select>
+
+	<!-- FindMatrCust_02 -->
+	<select id="FindMatrCust_02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindMatrCust">
+	 	<![CDATA[
+
+			  SELECT A.ITEM_CODE,
+							A.ITEM_NAME,
+							A.ITEM_STD,
+							A.ITEM_UNIT,
+							0 ESTIMATE_COST,
+							B.ITEM_MAKER,
+							NVL(V.DNAME,'') MAKER_NAME
+				 FROM TABLE(TF_MY_MATERIAL(#{search})) A
+				INNER JOIN PM_UNPR_MASTER B ON A.ITEM_CODE = B.ITEM_CODE AND B.CUST_CODE = #{custcode}
+				LEFT JOIN VW_C_PM_MATMAKER V ON B.ITEM_MAKER = V.DCODE
+				WHERE A.LARGE_CODE LIKE #{largecode}
+					AND A.MIDDLE_CODE LIKE #{middlecode}
+					AND A.SMALL_CODE LIKE #{smallcode}
+				ORDER BY A.ITEM_CODE
+
+    ]]>
+	</select>
+
+	<!-- FindMatrCust_03 -->
+	<select id="FindMatrCust_03" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindMatrCust">
+	 	<![CDATA[
+
+			  SELECT 
+			  		'' AS ITEM_CODE,
+					'' AS ITEM_NAME,
+					'' AS ITEM_STD,
+					'' AS ITEM_UNIT,
+					'' AS ESTIMATE_COST
+			  FROM DUAL
+
+    ]]>
+	</select>
+
+	<!-- FindMatrCust_S01 -->
+	<select id="FindMatrCust_S01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindMatrCust">
+	 	<![CDATA[
+
+			  SELECT A.LARGE_CODE AS CODE,
+			         A.LARGE_NAME AS LABEL
+			    FROM SM_CODE_MATERIAL_LARGE A
+			   WHERE A.LARGE_CODE IN (SELECT B.LARGE_CODE
+			                            FROM SM_CODE_MATERIAL B
+			                           INNER JOIN PM_UNPR_MASTER C ON B.ITEM_CODE = C.ITEM_CODE
+			                           WHERE C.CUST_CODE = #{custcode})
+			   ORDER BY A.LARGE_CODE ASC
+
+    ]]>
+	</select>
+
+	<!-- FindMatrCust_S02 -->
+	<select id="FindMatrCust_S02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindMatrCust">
+	 	<![CDATA[
+
+			  SELECT A.MIDDLE_CODE AS CODE,
+				         A.MIDDLE_NAME AS LABEL
+				    FROM SM_CODE_MATERIAL_MIDDLE A
+				   WHERE A.LARGE_CODE = #as_largecode#
+				     AND (A.LARGE_CODE, A.MIDDLE_CODE) IN (SELECT B.LARGE_CODE, B.MIDDLE_CODE
+				                                             FROM SM_CODE_MATERIAL B
+				                                            INNER JOIN PM_UNPR_MASTER C ON B.ITEM_CODE = C.ITEM_CODE
+				                                            WHERE C.CUST_CODE = #{custcode})
+				   ORDER BY A.LARGE_CODE, A.MIDDLE_CODE
+
+    ]]>
+	</select>
+
+	<!-- FindMatrCust_S03 -->
+	<select id="FindMatrCust_S03" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindMatrCust">
+	 	<![CDATA[
+
+			  SELECT A.SMALL_CODE AS CODE,
+				         A.SMALL_NAME AS LABEL
+				    FROM SM_CODE_MATERIAL_SMALL A
+				   WHERE A.LARGE_CODE = #as_largecode#
+				     AND A.MIDDLE_CODE = #as_middlecode#
+				     AND A.SMALL_CODE IN (SELECT B.SMALL_CODE
+				                            FROM SM_CODE_MATERIAL B
+				                           INNER JOIN PM_UNPR_MASTER C ON B.ITEM_CODE = C.ITEM_CODE
+				                           WHERE C.CUST_CODE = #{custcode})
+				   ORDER BY A.LARGE_CODE, A.MIDDLE_CODE, A.SMALL_CODE
+
+    ]]>
+	</select>
+
+	<!-- FindMatrCust_S04 -->
+	<select id="FindMatrCust_S04" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindMatrCust">
+	 	<![CDATA[
+
+			  SELECT A.LARGE_CODE AS CODE,
+			         A.LARGE_NAME AS LABEL
+			    FROM SM_CODE_MATERIAL_LARGE A
+			   ORDER BY A.LARGE_CODE
+
+    ]]>
+	</select>
+
+	<!-- FindMatrCust_S05 -->
+	<select id="FindMatrCust_S05" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindMatrCust">
+	 	<![CDATA[
+
+			  SELECT A.MIDDLE_CODE AS CODE,
+				         A.MIDDLE_NAME AS LABEL
+				    FROM SM_CODE_MATERIAL_MIDDLE A
+				   WHERE A.LARGE_CODE = #{largecode}
+				   ORDER BY A.MIDDLE_CODE
+
+    ]]>
+	</select>
+
+	<!-- FindMatrCust_S06 -->
+	<select id="FindMatrCust_S06" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindMatrCust">
+	 	<![CDATA[
+
+			   SELECT A.SMALL_CODE AS CODE,
+				         A.SMALL_NAME AS LABEL
+				    FROM SM_CODE_MATERIAL_SMALL A
+				   WHERE A.LARGE_CODE = #{largecode}
+				     AND A.MIDDLE_CODE = #{middlecode}
+				   ORDER BY A.SMALL_CODE
+
+    ]]>
+	</select>
+
+</mapper>

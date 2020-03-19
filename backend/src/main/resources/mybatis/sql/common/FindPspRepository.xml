@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.FindPspRepository">
+
+	<!-- FindPsp_01 -->
+	<select id="FindPsp_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindPsp">
+	 	<![CDATA[
+			SELECT A.FITTINGS           ,    
+		     	 A.FITTINGS_NAME      ,    
+		         A.PRODUCT_TYPE       ,    
+		         A.L1_TAG             ,    
+		         A.L2_TAG             ,    
+		         A.L3_TAG             ,    
+		         A.L4_TAG             ,    
+		         A.L5_TAG             ,    
+		         A.D1_TAG             ,    
+		         A.D2_TAG             ,    
+		         A.D3_TAG             ,    
+		         A.R1_TAG             ,    
+		         A.R2_TAG             ,    
+		         A.J1_TAG             ,    
+		         A.J2_TAG             ,    
+		         A.J3_TAG             ,    
+		         A.PRODUCT_TAG        ,    
+		         A.C_TAG              ,    
+		         A.FITTINGS_STD       ,    
+		         A.FITTINGS_UNIT      ,    
+		         A.ITEM_CODE          ,    
+		         A.REAL_ITEM_CODE     ,    
+		         A.CORNER_QTY         ,    
+		         A.HOLE_QTY           ,    
+		         A.REMARKS            ,    
+		         A.UNIT_KG            ,    
+		         A.FILE_NAME          ,    
+		         A.FILE_TYPE          ,    
+		         A.FILE_PATH          ,    
+		         A.AREA_FORMULA       ,    
+		         A.AREA_FORMULA_DESC  ,
+			     A.INCH_TAG
+		    FROM MM_PSP_FITTINGS A  
+		   WHERE A.PRODUCT_TYPE = '1'
+		     AND (FITTINGS LIKE #{find} || '%' OR FITTINGS_NAME LIKE '%' || #{find} || '%')
+		ORDER BY A.FITTINGS
+			 
+
+    ]]>
+	</select>
+
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.FindMatrCostRepository">
+
+	<!-- FindMatrCost_01 -->
+	<select id="FindMatrCost_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindMatrCost">
+	 	SELECT A.ITEM_CODE ITEM_CODE
+			     , B.ITEM_NAME ITEM_NAME
+			     , A.CUST_CODE
+			     , C.CUST_NAME
+			     , A.MASTER_YN
+			     , A.ESTIMATE_COST
+			     , A.ESTIMATE_RATE
+			     , A.ORDER_COST
+			  FROM PM_UNPR_MASTER A LEFT OUTER JOIN SM_CODE_MATERIAL B
+			                                     ON A.ITEM_CODE = B.ITEM_CODE
+			                        LEFT OUTER JOIN SM_CODE_CUST C
+			                                     ON A.CUST_CODE = C.CUST_CODE
+			 WHERE C.CUST_NAME LIKE #{search}
+	</select>
+
+	<!-- FindMatrCost_01_old -->
+	<select id="FindMatrCost_01_old" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindMatrCost">
+	 	SELECT FLAG
+			     , FLAG_NAME
+			     , CUST_CODE
+			     , CUST_NAME
+			     , MASTER_YN
+			     , MIN_COST
+			     , OPT_COST
+			     , ESTIMATE_COST
+			     , ESTIMATE_RATE
+			     , C
+			     , COST_VALUE
+			     , BDC_COST
+			     , STRT_DATE
+			     , HST_ORDER_COST
+			     , HIST_STRT_DATE
+			  FROM PM_MATR_GARA_COST
+	</select>
+
+
+</mapper>

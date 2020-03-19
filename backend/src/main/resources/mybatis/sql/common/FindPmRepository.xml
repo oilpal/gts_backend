@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.FindPmRepository">
+
+	<!-- FindPm_01 -->
+	<select id="FindPm_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindPm">
+	 	<![CDATA[
+
+			 SELECT A.EMP_NO, 
+							 A.EMP_NAME, 
+							 A.COMPANY_CODE, 
+							 A.DEPT_CODE, 
+							 A.GRADE_CODE, 
+							 A.JOIN_DATE, 
+							 A.RETIRE_DATE, 
+							 B.DEPT_NAME, 
+							 C.DEPT_NAME REAL_DEPT_NAME, 
+							 D.GRADE_NAME, 
+							 C.DEPT_DIV_CODE, 
+							 A.LEVEL_CODE, 
+							 E.LEVEL_NAME, 
+							 '' DUTY_CODE, 
+							 '' DUTY_NAME, 
+							 A.COMPANY_CODE CUR_COMPANY_CODE, 
+							 G.COMPANY_NAME CUR_COMPANY_NAME, 
+							 A.DEPT_CODE CUR_DEPT_CODE, 
+							 F.DEPT_NAME CUR_DEPT_NAME 
+				  FROM VW_PERS_MASTER A LEFT JOIN SM_CODE_DEPT B 
+								 ON A.COMPANY_CODE = B.COMPANY_CODE 
+								AND A.DEPT_CODE 	 = B.DEPT_CODE 
+						  LEFT JOIN SM_CODE_DEPT C 
+						 ON A.COMPANY_CODE   = C.COMPANY_CODE 
+					  AND A.REAL_DEPT_CODE = C.DEPT_CODE 
+					  LEFT JOIN HR_CODE_GRADE_COMM D 
+						 ON A.GRADE_CODE 	   = D.GRADE_CODE 
+					  LEFT JOIN HR_CODE_LEVEL_COMM E 
+							 				 ON A.LEVEL_CODE = E.LEVEL_CODE 
+					  LEFT JOIN SM_CODE_DEPT F 
+							 ON A.COMPANY_CODE = F.COMPANY_CODE 
+								 AND A.DEPT_CODE = F.DEPT_CODE 
+					  LEFT JOIN SM_CODE_COMPANY G 
+							 ON A.COMPANY_CODE    = G.COMPANY_CODE 
+				  WHERE ( A.EMP_NO LIKE #{find}||'%' OR A.EMP_NAME LIKE '%'|| #{find} ||'%' ) 
+					  AND ( A.COMPANY_CODE = #{comp} ) 
+			 ORDER BY B.SORT_ORDER ASC
+			 				, B.DEPT_CODE ASC
+			 				, A.GRADE_CODE ASC
+			 				, A.EMP_NO ASC 
+
+    ]]>
+	</select>
+
+</mapper>

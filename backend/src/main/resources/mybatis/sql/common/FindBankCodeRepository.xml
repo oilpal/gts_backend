@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.FindDuctRepository">
+
+	<!-- FindDuct_01 -->
+	<select id="FindDuct_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindDuct">
+	 	SELECT A.FITTINGS,
+             A.FITTINGS_NAME,
+             A.PRODUCT_TYPE,
+             A.PRODUCT_TAG,
+             A.L1_TAG,
+             A.W1_TAG,
+             A.W2_TAG,
+             A.W3_TAG,
+             A.W4_TAG,
+             A.D1_TAG,
+             A.D2_TAG,
+             A.D3_TAG,
+             A.D4_TAG,
+             A.R1_TAG,
+             A.R2_TAG,
+             A.S1_TAG,
+             A.S2_TAG,
+             A.S3_TAG,
+             A.S4_TAG,
+             A.P_TAG,
+             A.H_TAG,
+             A.HORIZON_TAG,
+             A.FITTINGS_STD,
+             A.FITTINGS_UNIT,
+             A.CORNER_QTY,
+             A.REMARKS,
+             A.FILE_NAME,
+             A.FILE_TYPE,
+             A.FILE_PATH,
+             A.AREA_FORMULA,
+             A.ITEM_CODE
+        FROM MM_CODE_FITTINGS A
+       WHERE A.PRODUCT_TYPE = #{type}
+         AND A.PRODUCT_TAG = #{tag}
+         AND (A.FITTINGS LIKE #{find} || '%' OR A.FITTINGS_NAME LIKE '%' || #{find} || '%')
+    ORDER BY FITTINGS
+	</select>
+
+</mapper>
