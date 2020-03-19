@@ -31,13 +31,13 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class CustomUserAuthenticationProvider implements AuthenticationProvider {
 
-	private UserDetailsService userDetailsService;
+	private CustomUserDetailService userDetailsService;
 	private ShaPasswordEncoder encoder;
 	
 	@Autowired
 	private UserService userService;
 	
-	public CustomUserAuthenticationProvider(UserDetailsService userDetailsService,ShaPasswordEncoder encoder) {
+	public CustomUserAuthenticationProvider(CustomUserDetailService userDetailsService,ShaPasswordEncoder encoder) {
 		this.userDetailsService = userDetailsService;
 		this.encoder = encoder;
 	}
@@ -51,10 +51,10 @@ public class CustomUserAuthenticationProvider implements AuthenticationProvider 
 		String userId = token.getName();
 		
 		LoginUser user = new LoginUser();
-		UserDetailsImpl findUser = null;
+		LoginUser findUser = null;
 		
 		if(!StringUtils.isEmpty(userId)) {
-			findUser = (UserDetailsImpl) userDetailsService.loadUserByUsername(userId);
+			findUser = (LoginUser) userDetailsService.loadUserByUsername(userId);
 		}
 		
 		if(ObjectUtils.isEmpty(findUser)) {
@@ -75,7 +75,7 @@ public class CustomUserAuthenticationProvider implements AuthenticationProvider 
 		}
 		
 		Collection<? extends GrantedAuthority> authorities = AuthoritiesUtils.createAuthorities(user);
-		
+		user.setAuthorities(authorities);
 		log.debug("=======================CustomUserAuthenticationProvider.authenticate End=======================");
 		
 		return new UsernamePasswordAuthenticationToken(user, password, authorities);

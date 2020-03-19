@@ -45,7 +45,7 @@ public class CustomUserDetailService implements UserDetailsService{
 		
 		log.debug("=============================== CustomUserDetailService.loadUserByUsername End ===============================");
 		
-		return UserDetailsImpl.build(user);
+		return LoginUser.build(user);
 	}
 	
 	public String getEncPassword(String password) {
