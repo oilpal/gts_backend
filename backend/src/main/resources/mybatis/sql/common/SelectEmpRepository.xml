@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.SelectEmpRepository">
+
+	<!-- FIND_MEMBER 사원찾기 -->
+	<select id="FIND_MEMBER" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.SelectEmp">
+	 	<![CDATA[
+
+			SELECT  A.MEMBER_ID
+					, A.NAME      AS MEMBER_NAME
+					, A.GUBUN_DIV
+					, A.DEPT_ID
+					, B.DEPT_NAME
+					, A.MEMBER_DIV
+					, A.WORK_YN
+		FROM		CODE_MEMBER   A
+						LEFT JOIN CODE_DEPT B
+							ON  B.DEPT_ID = A.DEPT_ID
+		WHERE		NVL(A.DEPT_ID,'%')  LIKE  #{deptid}
+		AND			A.WORK_YN = 'Y'
+		AND			NOT EXISTS	(	SELECT	1
+													FROM		CODE_DEPT_AUTHORITY	T
+													WHERE		T.MEMBER_ID	=	A.MEMBER_ID
+													AND			T.DEPT_ID		=	#{curdept}
+												)
+		ORDER BY  A.NAME
+
+    ]]>
+	</select>
+
+</mapper>

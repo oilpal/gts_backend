@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.FindMatrMasterRepository">
+
+	<!-- FindMatrMaster_01_old -->
+	<select id="FindMatrMaster_01_old" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindMatrMaster">
+	 	<![CDATA[
+
+			  SELECT DISTINCT A.ITEM_NAME,
+							A.ITEM_STD,
+							A.ITEM_UNIT,
+							A.ITEM_CODE,
+							B.ITEM_CODE AS UP_ITEM_CODE,
+							B.ITEM_NAME AS UP_ITEM_NAME,
+							A.LARGE_CODE,
+							A.MIDDLE_CODE,
+							A.SMALL_CODE,
+							C.ACNT_CODE
+				 FROM TABLE(TF_MY_MATERIAL(#{search})) A
+				        INNER JOIN SM_CODE_MATERIAL C ON A.ITEM_CODE = C.ITEM_CODE
+				 		LEFT JOIN SM_CODE_MATERIAL B ON A.UP_ITEM_CODE = B.ITEM_CODE
+				ORDER BY A.ITEM_CODE
+
+    ]]>
+	</select>
+
+	<!-- FindMatrMaster_01 -->
+	<select id="FindMatrMaster_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindMatrMaster">
+	 	<![CDATA[
+
+			   SELECT A.ITEM_CODE,
+		         A.LARGE_CODE,
+		         A.MIDDLE_CODE,
+		         A.SMALL_CODE,
+		         L.LARGE_NAME,
+		         M.MIDDLE_NAME,
+		         S.SMALL_NAME,
+		         SUBSTR(A.ITEM_CODE, 8,3) CODE,
+		         A.EST_USE_TAG,
+		         A.ITEM_NAME,
+		         A.ITEM_STD,
+		         A.ITEM_STD2,
+		         A.ITEM_UNIT,
+		         A.UP_ITEM_CODE,
+		         A.MASTER_COST,
+		         A.ORDER_COST,
+		         A.ETC_COST,
+		         A.REMARKS,
+		         A.STD_TAG,
+		         A.GUBUN_TAG,
+		         A.ACC_GB,
+		         A.ETC_ATT1,
+		         A.ETC_ATT2,
+		         A.ETC_ATT3,
+		         A.TEMPCODE_YN,
+		         A.NEW_YN,
+		         B.ITEM_NAME UP_ITEM_NAME,
+		         A.ACNT_CODE,
+		         C.ACNT_NAME,
+		         #{modify} CALC_MODIFY,
+		         A.COST_MODIFY,
+                 A.WIDTH WIDTH_YN,
+                 A.HEIGHT HEIGHT_YN,
+                 A.AREA AREA_YN,
+                 A.DIAMETER DIAMETER_YN,
+                 DECODE(A.WIDTH, 'Y', 0, NULL) WIDTH,
+                 DECODE(A.HEIGHT, 'Y', 0, NULL) HEIGHT,
+                 DECODE(A.AREA, 'Y', 0, NULL) AREA,
+                 DECODE(A.DIAMETER, 'Y', 0, NULL) DIAMETER,
+                 NULL ITEM_NAME2,
+                 A.WIDTH||A.HEIGHT||A.AREA WHA_YN,
+                 '0000' ITEM_MAKER,
+                 'N/A' MAKER_NAME
+		    FROM TABLE (TF_MY_MATERIAL(#{search})) T
+		         INNER JOIN SM_CODE_MATERIAL A ON T.ITEM_CODE = A.ITEM_CODE
+		         							  AND A.USE_YN ='Y'
+		                            INNER JOIN SM_CODE_MATERIAL_LARGE L
+		                                  ON A.LARGE_CODE = L.LARGE_CODE
+		                            INNER JOIN SM_CODE_MATERIAL_MIDDLE M
+		                                  ON A.LARGE_CODE = M.LARGE_CODE AND A.MIDDLE_CODE = M.MIDDLE_CODE
+		                            INNER JOIN SM_CODE_MATERIAL_SMALL S
+		                                  ON A.LARGE_CODE = S.LARGE_CODE AND A.MIDDLE_CODE = S.MIDDLE_CODE AND A.SMALL_CODE = S.SMALL_CODE
+		          LEFT JOIN SM_CODE_MATERIAL B
+		                                  ON A.UP_ITEM_CODE = B.ITEM_CODE
+		                                 AND B.USE_YN ='Y'
+		                            LEFT JOIN AC_CODE_ACNT C
+		                                   ON A.ACNT_CODE = C.ACNT_CODE
+		                            LEFT JOIN AC_CODE_ACNT D
+		                                   ON A.GACNT_CODE = D.ACNT_CODE
+		   WHERE (A.LARGE_CODE LIKE #{large}
+		     AND A.MIDDLE_CODE LIKE #{middle}
+		     AND A.SMALL_CODE  LIKE #{small})    
+		ORDER BY L.LARGE_NAME,
+		         M.MIDDLE_NAME,
+		         S.SMALL_NAME,
+		         A.ITEM_NAME,
+		         A.ITEM_STD,
+		         A.ITEM_STD2
+
+    ]]>
+	</select>
+
+</mapper>

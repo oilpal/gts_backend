@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.FindBoardRepository">
+
+	<!-- FindBoard -->
+	<select id="FindBoard" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindBoard">
+	
+		SELECT	A.BOARDGB
+			,	A.BOARDID
+			,	A.SITE_DIV
+			,	A.BOARDTITLE
+			,	A.ATCH_FILE_ID
+			,	A.WDATE
+			,	A.WRITER
+			,	A.WRITER_ID
+			,	A.POPUP_YN
+			,	A.SDATE
+			,	A.EDATE
+			,	A.BOARDCONTENTS
+		FROM	SM_BOARD	A
+		WHERE	A.SITE_DIV	=	#{comp}
+		AND		A.BOARDID		=	#{id}
+	<!-- <update_table>SM_BOARD</update_table>
+	<column name='BOARDGB'				type='char' updatable='Y' iskeycol='N' />
+	<column name='BOARDID'				type='char' updatable='Y' iskeycol='Y' />
+	<column name='SITE_DIV' 			type='char' updatable='Y' iskeycol='N' />
+	<column name='BOARDTITLE' 		type='char' updatable='Y' iskeycol='N' />
+	<column name='ATCH_FILE_ID' 	type='char' updatable='Y' iskeycol='N' />
+	<column name='WDATE'					type='date' updatable='Y' iskeycol='N' />
+	<column name='WRITER' 				type='char' updatable='Y' iskeycol='N' />
+	<column name='WRITER_ID' 			type='char' updatable='Y' iskeycol='N' />
+	<column name='POPUP_YN' 			type='char' updatable='Y' iskeycol='N' />
+	<column name='SDATE'					type='date' updatable='Y' iskeycol='N' />
+	<column name='EDATE'					type='date' updatable='Y' iskeycol='N' />
+	<column name='BOARDCONTENTS' 	type='char' updatable='Y' iskeycol='N' /> -->
+
+	</select>
+
+	<!-- FindBoard_File -->
+	<select id="FindBoard_File" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindBoard">
+	
+		SELECT 
+				ATCH_FILE_ID,
+	 			FILE_SN,
+				ORIGNL_FILE_NM,
+				FILE_SIZE
+		FROM 
+				SM_COMM_FILE_DETAIL
+		WHERE 
+				ATCH_FILE_ID = #{fileid}
+		ORDER BY FILE_SN
+
+	</select>
+
+	<!-- GET_NEXT_ID -->
+	<select id="GET_NEXT_ID" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindBoard">
+	
+		SELECT	SEQ_SM_BOARD_2.NextVal	FROM	DUAL
+
+	</select>
+
+	<!-- SM_BOARD_U01 -->
+	<select id="SM_BOARD_U01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindBoard">
+	
+		UPDATE	SM_BOARD
+		SET			WDATE	=	SYSDATE
+		WHERE		SITE_DIV	=	#{comp}
+		AND			BOARDID		=	#{id}
+
+	</select>
+
+</mapper>

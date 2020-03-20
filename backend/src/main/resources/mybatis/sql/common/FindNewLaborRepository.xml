@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.FindNewLaborRepository">
+
+	<!-- FindNewLabor_01 -->
+	<select id="FindNewLabor_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindNewLabor">
+	 	<![CDATA[
+
+			   SELECT A.PROJ_NAME,
+									A.INSTALL_PLACE,
+									A.CU_ID,
+									A.CARD_NO,
+									A.IO_DATE,
+									A.PHOTO_URL,
+									A.PROJ_CODE
+    	 FROM (
+								SELECT D.PROJ_NAME,
+											C.INSTALL_PLACE,
+											A.CU_ID,
+											A.CARD_NO,
+											A.IO_DATE,
+											TRIM('/IOLog/photos/' || to_char(A.IO_DATE,'YYYYMM') || '/' || A.CU_ID || '-' || A.FILE_NAME) as PHOTO_URL,
+											C.PROJ_CODE,
+											RANK() OVER (PARTITION BY A.CARD_NO ORDER BY A.IO_DATE DESC) AS IO_RANK
+								  FROM XM_IO_LOG A
+							       LEFT OUTER JOIN CM_CHECKINOUT_SENSOR C ON (A.CU_ID = C.SENSOR_SN)
+							       LEFT JOIN SM_CODE_PROJECT D ON (C.COMPANY_CODE = D.COMPANY_CODE AND C.PROJ_CODE = D.PROJ_CODE )
+         WHERE A.IO_DATE >= SYSDATE -1
+						    AND A.LABOR_CODE = '000000'
+						    AND (A.CARD_NO LIKE '%' || #{find} || '%'
+						     OR A.CU_ID LIKE '%' || #{find} || '%'
+						     OR C.PROJ_CODE = #{find}
+						     OR D.PROJ_NAME LIKE '%' || #{find} || '%'
+						     	)
+			    	 ) A
+   WHERE A.IO_RANK = 1			    
+		 ORDER BY A.IO_DATE DESC
+
+    ]]>
+	</select>
+
+</mapper>

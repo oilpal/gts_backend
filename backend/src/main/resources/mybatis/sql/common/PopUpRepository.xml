@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.PopUpRepository">
+
+	<!-- 공지사항 리스트 -->
+	<select id="BOARD_R01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.PopUp">
+	 	<![CDATA[
+
+		SELECT	A.BOARDID
+					,	A.BOARDTITLE
+					,	TO_CHAR(A.WDATE,'YYYY-MM-DD HH24:MI:SS')		AS WDATE
+					,	A.WRITER
+					,	A.BOARDCONTENTS
+					,	A.ATCH_FILE_ID
+		FROM		SM_BOARD	A
+		WHERE		A.SITE_DIV	=	#{comp}
+		AND			A.POPUP_YN	=	'Y'
+		AND			SYSDATE	BETWEEN	A.SDATE	AND	A.EDATE
+
+    ]]>
+	</select>
+
+	<!-- 공지사항 내용 -->
+	<select id="BOARD_R02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.PopUp">
+	 	<![CDATA[
+
+		SELECT	A.BOARDTITLE
+					,	TO_CHAR(A.WDATE,'YYYY-MM-DD HH24:MI:SS')		AS WDATE
+					,	A.WRITER
+					,	A.BOARDCONTENTS
+					,	A.ATCH_FILE_ID
+		FROM		SM_BOARD	A
+		WHERE		A.BOARDID	=	#{boardid}
+
+    ]]>
+	</select>
+
+	<!-- 공지사항첨부파일 -->
+	<select id="BOARD_R03" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.PopUp">
+	 	<![CDATA[
+
+		SELECT	ATCH_FILE_ID
+					,	FILE_SN
+					,	ORIGNL_FILE_NM
+		FROM		SM_COMM_FILE_DETAIL
+		WHERE		ATCH_FILE_ID	=	#{fileid}
+		ORDER BY	FILE_SN
+
+    ]]>
+	</select>
+
+	<!-- popup -->
+	<select id="popup" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.PopUp">
+	 	<![CDATA[
+
+		SELECT A.POPUP_ID
+			  FROM XG_COMTN_POPUP_MANAGE A	
+		   WHERE A.NTCE_AT = 'Y'
+		  	 AND A.COMPANY_CODE = #{companyCode}
+			   AND to_char(sysdate, 'YYYY-MM-DD') >= a.NTCE_BGNDE
+			   AND to_char(sysdate, 'YYYY-MM-DD') <=  a.NTCE_ENDDE	
+
+    ]]>
+	</select>
+
+	<!-- popup_detail -->
+	<select id="popup_detail" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.PopUp">
+	 	<![CDATA[
+
+		SELECT A.FILE_URL,
+			       A.BBS_ID,
+			       A.NTT_ID,
+			       A.POPUP_WIDTH_SIZE,
+			       A.POPUP_VRTICL_SIZE,
+			       A.POPUP_WIDTH_LC,
+			       A.POPUP_VRTICL_LC,
+			       A.STOPVEW_SETUP_AT
+			  FROM XG_COMTN_POPUP_MANAGE A    
+			 WHERE A.NTCE_AT = 'Y'
+			   AND A.POPUP_ID = #{popupId}
+    ]]>
+	</select>
+
+</mapper>

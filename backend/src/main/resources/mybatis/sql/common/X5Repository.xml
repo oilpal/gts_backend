@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.X5Repository">
+
+	<!-- GRID 공통코드 -->
+	<select id="GRID" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.X5">
+	 	<![CDATA[
+
+		SELECT
+				  A.SYS_ID
+				, A.PGM_CODE
+				, A.GRID_ID
+				, A.SQL_FILE
+				, A.SQL_ID
+				, A.UPDATE_TABLE
+		    FROM SM_DEV_GRID A
+		  WHERE A.SYS_ID = #{sysId}
+				AND A.PGM_CODE = #{pgmCode}
+				AND A.GRID_ID	= #{gridId}
+		ORDER BY A.FIELD_SEQ, A.SEQ
+
+    ]]>
+	</select>
+
+	<!-- GRID_SCRIPT 공통코드 -->
+	<select id="GRID_SCRIPT" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.X5">
+	 	<![CDATA[
+
+		SELECT
+				  A.GRID_SCRIPT as CLOB_GRID_SCRIPT
+		FROM SM_DEV_GRID_SCRIPT A
+		WHERE A.SYS_ID = UPPER(#{sysId})
+		AND A.PGM_CODE = #{pgmCode}
+
+    ]]>
+	</select>
+
+	<!-- GRID_COLS 공통코드 -->
+	<select id="GRID_COLS" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.X5">
+	 	<![CDATA[
+
+		SELECT 
+				  A.SYS_ID
+				, A.PGM_CODE
+				, A.GRID_ID
+				, A.SEQ
+				, A.FIELD_SEQ
+				, A.FIELDNAME
+				, A.TABLE_NAME
+				, A.WIDTH
+				, A.MUST_INPUT
+				, A.VISIBLE
+				, A.READONLY
+				, A.EDITABLE
+				, A.SORTABLE
+				, A.HEADER
+				, A.HEADER_TEXT
+				, A.STYLES
+				, A.EDITOR
+				, A.LOOKUPDISPLAY
+				, A.RENDERER
+				, A.BUTTON
+				, A.ALWAYSSHOWBUTTON
+				, A.HEADERTOOLTIP
+				, A.MERGE
+				, A.MAXLENGTH
+				, A.FOOTEREXPR
+				, A.FOOTERALIGN
+				, A.FOOTERSTYLE
+				, A.FOOTERPRE
+				, A.FOOTERPOST
+				, A.RESIZABLE
+				, A.UPDATE_TYPE
+				, A.UPDATABLE
+				, A.UPDATE_ISKEY
+			    FROM SM_DEV_GRID_COLS A
+			  WHERE A.SYS_ID = UPPER(#{sysId})
+					AND A.PGM_CODE = #{pgmCode}
+					AND A.GRID_ID	= #{gridId}
+			ORDER BY A.FIELD_SEQ, A.SEQ
+
+    ]]>
+	</select>
+
+</mapper>

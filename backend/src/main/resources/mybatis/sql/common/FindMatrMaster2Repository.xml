@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.FindMatrMaster2Repository">
+
+	<!-- FindMatrMaster2_01 -->
+	<select id="FindMatrMaster2_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindMatrMaster2">
+	 	<![CDATA[
+
+			   SELECT DISTINCT A.ITEM_NAME,
+							A.ITEM_STD,
+							A.ITEM_UNIT,
+							A.ITEM_CODE,
+							B.ITEM_CODE AS UP_ITEM_CODE,
+							B.ITEM_NAME AS UP_ITEM_NAME
+				 FROM TABLE(TF_MY_MATERIAL_LARGE1(#{search}, #{large})) A
+				 		LEFT JOIN SM_CODE_MATERIAL B ON A.UP_ITEM_CODE = B.ITEM_CODE
+				ORDER BY A.ITEM_CODE
+
+    ]]>
+	</select>
+
+</mapper>

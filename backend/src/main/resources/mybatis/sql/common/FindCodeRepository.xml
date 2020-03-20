@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.FindCodeRepository">
+
+	<!-- FindBankCode -->
+	<select id="FindBankCode" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindCode">
+	 	SELECT	A.COMPANY_CODE
+						,	A.USER_ID
+						,	A.USER_NAME
+						,	A.DEPT_CODE			AS DEPT_CD
+						,	A.USER_TAG
+						,	C.DNAME		AS USER_TAG_NM
+			FROM	SM_AUTH_USER		A
+						LEFT OUTER JOIN	SM_COMCODE_D	C
+							ON	C.SYS_ID	=	'SM'
+							AND	C.HCODE		=	'USER_TAG'
+							AND	C.DCODE		=	A.USER_TAG
+			WHERE	A.COMPANY_CODE	=	#{comp}
+			AND		(A.USER_ID			LIKE #{find} || '%'
+				OR	A.USER_NAME		LIKE '%' || #{find} || '%'
+					)
+			ORDER BY	A.USER_NAME, A.USER_ID
+	</select>
+
+	<!-- FindPgmCode -->
+	<select id="FindPgmCode" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindCode">
+	 		SELECT 
+	 			A.SYS_ID
+			     , A.PGM_CODE
+			     , A.SORT_CODE
+			     , A.PGM_NAME
+			  FROM SM_AUTH_PGMCODE A
+			 WHERE A.COMPANY_CODE = #{comp}
+			   AND X_SEARCH(#{find}, '$2' || A.PGM_CODE, A.PGM_NAME) = 'Y'
+			   AND SHOW_YESNO = 'Y'
+			 ORDER BY A.PGM_NAME ASC
+	</select>
+	
+	<select id="FIND_CODE_DEPT" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindCode">
+	
+
+SELECT  DISTINCT A.DEPT_ID,
+        A.DEPT_NAME,
+        A.OPER_DIV,
+        A.SERVICE_CODE,
+        A.ZIP_CODE,
+        A.ADDR1,
+        A.ADDR2,
+        A.PHONE,
+        A.FAX,
+        A.OWNER_NAME,
+        A.OWNER_HP,
+        A.MANAGER_NAME,
+        A.MANAGER_HP,
+        A.BIZ_NO,
+        A.BIZ_NAME,
+        A.BIZ_UPTAE,
+        A.BIZ_UPJONG,
+        A.BIZ_ADDR1,
+        A.BIZ_ADDR2,
+        A.RENT_BAMT,
+        A.REMT_MAMT,
+        A.OPER_AMT,
+        c1.OPER_DIV_name,
+        A.USE_YN
+  from code_dept a,
+         CODE_DEPT_AUTHORITY b,  
+       (select comdiv_code, comdiv_name as OPER_DIV_name from CODE_COMDIV
+        where comsec_code = '0126') c1
+ where a.dept_id = b.dept_id 
+   and a.oper_div = c1.comdiv_code(+)
+   and b.member_id like #{userid}
+  AND ( A.DEPT_ID LIKE #{find} || '%' OR DEPT_NAME LIKE '%' || #{find} || '%' )
+  ORDER BY a.USE_YN DESC, A.DEPT_ID 
+
+	
+ 
+	</select>
+
+
+  <!-- 거래처찾기 -->
+  <select id="FIND_CODE_DEPT2" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindCode">
+  
+
+SELECT  DISTINCT A.DEPT_ID,
+        A.DEPT_NAME,
+        C1.OPER_DIV_NAME,
+        A.SERVICE_CODE,
+        A.OPER_DIV,
+        A.ZIP_CODE,
+        A.ADDR1,
+        A.ADDR2,
+        A.PHONE,
+        A.FAX,
+        A.OWNER_NAME,
+        A.OWNER_HP,
+        A.MANAGER_NAME,
+        A.MANAGER_HP,
+        A.BIZ_NO,
+        A.BIZ_NAME,
+        A.BIZ_UPTAE,
+        A.BIZ_UPJONG,
+        A.BIZ_ADDR1,
+        A.BIZ_ADDR2,
+        A.RENT_BAMT,
+        A.REMT_MAMT,
+        A.OPER_AMT,
+        A.USE_YN
+  FROM CODE_DEPT A,
+         CODE_DEPT_AUTHORITY B,
+       (SELECT COMDIV_CODE, COMDIV_NAME AS OPER_DIV_NAME FROM CODE_COMDIV
+        WHERE COMSEC_CODE = '0126') C1
+ WHERE A.DEPT_ID = B.DEPT_ID
+   AND A.OPER_DIV = C1.COMDIV_CODE(+)
+   AND B.MEMBER_ID LIKE #{userid}
+  AND ( A.DEPT_ID LIKE #{find} || '%' OR DEPT_NAME LIKE '%' || #{find} || '%' )
+  ORDER BY A.USE_YN DESC, A.DEPT_NAME, A.DEPT_ID
+
+  
+ 
+  </select>
+
+
+  <!-- 물류센터찾기 -->
+  <select id="FIND_CODE_SALECENTER" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindCode">
+  
+
+select  A.DEPT_ID,
+        A.DEPT_NAME,
+        A.OPER_DIV,
+        A.SERVICE_CODE,
+        A.ZIP_CODE,
+        A.ADDR1,
+        A.ADDR2,
+        A.PHONE,
+        A.FAX,
+        A.OWNER_NAME,
+        A.OWNER_HP,
+        A.MANAGER_NAME,
+        A.MANAGER_HP,
+        A.BIZ_NO,
+        A.BIZ_NAME,
+        A.BIZ_UPTAE,
+        A.BIZ_UPJONG,
+        A.BIZ_ADDR1,
+        A.BIZ_ADDR2,
+        A.RENT_BAMT,
+        A.REMT_MAMT,
+        A.OPER_AMT,
+        c1.OPER_DIV_name
+  from code_dept a,
+       (select comdiv_code, comdiv_name as OPER_DIV_name from CODE_COMDIV
+        where comsec_code = '0126') c1
+ where a.oper_div = c1.comdiv_code(+)
+  AND ( A.DEPT_ID LIKE #{find} || '%' OR DEPT_NAME LIKE '%' || #{find} || '%' )
+  AND ( A.SALECENTER_YN = 'Y' )   
+ ORDER BY A.DEPT_ID 
+
+  </select>
+
+
+	<!-- 보장기관찾기 -->
+	<select id="FIND_CODE_COMDIV">
+	
+
+SELECT COMDIV_CODE AS MANAGE_OFFICE_DIV,
+       COMDIV_NAME AS MANAGE_OFFICE_DIV_NAME,
+       NAME1
+FROM CODE_COMDIV
+WHERE COMSEC_CODE = '0001'
+  AND ( COMDIV_CODE LIKE #{find} || '%' OR
+        COMDIV_NAME LIKE '%' || #{find} || '%' OR
+        NAME1 LIKE '%' || #{find} || '%' )
+
+	</select>
+
+
+	<!-- 지사별고객찾기 -->
+	<select id="FIND_CODE_CUST" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindCode">
+	
+
+		SELECT	A.CUST_ID
+					,	A.DEPT_ID
+					,	A.CUST_CODE
+					,	A.CUST_NAME
+					,	A.BIRTH_DATE
+					,	A.START_DATE
+					,	A.END_DATE
+					,	A.MANAGE_NO
+					,	A.MANAGE_NO1
+					,	A.MANAGE_NO2
+					,	'L'||A.MANAGE_NO1||'-'||NVL(A.MANAGE_NO2,'')		AS COPY_MANAGE_NO
+					,	A.M_LIMIT_AMT
+					,	A.CLIENT_DIV
+					,	A.CUST_LEVEL_DIV
+					,	FN_COMDIV_NAME('0125',A.CUST_LEVEL_DIV)		AS CUST_LEVEL_NAME
+					,	FN_COMDIV_NAME('0110',A.REDUCTION_DIV)		AS REDUCTION_NAME
+					,	FN_COMDIV_NAME('0111',A.APP_RATE_DIV)			AS APP_RATE_NAME
+					,	A.REDUCTION_DIV
+					,	A.ZIP_CODE
+					,	A.ADDR1
+					,	A.ADDR2
+		FROM		CODE_CUST		A
+						INNER JOIN	CODE_CUSTINDEPT	CD
+							ON	CD.CUST_ID	=	A.CUST_ID
+							AND	CD.DEPT_ID	=	#{dept}
+		WHERE		(	A.CUST_CODE LIKE DECODE(trim(#{find}),' ', ' ', #{find}||'%')	OR
+							A.CUST_NAME LIKE DECODE(trim(#{find}),' ', ' ', '%'||#{find}||'%')
+						)
+ORDER BY		A.CUST_NAME
+
+	</select>
+
+
+  <!-- 지사별고객찾기2 -->
+  <select id="FIND_CODE_CUST2" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindCode">
+  
+<![CDATA[
+		SELECT	A.CUST_ID
+					,	A.DEPT_ID
+					,	A.CUST_CODE
+					,	A.CUST_NAME
+					,	A.BIRTH_DATE
+					,	A.START_DATE
+					,	A.END_DATE
+					,	A.MANAGE_NO
+					,	A.MANAGE_NO1
+					,	A.MANAGE_NO2
+					,	'L'||A.MANAGE_NO1||'-'||NVL(A.MANAGE_NO2,'')		AS COPY_MANAGE_NO
+					,	A.M_LIMIT_AMT
+					,	A.CLIENT_DIV
+					,	A.CUST_LEVEL_DIV
+					,	FN_COMDIV_NAME('0125',A.CUST_LEVEL_DIV)		AS CUST_LEVEL_NAME
+					,	FN_COMDIV_NAME('0110',A.REDUCTION_DIV)		AS REDUCTION_NAME
+					,	FN_COMDIV_NAME('0111',A.APP_RATE_DIV)			AS APP_RATE_NAME
+					,	A.REDUCTION_DIV
+					,	A.ZIP_CODE
+					,	A.ADDR1
+					,	A.ADDR2
+		FROM		CODE_CUST		A
+						INNER JOIN	CODE_CUSTINDEPT	CD
+							ON	CD.CUST_ID	=	A.CUST_ID
+							AND	CD.DEPT_ID	=	#{dept}
+		WHERE		(	A.CUST_CODE LIKE DECODE(trim(#{find}),' ', ' ', #{find}||'%')	OR
+							A.CUST_NAME LIKE DECODE(trim(#{find}),' ', ' ', '%'||#{find}||'%')
+						)
+		AND			(	EXISTS	(	SELECT	1
+												FROM		SERVICE_CONTRACT	S
+												WHERE		S.CUST_ID			=		A.CUST_ID
+												<!-- --AND			S.DEPT_ID			=		#{dept} -->
+												AND			S.CONT_SDATE	<=	LAST_DAY(TO_DATE(#{yymm}||'01'))
+												AND			S.CONT_EDATE	>=	TO_DATE(#{yymm}||'01')
+												AND			(	S.CANCEL_DATE IS NULL	OR	S.CANCEL_DATE > TO_DATE(#{yymm}||'01')	)
+											)	OR
+							EXISTS	(	SELECT	1
+												FROM		SERVICE_SCHEDULE	S2
+												WHERE		S2.CUST_ID	=		A.CUST_ID
+												AND			S2.DEPT_ID	=		#{dept}
+												AND			S2.PLAN_DATE BETWEEN TO_DATE(#{yymm}||'01') AND LAST_DAY(TO_DATE(#{yymm}||'01'))
+											)
+						)
+		ORDER BY	A.CUST_NAME
+]]>
+  </select>
+
+
+  <!-- 지사별고객찾기2 -->
+  <select id="FIND_CODE_CUST2_OLD" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindCode">
+  
+<![CDATA[
+		SELECT	A.CUST_ID
+					,	A.DEPT_ID
+					,	A.CUST_CODE
+					,	A.CUST_NAME
+					,	A.BIRTH_DATE
+					,	A.START_DATE
+					,	A.END_DATE
+					,	A.MANAGE_NO
+					,	A.MANAGE_NO1
+					,	A.MANAGE_NO2
+					,	'L'||A.MANAGE_NO1||'-'||NVL(A.MANAGE_NO2,'')		AS COPY_MANAGE_NO
+					,	A.M_LIMIT_AMT
+					,	A.CLIENT_DIV
+					,	FN_COMDIV_NAME('0125',A.CUST_LEVEL_DIV)		AS CUST_LEVEL_NAME
+					,	FN_COMDIV_NAME('0110',A.REDUCTION_DIV)		AS REDUCTION_NAME
+					,	FN_COMDIV_NAME('0111',A.APP_RATE_DIV)			AS APP_RATE_NAME
+					,	A.REDUCTION_DIV
+					,	A.ZIP_CODE
+					,	A.ADDR1
+					,	A.ADDR2
+		FROM		CODE_CUST		A
+						INNER JOIN	CODE_CUSTINDEPT	CD
+							ON	CD.CUST_ID	=	A.CUST_ID
+							AND	CD.DEPT_ID	=	#{dept}
+		WHERE		(	A.CUST_CODE LIKE DECODE(trim(#{find}),' ', ' ', #{find}||'%')	OR
+							A.CUST_NAME LIKE DECODE(trim(#{find}),' ', ' ', '%'||#{find}||'%')
+						)
+		AND			(	EXISTS	(	SELECT	1
+												FROM		SERVICE_CONTRACT	S
+												WHERE		S.CUST_ID			=		A.CUST_ID
+												AND			S.CARE_SDATE	<=	LAST_DAY(TO_DATE(#{yymm}||'01'))
+												AND			S.CARE_EDATE	>=	TO_DATE(#{yymm}||'01')
+												AND			S.CONT_SDATE	<=	LAST_DAY(TO_DATE(#{yymm}||'01'))
+												AND			S.CONT_EDATE	>=	TO_DATE(#{yymm}||'01')
+												AND			(	S.CANCEL_DATE IS NULL	OR	S.CANCEL_DATE > TO_DATE(#{yymm#||'01')	)
+											)	OR
+							EXISTS	(	SELECT	1
+												FROM		SERVICE_SCHEDULE	S2
+												WHERE		S2.CUST_ID	=		A.CUST_ID
+												AND			S2.DEPT_ID	=		A.DEPT_ID
+												AND			S2.PLAN_DATE BETWEEN TO_DATE(#{yymm}||'01') AND LAST_DAY(TO_DATE(#{yymm}||'01'))
+											)
+						)
+		ORDER BY	A.CUST_NAME
+]]>
+  </select>
+
+
+  <!-- 요양보호사찾기 -->
+  <select id="FIND_CODE_MEMBER" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindCode">
+  
+
+		SELECT	MEMBER_ID,
+						EMP_NO,
+						NAME AS MEMBER_NAME,
+						CASE	SUBSTR(REG_CODE,7,1)
+								WHEN	'1'	THEN	'19'
+								WHEN	'2'	THEN	'19'
+								WHEN	'3'	THEN	'20'
+								WHEN	'4'	THEN	'20'
+								WHEN	'5'	THEN	'19'
+								WHEN	'6'	THEN	'19'
+								WHEN	'7'	THEN	'20'
+								WHEN	'8'	THEN	'20'
+								ELSE	'19'
+						END||SUBSTR(REG_CODE,1,6)	AS BIRTH_DATE,
+						LIINSURANCEDATE,
+						HP,
+						EMAIL,
+						ZIP_CODE,
+						ADDR1,
+						ADDR2,
+						REG_CODE
+		FROM		CODE_MEMBER
+		WHERE		WORK_YN = 'Y'
+		AND			GUBUN_DIV LIKE #{gubun}
+		AND			DEPT_ID = #{deptid}
+		AND			(	NAME LIKE DECODE(TRIM(#{find}),'', '%', '%'||#{find}||'%')
+						OR MEMBER_ID LIKE DECODE(TRIM(#{find}),'', '%', '%'||#{find}||'%') )
+		ORDER BY	NAME
+
+  </select>
+
+
+  <!-- 보호자 찾기 -->
+  <select id="FIND_CUSTPROTECTOR" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindCode">
+  
+
+		SELECT    A.CUST_ID,
+		            A.PRO_SEQ,
+		            A.PRO_NAME,
+		            A.RELATION_DIV,
+		            C.COMDIV_NAME		AS RELATION_DIV_NAME,
+		            A.BIRTH_DATE,
+		            A.HP,
+		            A.PHONE,
+		            A.EMAIL,
+		            A.ZIP_CODE,
+		            A.ADDR1,
+		            A.ADDR2
+		FROM CODE_CUSTPROTECTOR A
+		LEFT JOIN CODE_CUST B ON (A.CUST_ID = B.CUST_ID AND A.PRO_SEQ = B.PRO_SEQ)
+		LEFT JOIN	CODE_COMDIV	C
+			ON	C.COMSEC_CODE = '0116'
+			AND	C.COMDIV_CODE	=	A.RELATION_DIV
+		WHERE A.CUST_ID = #{id}
+		AND		(		A.PRO_NAME	LIKE	'%'||#{find}||'%'	)
+
+  </select>
+
+</mapper>

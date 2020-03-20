@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.SelectDeptRepository">
+
+	<!-- FIND_CODE_DEPT 거래처찾기 -->
+	<select id="FIND_CODE_DEPT" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.SelectDept">
+	 	<![CDATA[
+
+			SELECT  A.DEPT_ID,
+			        A.DEPT_NAME,
+			        A.OPER_DIV,
+			        A.SERVICE_CODE,
+			        A.USE_YN
+			  FROM	 CODE_DEPT A
+			 where  (	A.DEPT_ID LIKE #{find}||'%' OR A.DEPT_NAME LIKE '%'||#{find}||'%' )
+			  ORDER BY A.DEPT_ID 
+
+    ]]>
+	</select>
+
+</mapper>

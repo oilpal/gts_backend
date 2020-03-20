@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.FindCustDepositNoRepository">
+
+	<!-- FindCustDepositNo -->
+	<select id="FindCustDepositNo" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindCustDepositNoVO">
+	 	<![CDATA[
+
+      SELECT M.CUST_CODE
+           , M.DEPOSIT_SEQ
+           , M.BANK_CODE
+           , N.BANK_NAME
+           , M.DEPOSIT_NO
+           , M.DEPOSIT_OWNER
+           , M.DEPOSIT_CHK
+           , CASE WHEN M.DEPOSIT_CHK = 'Y' THEN '확인' ELSE '미확인' END  AS DEPOSIT_CHK_TITLE
+           , M.DEPOSIT_CHK_DATE
+           , M.REMARK
+       FROM ( SELECT A.CUST_CODE
+                   , A.DEPOSIT_SEQ
+                   , A.BANK_CODE
+                   , A.DEPOSIT_NO
+                   , A.DEPOSIT_OWNER
+                   , A.DEPOSIT_CHK
+                   , CASE WHEN A.DEPOSIT_CHK = 'Y' THEN '확인' ELSE '미확인' END  AS DEPOSIT_CHK_TITLE
+                   , A.DEPOSIT_CHK_DATE
+                   , A.PROJ_CODE
+                   , A.REMARK
+                   , ROW_NUMBER() OVER (ORDER BY (CASE WHEN A.PROJ_CODE IS NULL THEN 2 ELSE 1 END) ASC, A.DEPOSIT_SEQ DESC) AS RANK 
+                FROM SM_CODE_CUST_DEPOSIT A 
+               WHERE A.CUST_CODE = #{cust}
+                 AND (A.PROJ_CODE = #{proj}
+                   OR A.PROJ_CODE IS NULL)
+            ) M LEFT JOIN SM_CODE_BANK N ON M.BANK_CODE = N.BANK_CODE
+      <!-- -- WHERE M.RANK = 1 -- 2018-01-26 거래처별 여러개 계좌 조회할 수 있도록 수정 - 문석기 차장님  -->
+
+    ]]>
+	</select>
+
+</mapper>

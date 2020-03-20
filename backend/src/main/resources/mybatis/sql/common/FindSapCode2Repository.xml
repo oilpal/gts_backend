@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.FindSapCode2Repository">
+
+	<!-- FindSapCode BI0901|SAP 거래처 가져오기 -->
+	<select id="FindSapCode" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindSapCode2">
+	 	<![CDATA[
+			
+			SELECT
+			'' AS VENDOR_DIV,
+			SMTP_ADDR,
+			J_1KFTIND,
+			J_1KFTBUS,
+			BRSCH,
+			KUNNR,
+			REPLACE(REPLACE(NAME1, char(13), ''), char(10), ' ') AS NAME1,
+			KTOKD,
+			STCD2,
+			REPLACE(REPLACE(J_1KFREPRE, char(13), ''), char(10), ' ') AS J_1KFREPRE,
+			REPLACE(REPLACE(TELF1, char(13), ''), char(10), ' ') AS TELF1,
+			REPLACE(REPLACE(TELFX, char(13), ''), char(10), ' ') AS TELFX,
+			PSTLZ,
+			REPLACE(REPLACE(ORT01, char(13), ''), char(10), ' ') AS ORT01,
+			REPLACE(REPLACE(STRAS, char(13), ''), char(10), ' ') AS STRAS
+		FROM
+			IF_EPMS_VENDOR	
+		WHERE
+			(
+			NAME1 LIKE '%' ||#{find}|| '%'
+			OR KUNNR LIKE '%' ||#{find}|| '%'
+		)
+		AND SPERR = 'Y'
+		ORDER BY
+			NAME1
+
+    ]]>
+	</select>
+
+</mapper>

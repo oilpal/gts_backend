@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.FindMatrCost2Repository">
+
+	<!-- FindMatrCost2_01 -->
+	<select id="FindMatrCost2_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.FindMatrCost2">
+	 	SELECT A.FLAG,              
+             A.FLAG_NAME,         
+             A.CUST_CODE,         
+             A.CUST_NAME,         
+             A.MASTER_YN,         
+             A.MIN_COST,          
+             A.OPT_COST,          
+             A.ESTIMATE_COST,     
+             A.ESTIMATE_RATE,     
+             A.ORDER_COST,      
+             A.STRT_DATE,         
+             A.BDC_COST,
+             A.COST_VALUE,        
+             A.HST_ORDER_COST,    
+             A.HIST_STRT_DATE,    
+             B.COST_MODIFY,
+             A.MAKER_CODE,
+             A.MAKER_NAME,
+             CASE C.AREA WHEN 0 THEN 1 ELSE C.AREA END W,
+             CASE C.WIDTH WHEN 0 THEN 1 ELSE C.WIDTH END H,
+             CASE C.HEIGHT WHEN 0 THEN 1 ELSE C.HEIGHT END L,
+             CASE C.DIAMETER WHEN 0 THEN 1 ELSE C.DIAMETER END S,
+             REQUEST_YYMM
+       FROM ( SELECT '1' FLAG,
+                     '입찰단가' FLAG_NAME,
+                     C.ACCEPTED_CUST CUST_CODE,
+                     D.CUST_NAME CUST_NAME,
+                     'N' MASTER_YN,
+                     0 ESTIMATE_COST,
+                     0 ESTIMATE_RATE,
+                     B.CONFIRM_PRICE ORDER_COST,
+                     0 BDC_COST,
+                     0 MIN_COST,
+                     0 OPT_COST,
+                     0 COST_VALUE,
+                     '' STRT_DATE,
+                     0 HST_ORDER_COST,
+                     '' HIST_STRT_DATE,
+                     E.MAKER AS MAKER_CODE,
+                     G.DNAME AS MAKER_NAME,
+                     A.BID_NO
+                FROM PM_BIDD_APPPROJ A INNER JOIN PM_BIDD_CUSTBIDDING B ON A.BID_NO = B.BID_NO
+                                       INNER JOIN PM_BIDD_H C ON A.BID_NO    = C.BID_NO
+                                                             AND B.CUST_CODE = C.ACCEPTED_CUST
+                                       INNER JOIN SM_CODE_CUST D ON C.ACCEPTED_CUST = D.CUST_CODE
+                                       INNER JOIN PM_BIDD_D E ON A.BID_NO  = E.BID_NO
+                                                             AND E.MAT_SEQ = B.MAT_SEQ
+                                       LEFT JOIN SM_COMCODE_D G ON HCODE = 'MATMAKER'
+                                                              AND SYS_ID = 'PM'
+                                                              AND G.DCODE = E.MAKER
+               WHERE A.PROJ_CODE = #{projcode}
+                 --AND A.BID_NO LIKE :#{bidno} ||'%'
+                 AND E.ITEM_CODE = #{itemcode}
+                 AND C.BID_DIV   = 'B'
+                 AND C.STATUS = 'Y'
+              UNION ALL
+              SELECT '2' FLAG,
+                     '현장협정단가' FLAG_NAME,
+                     A.CUST_CODE CUST_CODE,
+                     B.CUST_NAME CUST_NAME,
+                     A.MASTER_YN MASTER_YN,
+                     A.ESTIMATE_COST ESTIMATE_COST,
+                     Z.ESTIMATE_RATE ESTIMATE_RATE,
+                     Z.ORDER_COST ORDER_COST,
+                     0 BDC_COST,
+                     NVL(A.MIN_COST,0) MIN_COST,
+                     NVL(A.OPT_COST,0) OPT_COST,
+                     0 COST_VALUE,
+                     NULL STRT_DATE,
+                     0 HST_ORDER_COST,
+                     NULL HIST_STRT_DATE,
+                     A.ITEM_MAKER,
+                     G.DNAME AS MAKER_NAME,
+                     'P' BID_NO
+                FROM PM_UNPR_MASTER A INNER JOIN PM_UNPR_MASTER_PROJ Z ON A.COMPANY_CODE = Z.COMPANY_CODE
+                                                                  AND Z.PROJECT_CODE = #{projcode}
+                                                                  AND A.ITEM_CODE = Z.ITEM_CODE
+                                                                  AND A.CUST_CODE = Z.CUST_CODE
+                                                                  AND A.ITEM_MAKER = Z.ITEM_MAKER
+                                      LEFT JOIN SM_CODE_CUST B ON A.CUST_CODE = B.CUST_CODE
+                                      LEFT JOIN VW_C_PM_UNPRCUST V ON A.CUST_CODE = V.DNAME
+                                      LEFT JOIN SM_COMCODE_D G ON HCODE = 'MATMAKER'
+                                                              AND SYS_ID = 'PM'
+                                                              AND G.DCODE = A.ITEM_MAKER
+               WHERE A.ITEM_CODE = #{itemcode}
+                 AND A.CUST_CODE = #{custCd}
+                 AND A.CUST_CODE = #{custCd}
+            UNION ALL
+             SELECT '3' FLAG,
+                     '견적단가' FLAG_NAME,
+                     C.ACCEPTED_CUST CUST_CODE,
+                     D.CUST_NAME CUST_NAME,
+                     'N' MASTER_YN,
+                     0 ESTIMATE_COST,
+                     0 ESTIMATE_RATE,
+                     B.CONT_AMOUNT ORDER_COST,
+                     0 BDC_COST,
+                     0 MIN_COST,
+                     0 OPT_COST,
+                     0 COST_VALUE,
+                     '' STRT_DATE,
+                     0 HST_ORDER_COST,
+                     '' HIST_STRT_DATE,
+                     E.MAKER AS MAKER_CODE,
+                     G.DNAME AS MAKER_NAME,
+                     A.BID_NO
+                FROM PM_BIDD_APPPROJ A INNER JOIN PM_BIDD_CUST B ON A.BID_NO = B.BID_NO
+                                       INNER JOIN PM_BIDD_H C ON A.BID_NO    = C.BID_NO
+                                                             AND B.CUST_CODE = C.ACCEPTED_CUST
+                                       INNER JOIN SM_CODE_CUST D ON C.ACCEPTED_CUST = D.CUST_CODE
+                                       INNER JOIN PM_BIDD_D E ON A.BID_NO  = E.BID_NO
+                                                             AND E.ITEM_CODE = #{itemcode}
+                                       LEFT JOIN SM_COMCODE_D G ON HCODE = 'MATMAKER'
+                                                               AND SYS_ID = 'PM'
+                                                               AND G.DCODE = E.MAKER
+               WHERE A.PROJ_CODE = #{projcode}
+                 AND C.BID_DIV   = 'E'
+                 AND C.STATUS = 'Y'
+             UNION ALL
+              SELECT CASE A.CUST_CODE WHEN V.DNAME THEN '5' ELSE '4' END FLAG,
+                     CASE A.CUST_CODE WHEN V.DNAME THEN '마스터단가' ELSE '협정단가' END FLAG_NAME,
+                     A.CUST_CODE CUST_CODE,
+                     B.CUST_NAME CUST_NAME,
+                     A.MASTER_YN MASTER_YN,
+                     A.ESTIMATE_COST ESTIMATE_COST,
+                     A.ESTIMATE_RATE ESTIMATE_RATE,
+                     A.ORDER_COST ORDER_COST,
+                     ROUND(A.ESTIMATE_COST*NVL(A.BDC,0),0) BDC_COST,
+                     NVL(A.MIN_COST,0) MIN_COST,
+                     NVL(A.OPT_COST,0) OPT_COST,
+                     0 COST_VALUE,
+                     A.STRT_DATE STRT_DATE,
+                     H.ORDER_COST HST_ORDER_COST,
+                     H.STRT_DATE HIST_STRT_DATE,
+                     A.ITEM_MAKER,
+                     G.DNAME AS MAKER_NAME,
+                     'UM' BID_NO
+                FROM PM_UNPR_MASTER A LEFT JOIN SM_CODE_CUST B ON A.CUST_CODE = B.CUST_CODE
+                                      LEFT JOIN VW_C_PM_UNPRCUST V ON A.CUST_CODE = V.DNAME
+                                      LEFT JOIN (SELECT CUST_CODE, ITEM_CODE
+                                           , MAX(ORDER_COST) KEEP (DENSE_RANK LAST  ORDER BY ROW_INPUT_DATE ASC) ORDER_COST
+                                           , MAX(STRT_DATE)  KEEP (DENSE_RANK LAST  ORDER BY ROW_INPUT_DATE ASC) STRT_DATE
+                                        FROM PM_UNPR_HISTORY
+                                       WHERE ITEM_CODE = #{itemcode}
+                                         AND #as_yymm# BETWEEN SUBSTR(STRT_DATE, 1, 6) AND SUBSTR(END_DATE, 1, 6)
+                                         GROUP BY CUST_CODE, ITEM_CODE) H ON A.ITEM_CODE = H.ITEM_CODE
+                                                                 AND A.CUST_CODE = H.CUST_CODE
+                                      LEFT JOIN SM_COMCODE_D G ON HCODE = 'MATMAKER'
+                                                              AND SYS_ID = 'PM'
+                                                              AND G.DCODE = A.ITEM_MAKER
+               WHERE A.ITEM_CODE = #{itemcode}) A INNER JOIN SM_CODE_MATERIAL B ON B.ITEM_CODE = #{itemcode}
+               INNER JOIN PM_RQST_DETAIL C ON B.ITEM_CODE = C.ITEM_CODE
+         WHERE C.PROJECT_CODE  = #{projcode} 
+           AND C.REQUEST_YYMM  = #{rqstyymm} 
+           AND C.REQUEST_NO    = #{rqstno}
+           AND C.REQUEST_SEQ   = #{rqstseq}
+           AND A.CUST_CODE     = #{custCd}
+           AND A.MAKER_CODE    LIKE #{maker}
+      ORDER BY A.FLAG, A.CUST_NAME
+	</select>
+
+</mapper>

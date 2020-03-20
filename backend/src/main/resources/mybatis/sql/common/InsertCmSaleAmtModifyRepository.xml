@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.common.repository.InsertCmSaleAmtModifyRepository">
+
+	<!-- R_InsertCmSaleAmtModify_FREE 상단 프리폼용 쿼리 -->
+	<select id="R_InsertCmSaleAmtModify_FREE" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.InsertCmSaleAmtModify">
+	 	<![CDATA[
+			
+			 SELECT A.ORDER_DOCNO		
+				   , A.ORDER_NAME		
+				   , A.SALE_AMT       
+				   , A.BUY_AMT        
+			 	FROM BM_ORDER_MASTER A INNER JOIN SM_CODE_CUST B
+			 	                               ON A.CUST_ID  = B.CUST_ID 
+			 WHERE A.ORDER_ID  = #{orderId}
+
+    ]]>
+	</select>
+
+	<!-- R_InsertCmSaleAmtModify_01 하단 그리드 쿼리 -->
+	<select id="R_InsertCmSaleAmtModify_01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.InsertCmSaleAmtModify">
+	 	<![CDATA[
+			
+			 SELECT A.ORDER_ID				
+			 	   , A.CALC_SEQ				
+			 	   , A.CALC_YYMM			
+			 	   , A.CUST_ID			
+			 	   , B.CUST_NAME			
+				   , A.SUPPLY_AMT    
+				   , A.VAT_AMT       
+				   , A.TOT_AMT      
+			 	   , A.MOD_COST			
+			 	   , A.BILL_SEQ		
+			 	FROM CM_SALE_CALCLIST A INNER JOIN SM_CODE_CUST B			ON A.CUST_ID  = B.CUST_ID 
+			 WHERE A.ORDER_ID  = #{orderId}
+
+    ]]>
+    
+    <!-- <update_table>CM_SALE_CALCLIST</update_table>
+
+    <column name='ORDER_ID'    	 type='char' updatable='Y' iskeycol='Y' />
+    <column name='CALC_SEQ'   	 type='char' updatable='Y' iskeycol='Y' />
+    <column name='CALC_YYMM'   	 type='char' updatable='Y' iskeycol='N' />
+    <column name='CUST_ID'   		 type='char' updatable='Y' iskeycol='N' />
+    <column name='CUST_NAME'  	 type='char' updatable='N' iskeycol='N' />
+    <column name='SUPPLY_AMT'    type='number' updatable='Y' iskeycol='N' />
+    <column name='VAT_AMT'       type='number' updatable='Y' iskeycol='N' />
+    <column name='TOT_AMT'       type='number' updatable='Y' iskeycol='N' />
+    <column name='MOD_COST'  		 type='number' updatable='Y' iskeycol='N' />
+    <column name='BILL_SEQ'  		 type='number' updatable='Y' iskeycol='N' /> -->
+    
+	</select>
+
+	<!-- R_InsertCmSaleAmtModify_02 -->
+	<select id="R_InsertCmSaleAmtModify_02" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.InsertCmSaleAmtModify">
+	 	<![CDATA[
+			
+			  SELECT MAX(MOD_SEQ) AS MAX_SEQ
+			 	FROM CM_SALEAMT_MODIFY 
+			 WHERE  ORDER_ID  = #{orderId}
+
+    ]]>
+    
+	</select>
+
+</mapper>
