@@ -6,6 +6,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -25,54 +28,67 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
  * 
  * 접속 시
  * /swagger-ui.html
- *
+ *	
  */
 @Configuration
 @EnableSwagger2WebMvc
 @Import(SpringDataRestConfiguration.class)
-public class SwaggerConfig {
-    @Bean
-    public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2) 
-          .select()                                 
-          .apis(RequestHandlerSelectors.basePackage("com.neofect.gts.rest") )             
-          .paths(PathSelectors.any())
-          .build()
-          .apiInfo(apiInfo())
-          .useDefaultResponseMessages(false)                                  
-          .globalResponseMessage(RequestMethod.GET, getArrayList());
-         
-    }
-     
-    private ArrayList<ResponseMessage> getArrayList(){
-        ArrayList<ResponseMessage> lists = new ArrayList<ResponseMessage>();
-         
-        lists.add(new ResponseMessageBuilder()
-                .code(500)
-                .message("Internal Server Error")
-                .responseModel(new ModelRef("Error"))
-                .build());
-        
-        lists.add(new ResponseMessageBuilder()
-                .code(400)
-                .message("Bad Request")
-                .build());
-        
-        lists.add(new ResponseMessageBuilder()
-                .code(404)
-                .message("Not Found")
-                .build());
-         
-        return lists;
-    }
-    
-    private ApiInfo apiInfo() {
-        return new ApiInfo(
-          "GreenCare REST API", 
-          "Description of API.", 
-          "API TOS", 
-          "Terms of service", 
-          new Contact("", "www.neofect.com", "help@neofect.com"), 
-          "License of API", "API license URL", Collections.emptyList());
-    }
+public class SwaggerConfig extends WebMvcConfigurationSupport{
+	@Bean
+	public Docket api() {
+		return new Docket(DocumentationType.SWAGGER_2) 
+		  .select()								 
+		  .apis(RequestHandlerSelectors.basePackage("com.neofect.gts.rest") )			 
+		  .paths(PathSelectors.any())
+		  .build()
+		  .apiInfo(apiInfo())
+		  .useDefaultResponseMessages(false)								  
+		  .globalResponseMessage(RequestMethod.GET, getArrayList());
+		 
+	}
+	 
+	private ArrayList<ResponseMessage> getArrayList(){
+		ArrayList<ResponseMessage> lists = new ArrayList<ResponseMessage>();
+		 
+		lists.add(new ResponseMessageBuilder()
+				.code(500)
+				.message("Internal Server Error")
+				.responseModel(new ModelRef("Error"))
+				.build());
+		
+		lists.add(new ResponseMessageBuilder()
+				.code(400)
+				.message("Bad Request")
+				.build());
+		
+		lists.add(new ResponseMessageBuilder()
+				.code(404)
+				.message("Not Found")
+				.build());
+		 
+		return lists;
+	}
+	
+	private ApiInfo apiInfo() {
+		return new ApiInfo(
+		  "GreenCare REST API", 
+		  "Description of API.", 
+		  "API TOS", 
+		  "Terms of service", 
+		  new Contact("", "www.neofect.com", "help@neofect.com"), 
+		  "License of API", "API license URL", Collections.emptyList());
+	}
+	
+	 @Override
+	  public void addViewControllers(ViewControllerRegistry registry) {
+	    registry.addRedirectViewController("/api/swagger/v2/api-docs", "/v2/api-docs").setKeepQueryParams(true);
+	    registry.addRedirectViewController("/api/swagger/swagger-resources/configuration/ui", "/swagger-resources/configuration/ui");
+	    registry.addRedirectViewController("/api/swagger/swagger-resources/configuration/security", "/swagger-resources/configuration/security");
+	    registry.addRedirectViewController("/api/swagger/swagger-resources", "/swagger-resources");
+	  }
+	 
+	 @Override
+	  public void addResourceHandlers(ResourceHandlerRegistry registry) {
+	    registry.addResourceHandler("/api/swagger/**").addResourceLocations("classpath:/META-INF/resources/");
+	  }
 }
