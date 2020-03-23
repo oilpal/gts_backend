@@ -15,12 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.neofect.gts.services.ho.domain.HO01010;
-import com.neofect.gts.services.ho.service.HO01010Service;
 import com.neofect.gts.services.sm.domain.SM01012;
-import com.neofect.gts.services.sm.domain.SMCOMCODE;
 import com.neofect.gts.services.sm.service.SM01012Service;
-import com.neofect.gts.services.sm.service.SMCOMCODEService;
 
 import lombok.extern.slf4j.Slf4j;
 
