@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neofect.gts.services.center.item.repository.CenterItemRepository">
+
+	<!-- 서비스 품목 관리 리스트 -->
+	<select id="getServiceItemList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.center.item.domain.CenterItem">
+	  SELECT		PRODUCT_ID, 
+					PRODUCT_DIV, 
+					PRODUCT_CODE,
+					PRODUCT_NAME,
+					SERVICE_MIN,
+					SALE_AMT,
+					DEPT_SALE_AMT, 
+					INTRO_RATE,  
+					START_DATE, 
+					END_DATE, 
+					USE_YN, 
+					UNIT_DIV,
+					ROUND_YN,
+					CUST_LEVEL_DIV,
+					FAMILY_YN,
+					PROOFFI_DIV,
+					PSEP_DIV, 
+					REG_DATE,
+					SORT_ORDER
+			FROM CODE_PRODUCT 
+			WHERE PSEP_DIV = 'S' 
+			   AND USE_YN LIKE #{useYn}
+			   AND PRODUCT_DIV like #{productDiv}
+			   AND START_DATE <![CDATA[<]]>= TO_DATE(#{date}, 'YYYYMMDD')
+			   AND END_DATE <![CDATA[>]]>= TO_DATE(#{date}, 'YYYYMMDD')
+			ORDER BY PRODUCT_DIV, PRODUCT_CODE
+	</select>
+
+	<!-- 다음 순번의 품목ID를 반환 -->
+	<select id="getDataProductId" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.center.item.domain.CenterItem">
+	SELECT SEQ_PRODUCT_ID.NEXTVAL FROM DUAL
+	</select>
+	
+	<!-- 서비스 품목 관리 리스트 -->
+	<insert id="insertCenterItemService" parameterType="map">
+	  INSERT into CODE_PRODUCT 
+	  (
+	  			PRODUCT_ID, 
+			  	PRODUCT_DIV, 
+				PRODUCT_CODE,
+				PRODUCT_NAME,
+				SERVICE_MIN,
+				SALE_AMT,
+				DEPT_SALE_AMT, 
+				INTRO_RATE,  
+				START_DATE, 
+				END_DATE, 
+				USE_YN, 
+				UNIT_DIV,
+				ROUND_YN,
+				CUST_LEVEL_DIV,
+				FAMILY_YN,
+				PROOFFI_DIV,
+				PSEP_DIV
+			
+	  )
+    values (
+    			SEQ_PRODUCT_ID.NEXTVAL, #{productDiv}, #{productCode}, #{productName}, #{serviceMin},
+    			#{saleAmt}, #{deptSaleAmt}, #{introRate}, #{startDate}, #{endDate}, 
+    			#{useYn}, #{unitDiv}, #{roundYn}, #{custLevelDiv}, #{familyYn}, 
+    			#{prooffiDiv}, #{psepDiv}
+      		)		
+					
+			
+	</insert>
+
+</mapper>
