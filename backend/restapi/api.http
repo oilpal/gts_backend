@@ -1,0 +1,499 @@
+users/me###
+POST https://{{auth_service_host}}/uaa/oauth/token?client_id={{client_id}}&response_type=code&grant_type=password&scope=ui&username={{username}}&password={{password}}
+Content-Type: application/json
+
+> {%
+ client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+  client.global.set("access_token", response.body.access_token)
+});
+%}
+
+###
+
+### 로그인 여부와 무관하게 무조건 현재 버전의 약관을 내려줌: 기존과 동일. 단순 컨텐츠 보기용
+GET http://{{user_service_host}}/user/api/v1/users/acceptTerms
+Content-Type: application/json
+
+### 사용자가 로그인한 상태이면 현재버전 약관에 동의하지 않은 경우에만 내려주고, 이미 동의했으면 204 (No Content) 응답
+GET http://{{user_service_host}}/user/api/v1/users/checkNewTerms
+Content-Type: application/json
+Authorization: Bearer  {{accessToken}}
+
+### 로그인 후 기존 사용자가 신규 약관 동의용. 파라미터 없으며, 성공시 return true.
+### 단, 최초 가입한 사용자의 경우에는 본 API 호출 없고 가입 완료시(addNewUser) 자동 처리
+POST http://{{user_service_host}}/user/api/v1/users/checkNewTerms
+Content-Type: application/json
+Authorization: Bearer  {{accessToken}}
+
+
+### 로그인 사용자 정보 조회
+GET http://{{user_service_host}}/user/api/v1/users/me
+Content-Type: application/json
+Authorization: Bearer  {{accessToken}}
+
+### 로그인 사용자 정보 조회
+GET http://{{user_service_host}}/user/api/v1/users/me
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo3NjYsInVzZXJfbmFtZSI6Im5lb2ZlY3RzcWExMjEwQGdtYWlsLmNvbSIsInNjb3BlIjpbInVpIl0sIm5hbWUiOiJuZW9mZWN0c3FhMTIxMEBnbWFpbC5jb20iLCJleHAiOjE4MzU0MDMwNzUsImF1dGhvcml0aWVzIjpbInJvbGVfcGF0aWVudCIsInJvbGVfdXNlciJdLCJqdGkiOiJlZmY2ODE1MC04ODI4LTRmMTctYjUxZi0wZDdjZTU2OTdjNGIiLCJlbWFpbCI6Im5lb2ZlY3RzcWExMjEwQGdtYWlsLmNvbSIsImNsaWVudF9pZCI6ImJyb3dzZXIifQ.E8A437pp-_Rw0Ru05lF0kJCoHJFyz7O6rNEh-JGAwFLeXLAqlmYAMwwKjS-4pnkcCCaB2s_5kheVJa4PUOrzqovVtZhEV2AN12KVS2MkB8Y0FQKJKy4iLFHXKPVP8KEIg2dShHT4a6o0b2Tz-geWPQ1tSR3TLOVcw6E1stvysGNbjx7L4xqi3IwX-wMvORCwUN1otcP2oy_vljNVJyi6pPpH0wpAvSZGWew4BcBsnHj4YEX48S1Iwd3rYLYK-NkLn0QQGCoAk4figmGIN1Tq5Sety3UkXBj3ro-StirMa2jIeVD1JkbX-CnYFAmF-mhZBEdlegRSWWc4LIgfaGVdbQ
+
+
+
+
+### 로그인 사용자 정보 조회
+GET http://{{user_service_host}}/user/api/v1/users/me
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo3MTMsInVzZXJfbmFtZSI6Imh3a2ltQG5lb2ZlY3QuY29tIiwic2NvcGUiOlsidWkiXSwibmFtZSI6IkhXS0lNIiwiZXhwIjoxODM0NTY0MDk2LCJhdXRob3JpdGllcyI6WyJyb2xlX3BhdGllbnQiLCJjYW5fcmVhZF91c2VyIiwicm9sZV91c2VyIl0sImp0aSI6IjI4MjM0ZWUzLTUwMzQtNDg4Mi05YTE1LTllMDdiMDUzMjgwYyIsImVtYWlsIjoiaHdraW1AbmVvZmVjdC5jb20iLCJjbGllbnRfaWQiOiJicm93c2VyIn0.p6TD3Iyz_aPQztUV6uL6sEfjNdZ3GTeJ_fCW4g0r1aWnHv0Ub7chvx2T0XMpHyLZG7yO1dEsBtxiOUBRNkW6FQpdwV-zVZv2YyB4YbfIdL6Vw_yNZDa2zs-VuMWL6IBLmT5DpzsVIbmUxhtIfGq2xCnOE9gOU55rTOsNhg92YfMUsv-tDxH_86Dr7eEagvMsjQnNNSf-NFVb5wW40W-F9Ip_bVyiSgTDDjdHDWZ_wMJzxWMaXpnn6RAdTVQyRVPEC4VZXV8OG4gahQBI7cBxZ_7Sg0546kSZRA8QjTO2ku00NA3istswtTOU0tTtj38_dwC3leoAI1GGchnyYll-VA
+
+
+
+
+###
+GET http://localhost:8060/user/api/v1/users/me
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0MjAsInVzZXJfbmFtZSI6Inplcm9AbmVvZmVjdC5jb20iLCJzY29wZSI6WyJ1aSJdLCJuYW1lIjoi7YWM7Iqk7Yq4IOydtOumhOyeheuLiOuLpCIsImV4cCI6MTU3Mzk1MzA2MSwiYXV0aG9yaXRpZXMiOlsiY2FuX3JlYWRfdXNlciIsInJvbGVfdXNlciIsInJvbGVfdGhlcmFwaXN0Il0sImp0aSI6IjNmMzFkODE2LWM0N2EtNDFjYy1hYTRkLTJlZmMwNmY3MTlhNyIsImVtYWlsIjoiemVyb0BuZW9mZWN0LmNvbSIsImNsaWVudF9pZCI6ImJyb3dzZXIifQ.VVSFU5wMTF94jj6WoLzDe4E0N0z41jF_I7__4B-GknG4Q-_Nf60fn43mD7jWV_WUsEOICRuQYB78v4SBL5JSBANukkhXDQDEIH80pau2JtR1Ne2i1apg06kfORJYiDqmsAFi39LemZ5dj7orTiy3j-Vc3IPFWpXdbB0RAMqGr0KMQVvyaNZs60hCA6SyLXqDkBiJHzDEFX7O7oFDGJvwuwA3KQPxuqJx_T4FdNLhXvl1H7sE9oxq4CDIMxc8YoQHBTJ5N4EUXwYbftjuvwtTvCSgZQSeztER6TPt3BOgS6gMxFxcYurpabFu83Ec0boF6xb1XBtEEYhz4NN7bHQ9cw
+#Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo1NjgsInVzZXJfbmFtZSI6InF1ZGFuc2RsQGdtYWlsLmNvbSIsInNjb3BlIjpbInVpIl0sIm5hbWUiOiLthYzsiqTtirgg7J2066aE7J6F64uI64ukIiwiZXhwIjoxODMwODkyMDI5LCJhdXRob3JpdGllcyI6WyJyb2xlX2FkbWluIiwiY2FuX3VwZGF0ZV91c2VyIiwiY2FuX3JlYWRfdXNlciIsImNhbl9jcmVhdGVfdXNlciIsInJvbGVfdGhlcmFwaXN0IiwiY2FuX2RlbGV0ZV91c2VyIl0sImp0aSI6IjM1ODEzYzU1LTQ3NTAtNGIyNS04YjIyLTg4YmM0NjFiZjAyNCIsImVtYWlsIjoicXVkYW5zZGxAZ21haWwuY29tIiwiY2xpZW50X2lkIjoiYnJvd3NlciJ9.KbR7CqFC2uF82cTief_p_E3nzjw07OaYw3H_E8VcORTngqDHsO4LkGGot2RsoWD2fkRjHSRSKOCNq4gFrVxiTqVsQlZBJgw2Fpte4LwS7t3paU-OdNEdMgmk0Ez5xFC32vmlBm5Ie-RKTutXRE_IRYa7tTBDp92R4lZEgH7ZxIhChhHS3yGaR03Tmb_cYA-unBqnCBcZjRdU5RtmNGWahpvj8HeUiJuBBbJnaKc2ZPA1eBWqb8Nyg2wt8jZ2D9_iI_riyVfvA9tbguXs2dV9FCK0055xqUDEffx5PE8H3lBdHY-wt-PgJgp0vYQyPcrpfMs6kFDPMqY-1T3WJegm1Q
+
+###
+POST http://127.0.0.1:8060/user/api/v1/patients/severity/568?severityLevel=3
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo1NjgsInVzZXJfbmFtZSI6InF1ZGFuc2RsQGdtYWlsLmNvbSIsInNjb3BlIjpbInVpIl0sIm5hbWUiOiLthYzsiqTtirgg7J2066aE7J6F64uI64ukIiwiZXhwIjoxODMwODkyMDI5LCJhdXRob3JpdGllcyI6WyJyb2xlX2FkbWluIiwiY2FuX3VwZGF0ZV91c2VyIiwiY2FuX3JlYWRfdXNlciIsImNhbl9jcmVhdGVfdXNlciIsInJvbGVfdGhlcmFwaXN0IiwiY2FuX2RlbGV0ZV91c2VyIl0sImp0aSI6IjM1ODEzYzU1LTQ3NTAtNGIyNS04YjIyLTg4YmM0NjFiZjAyNCIsImVtYWlsIjoicXVkYW5zZGxAZ21haWwuY29tIiwiY2xpZW50X2lkIjoiYnJvd3NlciJ9.KbR7CqFC2uF82cTief_p_E3nzjw07OaYw3H_E8VcORTngqDHsO4LkGGot2RsoWD2fkRjHSRSKOCNq4gFrVxiTqVsQlZBJgw2Fpte4LwS7t3paU-OdNEdMgmk0Ez5xFC32vmlBm5Ie-RKTutXRE_IRYa7tTBDp92R4lZEgH7ZxIhChhHS3yGaR03Tmb_cYA-unBqnCBcZjRdU5RtmNGWahpvj8HeUiJuBBbJnaKc2ZPA1eBWqb8Nyg2wt8jZ2D9_iI_riyVfvA9tbguXs2dV9FCK0055xqUDEffx5PE8H3lBdHY-wt-PgJgp0vYQyPcrpfMs6kFDPMqY-1T3WJegm1Q
+
+
+### Reset Password
+POST {{user_service_host}}/user/api/v1/users/resetPassword/{{username}}
+Content-Type: application/json
+
+### Reset Password
+POST {{user_service_host}}/user/api/v1/users/resetPassword/poh2432423@gmail.com
+Content-Type: application/json
+
+### update Password
+POST {{user_service_host}}/user/api/v1/users/updatePassword?password=22222222&newPassword=11111111
+Content-Type: application/json
+Authorization: Bearer  {{accessToken}}
+
+
+### 사용자 정보 조회 By Email
+GET http://{{user_service_host}}/user/api/v1/users/email/{{username}}
+Content-Type: application/json
+Authorization: Bearer  {{accessToken}}
+
+### 가입여부 검사
+GET http://{{user_service_host}}/user/api/v1/users/email/exist/{{username}}
+Content-Type: application/json
+
+### 가입여부 검사
+GET http://{{user_service_host}}/user/api/v1/users/email/exist/sadas@neofect.com
+Content-Type: application/json
+
+
+### 이메일 검증
+GET http://{{user_service_host}}/user/api/v1/users/email/verify/{{username}}?uuid={{uuid}}&from=CONNECT
+Content-Type: application/json
+
+### 이메일 검증
+GET http://{{user_service_host}}/user/api/v1/users/email/verify/qudansdl@gmail.com?uuid=908426&from=CONNECT
+Content-Type: application/json
+
+
+### 이메일 검증 완료 여부
+GET http://{{user_service_host}}/user/api/v1/users/email/verified?token={{emailToken}}
+Content-Type: application/json
+
+### 이메일 검증 완료 여부
+GET http://{{user_service_host}}/user/api/v1/users/email/verified?token=i_nobzFinX3AKMqpkdjyXkunHlXyEhkPGIuHCpR1e45iARWgvj75Z0W3HAEVFMgQLum2vHMyVxsVvfflE0jlha4nfEQrGJni-c4pcU5tOPUmX275J6hoKZWXgpgja-mXEEyTNfoNBNwf6ALF9A0eSmTP19-2ATKbCqEqRivHJpQ
+Content-Type: application/json
+
+
+
+###
+GET http://{{user_service_host}}/user/api/v1/users/email/{{username}}
+Content-Type: application/json
+Authorization: Bearer  {{accessToken}}
+
+
+###
+GET http://{{user_service_host}}/user/api/v1/address/states
+Content-Type: application/json
+
+### 이메일 검증
+GET http://{{user_service_host}}/user/api/v1/users/email/verify/test0003@gmail.com?uuid=908426&from=PATIENT
+Content-Type: application/json
+
+###
+POST http://{{user_service_host}}/user/api/v1/users/register
+Content-Type: application/json
+
+{
+  "token": "E3OrH1KjoPgcHugpRGbkE_tS44EkCZsnpU1LeL_SI4k5YwzJULDxVELeHarSuvV4dkGvqfx95YA_SVJZBxpq7DbP_-sz8xhGtKlni4rSQLCJXFsI811bKQu4L9QS1lx2fv0sMyMkvHhGOfKgs0Grzo1VfWDWfGXoLPejwrl1EMQ",
+  "type": "PATIENT",
+  "email": "test0003@gmail.com",
+  "password": "aaaa"
+}
+
+###
+POST http://{{user_service_host}}/user/api/v1/users/registTherapist
+Content-Type: application/json
+
+{
+  "nickname": "zzz",
+  "country": "US",
+  "state": "AR",
+  "gender": "MALE",
+  "birthday": "2019-01-01",
+  "mobile": "04535433",
+  "type": "OT",
+  "email": "test0003@gmail.com",
+  "password": "aaaa",
+  "token": "{{emailToken}}"
+}
+###
+
+POST http://{{user_service_host}}/user/api/v1/users/registTherapist
+Content-Type: application/json
+
+{
+    "nickname":"pumpkinzomb",
+    "country":"KR",
+    "gender":"MALE",
+    "birthday":"2019-10-15T15:00:00.000Z",
+    "mobile":"010-2222",
+    "token":"hfwzv2RIfOz2RAPoADY5BCY9fPbdhrW5q2%204EL1JUEdicTNiO8QuJSCCZANYtZSDCULrkku1K5p8dfLDsmIm7g0TJ8jAHT8Odg01od%2F2iNjNRs0BgXwiHz%209EiRmHQ4zO3llziyB%2FFHr84bhrY6VyK1WRPJ25iWIbZbVrttnJf0%3D",
+    "type":"OT",
+    "email":"pumpkinzomb@neofect.com",
+    "password":"asdf1234"
+}
+###
+
+POST http://{{user_service_host}}/user/api/v1/client/init
+Content-Type: application/json
+
+{
+  "uuid": "c011b8e5-7b43-4092-a378-c2aa8689c484",
+  "service_type": "connect",
+  "gmt_offset": 240,
+  "app_version": "0.1.1",
+  "ad_id": "ad_id_1111",
+  "fcm_token": "ecnbSygjRD8:APA91bGgfhvEPG1DKtifQ4dSeZ8LluZgw-fawy_Obgczg1F7SkQxII4ku_8Z0bzGJ2kKJVRsqxprfGg52hx3uBhSZWSpOu4bJea2AmDW6oIxlxxK7KP0IhVOcyfLosF6hZ97BnWkmpK3"
+}
+
+###
+
+POST http://{{user_service_host}}/user/api/v1/client/init
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "uuid": "c011b8e5-7b43-4092-a378-c2aa8689c484",
+  "service_type": "connect",
+  "gmt_offset": 240,
+  "app_version": "0.1.1",
+  "ad_id": "ad_id_1111",
+  "fcm_token": "ecnbSygjRD8:APA91bGgfhvEPG1DKtifQ4dSeZ8LluZgw-fawy_Obgczg1F7SkQxII4ku_8Z0bzGJ2kKJVRsqxprfGg52hx3uBhSZWSpOu4bJea2AmDW6oIxlxxK7KP0IhVOcyfLosF6hZ97BnWkmpK3"
+}
+
+###
+POST http://{{user_service_host}}/user/api/v1/client/firebase
+Content-Type: application/json
+
+{
+  "uuid": "c011b8e5-7b43-4092-a378-c2aa8689c484",
+  "fcm_token": "111ecnbSygjRD8:APA91bGgfhvEPG1DKtifQ4dSeZ8LluZgw-fawy_Obgczg1F7SkQxII4ku_8Z0bzGJ2kKJVRsqxprfGg52hx3uBhSZWSpOu4bJea2AmDW6oIxlxxK7KP0IhVOcyfLosF6hZ97BnWkmpK3"
+}
+
+###
+GET http://{{user_service_host}}/user/api/v1/patients/therapist
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+
+### 가입여부 검사
+GET http://{{user_service_host}}/user/api/v1/users/email/exist/kurt6@gmail.com
+Content-Type: application/json
+
+### 환자 질환 정보 수정
+POST http://{{user_service_host}}/user/api/v1/users/symptom
+Content-Type: application/json
+Authorization: Bearer {{ access_token }}
+
+{
+  "name": "PPPP",
+  "gender": "OTHER",
+  "birthday": "1999-01-01",
+  "onset_date": "1999-01-01",
+  "stroke_side": ["LEFT", "RIGHT"],
+  "us_state_code": "AL",
+  "dominant_hand": "LEFT",
+  "diagnostic_name": "진단명"
+
+}
+
+### 담당 치료사 정보 조회
+GET http://{{user_service_host}}/user/api/v1/patients/therapistInfo
+Content-Type: application/json
+Authorization: Bearer {{ access_token }}
+
+
+
+### 환자가 보유한 장비 목록
+GET http://{{user_service_host}}/user/api/v1/patients/devices?userId={{patientId}}
+Content-Type: application/json
+Authorization: Bearer {{ access_token }}
+
+
+
+
+### 로그 테스트
+POST https://ne-alpha.rapaelrehab.com/log/writeRapaelHome
+Content-Type: application/json
+
+{
+
+}
+###
+
+
+###
+POST https://{{auth_service_host}}/chat/oauth/token?client_id={{client_id}}&response_type=code&grant_type=password&scope=ui&username={{username}}&password={{password}}
+Content-Type: application/json
+
+> {%
+ client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+  client.global.set("access_token", response.body.access_token)
+});
+%}
+
+###
+
+POST https://ne-pdev.rapaelrehab.com/uaa/oauth/token?client_id=browser&response_type=code&grant_type=password&scope=ui&username=neofectsqa1210@gmail.com&password=11111111
+Content-Type: application/json
+###
+
+
+### 로그인 테스트
+POST http://127.0.0.1:5000/uaa/oauth/token?grant_type=client_credentials&response_type=code&username=server&password=11111111
+Content-Type: application/json
+
+###
+
+
+
+
+GET https://ne-alpha.rapaelrehab.com/api/rapaelClient?packageName=com.neofect.rapael.client.clinic2&rapaelVersion=84
+Accept-Language: de-AT
+TimeZone: Asia/Seoul
+Country: AT
+appVersionName: 2.1.0 (20191114-00032)-LIVE
+appVersionCode: 85
+
+###
+
+POST https://{{user_service_host}}/user/api/v1/patients/notification
+Content-Type: application/json
+
+{
+  "type": "connect_live_sched_regist",
+  "data": {
+  }
+
+}
+
+###
+
+GET https://{{user_service_host}}/user/api/v1/patients/chat
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo3MTMsInVzZXJfbmFtZSI6Imh3a2ltQG5lb2ZlY3QuY29tIiwic2NvcGUiOlsidWkiXSwibmFtZSI6Imh3a2ltQG5lb2ZlY3QuY29tIiwiZXhwIjoxODMzNTI2MTY3LCJqdGkiOiIwM2I4NGRmOS0wMTRhLTRkY2QtYjM3Yi01Yjc5NDYzMGU0MjciLCJlbWFpbCI6Imh3a2ltQG5lb2ZlY3QuY29tIiwiY2xpZW50X2lkIjoiYnJvd3NlciJ9.HtEV-3HJP0drNXQsA4GmPd1ArZrqawX-dIMG_o6Jz_nPAg-jEw442wOCFZ9sw2Q-K20lJlMKVgbZ5EvF8AAyd2WTOAHvNSvlOMzrWKcLSaONgQX7eHoWDFJiQLR55lMHWsK5DHl6slaH2IpZlIoACD7xM2J2prQI4ILPvw-BQ66HerEm2A_4WXP-54e9T3IPWafE2-m0HcAaGRXHfLwwETUj9sqM4gRfqtG5lz-oX47OyYGUhRn8LEBr8YP3fWTzNdNhLQCMxykwFhy0dXSmUKfkTNw9V1BjXFzfGWoLTUm3JGqRcIjNykAIG51Hz0_4OykjgNo-FhQnNxGGwEfkEg
+
+###
+
+GET https://{{user_service_host}}/user/api/v1/therapist
+Content-Type: application/json
+Authorization: Bearer {{ access_token }}
+
+###
+
+
+###
+POST http://{{auth_service_host}}/uaa/oauth/token?client_id={{client_id}}&response_type=code&grant_type=password&scope=ui&username={{username}}&password={{password}}
+###
+
+
+###
+POST http://{{auth_service_host}}/uaa/oauth/token?client_id={{client_id}}&response_type=code&grant_type=refresh_token&refresh_token={{refreshToken}}
+###
+
+
+###
+POST http://{{auth_service_host}}/uaa/oauth/token?client_id={{client_id}}&response_type=code&grant_type=password&scope=ui&username={{username}}&password={{password}}
+###
+
+
+###
+POST http://{{auth_service_host}}/uaa/oauth/token?client_id={{client_id}}&response_type=code&grant_type=password&scope=ui&username={{username}}&password={{password}}
+###
+
+POST http://{{auth_service_host}}/uaa/oauth/token?client_id={{client_id}}&response_type=code&grant_type=refresh_token&refresh_token={{refreshToken}}
+###
+
+POST http://ne-pdev.rapaelrehab.com/uaa/oauth/token?client_id=browser&response_type=code&grant_type=password&scope=ui&username=kurt6@gmail.com&password=00000000
+###
+
+
+
+# curl 'http://localhost:9528/user/api/v1/users/registTherapist' -X PUT -H 'Connection: keep-alive' -H 'Accept: application/json, text/plain, */*' -H 'Origin: http://localhost:9528' -H 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0MjAsInVzZXJfbmFtZSI6Inplcm9AbmVvZmVjdC5jb20iLCJzY29wZSI6WyJ1aSJdLCJuYW1lIjoiRGFleW91bmcgIiwiZXhwIjoxODM0NDUzNTYwLCJhdXRob3JpdGllcyI6WyJjYW5fcmVhZF91c2VyIiwicm9sZV91c2VyIiwicm9sZV90aGVyYXBpc3QiXSwianRpIjoiMTBjZWMwZWYtNTZhNS00NWU3LThhMDctOGJiODc2Y2FjM2NjIiwiZW1haWwiOiJ6ZXJvQG5lb2ZlY3QuY29tIiwiY2xpZW50X2lkIjoiYnJvd3NlciJ9.mDHbRnoCkOSTnQS9Kw5HQ-EYRLuHTL6VvTCF3MKkcrBo68JnxUSKLIbmVDAZMqC_Y9Fa9upXD3pazEyJX1n8s5ju5GS9c1DQi33ucrNDCKZQRSoG-T7RWULA2Rbw48yh_JBwXUd4En5mGFAAXuJVTcheCSCSL-boPusO54i9NLcFZuGVbJIRIc7ih43_-DVB3dJc9riAUbJQV7_pD5aRDIgzWslECpSxjeiXyLck2FXP333TFsudQAeyTOk5s_gR8gimQ7b1ger_1_dWSfzL07i2gC9o2jWzfsQBdRlVb7nH8Bl7WgKTDzhSg-fJkb5EpIuk1MBi2WIMeYi1ZkkjQA' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36' -H 'Content-Type: application/json;charset=UTF-8' -H 'Sec-Fetch-Site: same-origin' -H 'Sec-Fetch-Mode: cors' -H 'Referer: http://localhost:9528/profile' -H 'Accept-Encoding: gzip, deflate, br' -H 'Accept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7' --data-binary '{"state":"AK","gender":"MALE","birthday":"1982-01-10","mobile":"1111","type":"PT","password":"1111"}' --compressed
+PUT {{user_service_host}}/user/api/v1/users/registTherapist
+Connection: keep-alive
+Accept: application/json, text/plain, */*
+Origin: http://localhost:9528
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0MjAsInVzZXJfbmFtZSI6Inplcm9AbmVvZmVjdC5jb20iLCJzY29wZSI6WyJ1aSJdLCJuYW1lIjoiRGFleW91bmcgIiwiZXhwIjoxODM0NDUzNTYwLCJhdXRob3JpdGllcyI6WyJjYW5fcmVhZF91c2VyIiwicm9sZV91c2VyIiwicm9sZV90aGVyYXBpc3QiXSwianRpIjoiMTBjZWMwZWYtNTZhNS00NWU3LThhMDctOGJiODc2Y2FjM2NjIiwiZW1haWwiOiJ6ZXJvQG5lb2ZlY3QuY29tIiwiY2xpZW50X2lkIjoiYnJvd3NlciJ9.mDHbRnoCkOSTnQS9Kw5HQ-EYRLuHTL6VvTCF3MKkcrBo68JnxUSKLIbmVDAZMqC_Y9Fa9upXD3pazEyJX1n8s5ju5GS9c1DQi33ucrNDCKZQRSoG-T7RWULA2Rbw48yh_JBwXUd4En5mGFAAXuJVTcheCSCSL-boPusO54i9NLcFZuGVbJIRIc7ih43_-DVB3dJc9riAUbJQV7_pD5aRDIgzWslECpSxjeiXyLck2FXP333TFsudQAeyTOk5s_gR8gimQ7b1ger_1_dWSfzL07i2gC9o2jWzfsQBdRlVb7nH8Bl7WgKTDzhSg-fJkb5EpIuk1MBi2WIMeYi1ZkkjQA
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Referer: http://localhost:9528/profile
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+Content-Type: application/json;charset=UTF-8
+
+{
+  "state": "AK",
+  "gender": "MALE",
+  "birthday": "1982-01-10",
+  "mobile": "1111",
+  "type": "PT",
+  "password": "1111"
+}
+
+###
+
+
+GET {{user_service_host}}/user/api/v1/users/code/verify?code=sIzP548JNeE9MfI7rpnE4jkly4_JU58A72WHH60XHwP9ulr28BILhwhfzfFi-fiKPJHWtgJETNzwiKOD_JvJE5cAWCOOF3CgfQsnSUY_iCYjgYaWvZAaEiMSHf8O8PMPxh54N6gG3QIfgFEKVYS6FA12327jCHcF5Lr9_Dm0CgY
+###
+
+
+POST https://hooks.slack.com/services/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
+Content-Type: application/x-www-form-urlencoded
+
+payload={"text": "오메나 빌드가 됐네.. ㅋㅋㅋㅋㅋ"}
+###
+
+
+### 로그인 사용자 정보 조회
+GET http://{{user_service_host}}/user/api/v1/users/me
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo3NjYsInVzZXJfbmFtZSI6Im5lb2ZlY3RzcWExMjEwQGdtYWlsLmNvbSIsInNjb3BlIjpbInVpIl0sIm5hbWUiOiJuZW9mZWN0c3FhMTIxMEBnbWFpbC5jb20iLCJleHAiOjE4MzU0MDM2MTQsImF1dGhvcml0aWVzIjpbInJvbGVfcGF0aWVudCIsInJvbGVfdXNlciJdLCJqdGkiOiI1MmNkNDVjYS0yZDk2LTRkNzMtODZkNy0xZWIxMjY4Mzg3YTMiLCJlbWFpbCI6Im5lb2ZlY3RzcWExMjEwQGdtYWlsLmNvbSIsImNsaWVudF9pZCI6ImJyb3dzZXIifQ.iuFHN-yL7T1ax1aBx0CtTfE-EtMAY8jjoujfN2A8_gPvdPSRckh3zXQDgJ_X7IbTY_D99acBfKx2gmOeZYR5tJw4ZidsBoVZPm22rDROrt2gyfK1hxFXt6iiSUbz7h2O4WhwpnYxQjPxaTuU9a3ae1Bpxff9sbu1DJkf72TuJM5-CENzw_2LHH6PDZwDXgSNItN7eybABvXkPKrJnN2VJcjtCY0zcve-aZHhTFsLihcY5SXL6RLC8ARnPcPHRIUO-H_oXHW9HSG2KK06EY4igcL26zAZWhV_eunTRUwboNsTGZ5CWdCuKRnJNTQUKWFv_PTVYEtayp1lxdpUs0uIBQ
+
+###
+
+### 로그인 사용자 정보 조회
+GET http://{{user_service_host}}/user/api/v1/users/me
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyNTI0LCJ1c2VyX25hbWUiOiJqa2tlZUBuZW9mZWN0LmNvbSIsInNjb3BlIjpbInVpIl0sIm5hbWUiOiJqa2tlZUBuZW9mZWN0LmNvbSIsImV4cCI6MTgzNTY2ODgzMSwiYXV0aG9yaXRpZXMiOlsicm9sZV9wYXRpZW50Iiwicm9sZV91c2VyIl0sImp0aSI6IjhkNGEyNGEzLWMxMGMtNDI0MS04MmNlLTA1Nzc4NzFiNWY4NyIsImVtYWlsIjoiamtrZWVAbmVvZmVjdC5jb20iLCJjbGllbnRfaWQiOiJicm93c2VyIn0.SEbC7vMkdl9HXO7uDiwfNtMWaTLQeaDLYkYQe6YPaeCGj4u7hVVe9nnpg3br8YL9X-vhe5Kig1bR5QWsFXLHLyDfaYn27F5gMXPv9Efj88r4VNzNbkxJXLXFKAESFICgDi01VfJAwakTSgK275zgeXKMT98yvqSZJMALAQGEZul6ELirmATwXIhvG0FeN9dArw0etXlNEGVb04k1kU3UveA6gBhvaV50meEQBcuggL6fjoL9VicEwL5TB9LdOpY2-zoAn8kYjra1JCy36gx8wMVyvJHuUNzG7GQnUWB58AI3BGGq3hnePg6Bg0ftrxT-V-wbSCLWxJM50N_JL39_TQ
+
+###
+
+
+
+###
+POST https://{{auth_service_host}}/uaa/oauth/token?client_id={{client_id}}&response_type=code&grant_type=password&scope=ui&username=sqapatient02@test.com&password=lim1423!
+Content-Type: application/json
+
+###
+
+### 로그인 사용자 정보 조회
+GET http://{{user_service_host}}/user/api/v1/users/me
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyNTE4LCJ1c2VyX25hbWUiOiJzcWFwYXRpZW50MDJAdGVzdC5jb20iLCJzY29wZSI6WyJ1aSJdLCJuYW1lIjoic3FhcGF0aWVudDAyQHRlc3QuY29tIiwiZXhwIjoxODM1NjcyMDAxLCJhdXRob3JpdGllcyI6WyJyb2xlX3BhdGllbnQiLCJyb2xlX3VzZXIiXSwianRpIjoiNjhmNmE4YTEtMmY5MC00YzYwLWEyODUtOTE1ZTVkNDdlYjVhIiwiZW1haWwiOiJzcWFwYXRpZW50MDJAdGVzdC5jb20iLCJjbGllbnRfaWQiOiJicm93c2VyIn0.o_IdDF5DAXVJzTd03rweZSvemsT3nXgKQ0nlUK6q4g3JwutNpkpSGrqyINy_Gb4GVk89hpQGd89sTlVGIRWRgMqK3qGTNY3E3t-3HzGc1saNMekoxrCYmqamBjueqoNr1t46ScLty4HUf8eJjdzx9u5xdTEEIZQMxEJtW-uqYyGU521FSdWKq2ykc0GoryXA_o55bKwl3wik5uCWkzvz10FI7jU71pBYFTCIaVo_nnhBDazyIFPc5uLBg-cHd9UsjQLax2MBeLa09fRBg-FaIrw9DkwGM1dj7gpo-wvrNXGJ9A_NQLJEkICxkR8DFQaGkgfjIzJcIEn8P0YIAB62bQ
+
+###
+
+###
+POST {{user_service_host}}/user/api/v1/users/updatePassword?newPassword=2222222a&code=QUlrXTEhZh2mQZj2upPZJ2VcsqE3NQxmXTFFRdeTOVv0suD5soX-7q3-oXY7fl6fRPMYfYCxVCMRbUz41YN9NK1QTjKqGCb2LswGwcihB3MgMdC9QqLId7K8qsdNIFIu4xTn2cBz5XEgzQycfNS5Hwl_MZ4oGzUFTuNu8VTVuGU
+
+###
+
+
+GET {{user_service_host}}/user/api/v1/patients/devices?userId=1574
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo3MywidXNlcl9uYW1lIjoiY2xhcmljZUBuZW9mZWN0LmNvbSIsInNjb3BlIjpbInVpIl0sIm5hbWUiOiJFZGRpZSB0ZXN0ZXIiLCJleHAiOjM3MjQwNDg5NzksImF1dGhvcml0aWVzIjpbInJvbGVfcGF0aWVudCIsInJvbGVfdXNlciIsInJvbGVfdGhlcmFwaXN0Il0sImp0aSI6IjY1MmFhMWE2LThkODYtNGFkZi1hYTc1LTNiYWE1NWJlYTQ5NyIsImVtYWlsIjoiY2xhcmljZUBuZW9mZWN0LmNvbSIsImNsaWVudF9pZCI6ImJyb3dzZXIifQ.HSTE3Uajt4ENlERybvYMk6Gl5HBB3Wk1M1FaARAhgmvRy8D9QZTAm5dvSKEN_aiIz83mWujxj5dfeHI5KLqkDy6CFnH7q858R1cZBllw6JPxYIN-6kh9u_DjQCovtJfFN72-WUNqQ1DKdvi-g3CIVxoGKhXRHkS9qGR0f2MA-gh-b8ffEjpXd91jXdRKeqcGPFBVJvpraSOPUwJKY_tzrasWFscQOgiblNbO_1cS1obqWOOuIoYwMEroAr6evB43Jb7wYLQ14TJ0eD4BK4RaK9RpPnfM_Wc5wpIoN2lJvTvJ9bkCwvtxkqEAWkEp-ORspZaCggGXlj2Rl5y8GgWENQ
+
+###
+
+
+
+###
+POST {{auth_service_host}}/uaa/oauth/token?client_id=server&client_secret=11111111&response_type=code&grant_type=client_credentials&scope=server
+
+###
+
+
+###
+POST https://{{auth_service_host}}/uaa/oauth/token?client_id={{client_id}}&response_type=code&grant_type=password&scope=ui&username=jkleeiosdev@neofect.com&password=1111111q
+Content-Type: application/json
+
+###
+
+### 로그인 사용자 정보 조회
+GET http://{{user_service_host}}/user/api/v1/users/me
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyNjg4LCJ1c2VyX25hbWUiOiJzcWFwYXRpZW50MjMwMkB0ZXN0LmNvbSIsInNjb3BlIjpbInVpIl0sIm5hbWUiOiJTUUEgUGF0aWVudCAyMyAwMiIsImV4cCI6MzcyNDU0NzI2MCwiYXV0aG9yaXRpZXMiOlsicm9sZV9wYXRpZW50Iiwicm9sZV91c2VyIl0sImp0aSI6ImU3OGQ1MmJjLWZlNzktNDBlYi04ZjVmLTYzZmY2YmI5MmM0OSIsImVtYWlsIjoic3FhcGF0aWVudDIzMDJAdGVzdC5jb20iLCJjbGllbnRfaWQiOiJicm93c2VyIn0.m3wZ5hZdpisTYxEj3q17MEpG8qo_vX28XebuLs4-c1IIABe4TKotepQ7ytuvlOjDyOMEU78pNTTAseyHWeRJiFR09Q-YN4cSlfQxnNpaoZXhPLlf3jJl2IjfAtLZxS3sEfL2zUyYSFWSDElUzfeXjmF3IkCpGFzbrXhJX6LRGeyGhMhBPWsvYa5E3FGn9h-MrBLhnF0fh160FoOl7q--VnmgAizFPpO4ReJCPlgvThIAXSL4D9MPKulVHuncGvGQXW6AsdrDuTOCxX5qqO3LI1n6vBupFOPAs1wSJmg2vYdRWwZOkdi1u3GWmRb9MHNBCuqxZBLfBrGOfCum7mhyNg
+
+###
+
+
+
+###
+POST https://{{auth_service_host}}/uaa/oauth/token?client_id={{client_id}}&response_type=code&grant_type=password&scope=ui&username=sdgp9@a.com&password=11111111
+Content-Type: application/json
+
+
+
+### 로그인 사용자 정보 조회
+GET {{user_service_host}}/user/api/v1/users/me
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyNzMyLCJ1c2VyX25hbWUiOiJzZGdwOUBhLmNvbSIsInNjb3BlIjpbInVpIl0sIm5hbWUiOiJTZGcgUGF0aWVudDkgU3RhZ2UiLCJleHAiOjM3MjU0MTg5ODMsImF1dGhvcml0aWVzIjpbInJvbGVfcGF0aWVudCIsInJvbGVfdXNlciJdLCJqdGkiOiIyM2U3ZmMzMC1hODRkLTRmOTMtYTRhMi04NmJjMWZjZGUyNmUiLCJlbWFpbCI6InNkZ3A5QGEuY29tIiwiY2xpZW50X2lkIjoiYnJvd3NlciJ9.ZgEuN7E3VAcMMHU2pHPeYlMMl9lNvChUJE_efGckfGF-Cr277B50sqjjqswi8KTku4pIu1oD1GwIfvp-fy4NdxZC2sjNwnjurYPOk1cIQ-Og8CiwUQkXTX3N2w_FrOMzVTIQFc20s3jfw2Of45YTuJyKKWNvpbk9Yk3LSZDzYSIg0CXs-H_vkDkOIBGvfv1wO_VgM1VIh6ofN7VHitCCModVOyTyfjzTYTtH2_BKBgfbeHAac_F4s_mt-jkPpCtVANiDIXx9wjUDKJi4PNlplS_JxJpfAylSfktAunP7wBsxW0V7VwbObaxocZ9CTJvnqWONrtk9CcSDjXff-Dk0JQ
+
+###
+
+
+###
+GET {{auth_service_host}}/uaa/google/callback?target=nadmin&state=2d718936a4d637ff08f0b002057a784a4b1549bc1e92ee052d470de93f1bba5e32618b40d4a8046a2d6f7753e630126b9d8f459e5902a3a57bc52e131b3f74f0&code=4/wgED3xQYgI-eG82q87yIAQLDX5XjMXCCjCRllhguLyyOVDb4MWPe7Caj3eYzKOIE_qHEKfnxA_GZ4w-WBmH6WXw&scope=email%20profile%20https://www.googleapis.com/auth/userinfo.profile%20https://www.googleapis.com/auth/userinfo.email%20openid&authuser=1&hd=neofect.com&prompt=consent&session_state=a672d03882d30c7fbfa7b90beae4e5f1ecc41ac8..03bd
+###
+
+
+
+
+###
+POST https://{{auth_service_host}}/uaa/oauth/token?client_id={{client_id}}&response_type=code&grant_type=authorization_code&scope=ui&username={{username}}&code=4/wgED3xQYgI-eG82q87yIAQLDX5XjMXCCjCRllhguLyyOVDb4MWPe7Caj3eYzKOIE_qHEKfnxA_GZ4w-WBmH6WXw
+Content-Type: application/json
+
+> {%
+ client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+  client.global.set("access_token", response.body.access_token)
+});
+%}
+
+###
+
+POST https://stage.rapaelrehab.com/uaa/oauth/token?client_id=browser&response_type=code&grant_type=password&scope=ui&username=LimPatient05@test.com&password=1111111q
+Content-Type: application/json
+
+###
+
+
+### 환자 정보 조회
+GET {{user_service_host}}/user/api/v1/users/patient/me
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyOTk4LCJ1c2VyX25hbWUiOiJMaW1QYXRpZW50MDVAdGVzdC5jb20iLCJzY29wZSI6WyJ1aSJdLCJuYW1lIjoiTGltUGF0aWVudDA1IiwiZXhwIjozNzMxMzg5NjE1LCJhdXRob3JpdGllcyI6WyJyb2xlX3BhdGllbnQiLCJyb2xlX3VzZXIiXSwianRpIjoiNTJmZTU4NGQtYzY4ZS00ZTI4LWE3YmQtM2FhMzk2NzJkMmEzIiwiZW1haWwiOiJMaW1QYXRpZW50MDVAdGVzdC5jb20iLCJjbGllbnRfaWQiOiJicm93c2VyIn0.lSm2ORNIbni3YpDHWdDM92JuNwhLHc1UiYeUXsRb7wWJu5l4t7ukw53oXVj5cDIOfaZAF-7-Ay9mCIYI5XOaTvj9vK_YVBV8K11nyDyEXvPUxR3A2_mjIfaHCEsIIBOuLee7lLgth5l_rzjGw8p2txaAHjvVLVpKGqPoN-2ou9tuXFeGNzKFvWca_fujzkMkug9w3CTOrZO6NL7pOwHrmME155PlFZEYTldhLCPhA63ZfflDLiM7A2kIsBjBdchpNfwVGqSU4nK0_pUJ0X0EewUM_dTEwPSX90p1ENalqHSwYlauImBcrxZeNnP-LQ_Vvd31eyfBC7ggfczC4_op2Q
+
+###
+
+
+### 사용자 정보 조회
+GET http://{{user_service_host}}/user/api/v1/users/me
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyOTk4LCJ1c2VyX25hbWUiOiJMaW1QYXRpZW50MDVAdGVzdC5jb20iLCJzY29wZSI6WyJ1aSJdLCJuYW1lIjoiTGltUGF0aWVudDA1IiwiZXhwIjozNzMxMzg5NjE1LCJhdXRob3JpdGllcyI6WyJyb2xlX3BhdGllbnQiLCJyb2xlX3VzZXIiXSwianRpIjoiNTJmZTU4NGQtYzY4ZS00ZTI4LWE3YmQtM2FhMzk2NzJkMmEzIiwiZW1haWwiOiJMaW1QYXRpZW50MDVAdGVzdC5jb20iLCJjbGllbnRfaWQiOiJicm93c2VyIn0.lSm2ORNIbni3YpDHWdDM92JuNwhLHc1UiYeUXsRb7wWJu5l4t7ukw53oXVj5cDIOfaZAF-7-Ay9mCIYI5XOaTvj9vK_YVBV8K11nyDyEXvPUxR3A2_mjIfaHCEsIIBOuLee7lLgth5l_rzjGw8p2txaAHjvVLVpKGqPoN-2ou9tuXFeGNzKFvWca_fujzkMkug9w3CTOrZO6NL7pOwHrmME155PlFZEYTldhLCPhA63ZfflDLiM7A2kIsBjBdchpNfwVGqSU4nK0_pUJ0X0EewUM_dTEwPSX90p1ENalqHSwYlauImBcrxZeNnP-LQ_Vvd31eyfBC7ggfczC4_op2Q
+
+###
+
