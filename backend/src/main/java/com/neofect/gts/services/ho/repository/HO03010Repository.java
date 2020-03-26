@@ -13,39 +13,44 @@ import com.neofect.gts.services.ho.domain.HO03010;
 public interface HO03010Repository {
 
 	/**
-	 * 임직원 관리 리스트
+	 * [사용]임직원 관리 리스트
+	 * 복사 완료
 	 * HO03010_C01
 	 * * dept, gubundiv, workyn, find 필요 
 	 * @param param
 	 * @return
 	 */
+	@Deprecated
 	List<HO03010> getEmpManageList(Map<String, Object> param);
 
 	/**
-	 * 주민번호조회?
+	 * [사용]주민번호조회?
 	 * HO03010_R03
 	 * * reg 필요 
 	 * @param param
 	 * @return
 	 */
+	@Deprecated
 	List<HO03010> hO03010R03(Map<String, Object> param);
 
 	/**
-	 * 사번검색?
+	 * [사용]사번검색?
 	 * HO03010_R04
 	 * * id 필요 
 	 * @param param
 	 * @return
 	 */
+	@Deprecated
 	List<HO03010> hO03010R04(Map<String, Object> param);
 
 	/**
-	 * 사번 count?
+	 * [사용]사번 count?
 	 * MEMBER_DUP_CHK
 	 * * id 필요 
 	 * @param param
 	 * @return
 	 */
+	@Deprecated
 	List<HO03010> memberDupChk(Map<String, Object> param);
 
 	/**
@@ -58,12 +63,13 @@ public interface HO03010Repository {
 	List<HO03010> memberIdChange(Map<String, Object> param);
 
 	/**
-	 * 주민번호 체크
+	 * [사용]주민번호 체크
 	 * CHK_JUMIN
 	 * jumin, memberid 필요
 	 * @param param
 	 * @return
 	 */
+	@Deprecated
 	List<HO03010> chkJumin(Map<String, Object> param);
 
 	/**
