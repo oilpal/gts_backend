@@ -18,10 +18,10 @@
 	</select>
 	
 	<!-- 공통코드 목록 By DValue2 값을 코드 값으로 -->
-	<select id="getSmCommonCodeListByDvalue2" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Code">
-	/* com.neofect.gts.services.common.repository.CodeRepository.getSmCommonCodeListByDvalue2 */
+	<select id="selectSmCommonCodeListByDvalue2" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Code">
+	/* com.neofect.gts.services.common.repository.CodeRepository.selectSmCommonCodeListByDvalue2 */
 		SELECT 
-		DVALUE2 AS CODE
+			DVALUE2 AS CODE
            , DNAME AS LABEL
         FROM SM_COMCODE_D
         WHERE SYS_ID = #{sysId}
@@ -55,5 +55,22 @@
       		SM_COMM_FILE_DETAIL
      	WHERE 
      		ATCH_FILE_ID = #{fileId}
+	</select>
+	
+	<!-- CODE_COMDIV 그린케어용 -->
+	<select id="selectCodeComdivList" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Code">
+	/* com.neofect.gts.services.common.repository.CodeRepository.selectCodeComdivList */
+	<![CDATA[
+		SELECT 
+				A.COMDIV_CODE AS CODE,
+             	A.COMDIV_NAME AS LABEL
+        FROM 
+        		CODE_COMDIV A
+        WHERE 
+        		A.COMSEC_CODE = #{hcode}
+        AND 
+        		A.USE_YN LIKE #{use}
+        ORDER BY A.PRINT_SEQ, A.COMDIV_CODE
+    ]]>
 	</select>
 </mapper>

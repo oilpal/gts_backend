@@ -9,6 +9,12 @@ public interface CommonRepository {
 
 	List<Common> SM_COMCODE_D(Map<String,Object> param);
 
+	/**
+	 * [사용]
+	 * @param param
+	 * @return
+	 */
+	@Deprecated
 	List<Common> SM_COMCODE_D_DV2(Map<String,Object> param);
 
 	List<Common> SM_COMCODE_D_W(Map<String,Object> param);
@@ -49,6 +55,12 @@ public interface CommonRepository {
 
 	List<Common> BM_COMM_DETAIL(Map<String,Object> param);
 
+	/**
+	 * [사용]
+	 * @param param
+	 * @return
+	 */
+	@Deprecated
 	List<Common> CODE_COMDIV(Map<String,Object> param);
 
 	List<Common> CODE_COMDIV4(Map<String,Object> param);

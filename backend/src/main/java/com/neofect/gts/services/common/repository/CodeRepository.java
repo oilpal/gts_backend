@@ -30,7 +30,7 @@ public interface CodeRepository {
 	 * @param param
 	 * @return
 	 */
-	List<Code> getSmCommonCodeListByDvalue2(Map<String,Object> param);
+	List<Code> selectSmCommonCodeListByDvalue2(Map<String,Object> param);
 	
 	/**
 	 * 공통코드 목록 by RelateCode
@@ -47,4 +47,11 @@ public interface CodeRepository {
 	 * @return
 	 */
 	int getSmCommonFileCount(Map<String,Object> param);
+	
+	/**
+	 * 공통코드 목록 CODE_COMDIV
+	 * @param param
+	 * @return
+	 */
+	List<Code> selectCodeComdivList(Map<String,Object> param);
 }

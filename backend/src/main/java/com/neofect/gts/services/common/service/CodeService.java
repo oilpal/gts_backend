@@ -28,4 +28,23 @@ public class CodeService {
 	public List<Code> getSmCommonCodeList( Map<String,Object> param){
 		return codeRepository.getSmCommonCodeList(param);
 	}
+	
+	/**
+	 * 공통코드 목록 CODE_COMDIV
+	 * @param param
+	 * @return
+	 */
+	public List<Code> selectCodeComdivList(Map<String,Object> param){
+		return codeRepository.selectCodeComdivList(param);
+	}
+	
+	/**
+	 * 공통코드 목록 코드값 DValue2 로 
+	 * 기존 SM_COMCODE_D_DV2
+	 * @param param
+	 * @return
+	 */
+	public List<Code> selectSmCommonCodeListByDvalue2(Map<String,Object> param){
+		return codeRepository.selectSmCommonCodeListByDvalue2(param);
+	}
 }

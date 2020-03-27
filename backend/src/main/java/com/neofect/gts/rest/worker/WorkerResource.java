@@ -1,6 +1,7 @@
 package com.neofect.gts.rest.worker;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.neofect.gts.services.common.domain.Code;
+import com.neofect.gts.services.common.service.CodeService;
 import com.neofect.gts.services.worker.worker.domain.Worker;
 import com.neofect.gts.services.worker.worker.service.WorkerService;
 
@@ -37,6 +40,9 @@ public class WorkerResource {
 
 	@Autowired
 	WorkerService service;
+	
+	@Autowired
+	CodeService codeService;
 	
 	/**
 	 * 직원정보 목록
@@ -89,4 +95,102 @@ public class WorkerResource {
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(data, headers, HttpStatus.OK);
     }
+	
+	/**
+	 * 직원정보에 사용하는 코드 정보
+	 * @param q
+	 * @param code
+	 * @return
+	 * @throws URISyntaxException
+	 */
+	@ApiOperation(value = "직원정보 코드 정보" ,notes = "직원정보에 사용되는 코드 정보")
+	@GetMapping(value = "/code/info", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String,Object>> getWorkerCodeGroup(@RequestBody(required = false) Map<String, Object> q) throws URISyntaxException {
+        if (q == null) {
+            q = new HashMap<String,Object>();
+        }
+        Map<String,Object> result = new HashMap<String,Object>();
+        
+        q.put("hcode", "0103");
+        q.put("use", "Y");
+        //직급
+        List<Code> gubunDivList = codeService.selectCodeComdivList(q);
+        result.put("gubunDivList", gubunDivList);
+        
+        //재직여부 코드
+        List<Code> workYnList = new ArrayList<Code>();
+        Code eo = new Code();
+        eo.setCode("Y");
+        eo.setLabel("재직중");
+        workYnList.add(eo);
+        eo = new Code();
+        eo.setCode("N");
+        eo.setLabel("퇴직");
+        workYnList.add(eo);
+        result.put("workYnList", workYnList);
+        
+        //장애등급
+        q.put("hcode", "0145");
+        List<Code> handicapLevelList = codeService.selectCodeComdivList(q);
+        result.put("handicapLevelList", handicapLevelList);
+        
+        //
+        q.put("hcode", "0102");
+        List<Code> memberDivList = codeService.selectCodeComdivList(q);
+        result.put("memberDivList", memberDivList);
+        
+        q.put("hcode", "0104");
+        List<Code> licenselevelDivList = codeService.selectCodeComdivList(q);
+        result.put("licenselevelDivList", licenselevelDivList);
+        
+        //급여계좌정보의 은행 
+        q.put("hcode", "0100");
+        List<Code> bankDivList = codeService.selectCodeComdivList(q);
+        result.put("bankDivList", bankDivList);
+        
+        q.put("hcode", "9999");
+        List<Code> authorityDivList = codeService.selectCodeComdivList(q);
+        result.put("authorityDivList", authorityDivList);
+        
+        //급여종류
+        q.put("sysId", "SM");
+        q.put("hcode", "PAYTYPE");
+        List<Code> payTypeList = codeService.selectSmCommonCodeListByDvalue2(q);
+        result.put("payTypeList", payTypeList);
+        
+        //퇴직정산방법
+        q.put("sysId", "SM");
+        q.put("hcode", "RETIRECALCTYPE");
+        List<Code> retirecalctypeList = codeService.selectSmCommonCodeListByDvalue2(q);
+        result.put("retirecalctypeList", retirecalctypeList);
+        
+        //보험가입구분
+        q.put("sysId", "SM");
+        q.put("hcode", "LIINSURANCETYPE");
+        List<Code> liinsurancetypeList = codeService.selectSmCommonCodeListByDvalue2(q);
+        result.put("liinsurancetypeList", liinsurancetypeList);
+        
+        //건강보험적용
+        q.put("sysId", "SM");
+        q.put("hcode", "HEALTHINSURETAG");
+        List<Code> healthinsuretagList = codeService.selectSmCommonCodeListByDvalue2(q);
+        result.put("healthinsuretagList", healthinsuretagList);
+        
+        //국민연금적용
+        q.put("sysId", "SM");
+        q.put("hcode", "NATIONALPENSIONTAG");
+        List<Code> nationalpensiontagList = codeService.selectSmCommonCodeListByDvalue2(q);
+        result.put("nationalpensiontagList", nationalpensiontagList);
+        
+        //고용보험적용
+        q.put("sysId", "SM");
+        q.put("hcode", "GOYONGTAG");
+        List<Code> goyongtagList = codeService.selectSmCommonCodeListByDvalue2(q);
+        result.put("goyongtagList", goyongtagList);
+        
+        HttpHeaders headers = new HttpHeaders();
+        return new ResponseEntity<>(result, headers, HttpStatus.OK);
+    }
+	
+	
 }
