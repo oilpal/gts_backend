@@ -1,4 +1,4 @@
-package com.neofect.gts.services.center.item.domain;
+package com.neofect.gts.services.settings.serviceItemsMgt.domain;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -7,9 +7,9 @@ import org.apache.ibatis.type.Alias;
 
 import lombok.Data;
 
-@Alias("centerItem")
+@Alias("serviceItemsMgt")
 @Data
-public class CenterItem implements Serializable{
+public class ServiceItemsMgt implements Serializable{
 
 	private static final long serialVersionUID = 2639738703070428346L;
 	

@@ -1,4 +1,4 @@
-package com.neofect.gts.rest.center.item;
+package com.neofect.gts.rest.settings.serviceItemsMgt;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -17,23 +17,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.neofect.gts.services.center.item.domain.CenterItem;
-import com.neofect.gts.services.center.item.service.CenterItemService;
+import com.neofect.gts.services.settings.serviceItemsMgt.domain.ServiceItemsMgt;
+import com.neofect.gts.services.settings.serviceItemsMgt.service.SettingsServiceItemsMgtService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 
 @CrossOrigin(origins="*")
 @RestController
-@Api(value = "CenterItemResource")
-@RequestMapping("/api/centerItem")
-public class CenterItemResource {
+@Api(value = "ServiceItemsMgtResource")
+@RequestMapping("/api/settings/svcitems")
+public class ServiceItemsMgtResource {
 
 	@Autowired
-	CenterItemService centerItemService;
+	SettingsServiceItemsMgtService serviceItemsMgtService;
 	
 	/**
 	 * 서비스 품목 체크 리스트
@@ -49,12 +48,12 @@ public class CenterItemResource {
         @ApiImplicitParam(name = "date", value = "적용일 ex : 20200323", required = true, dataType = "string", paramType = "query", defaultValue = ""),
     })
 	@GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<CenterItem>> listCode(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
+    public ResponseEntity<List<ServiceItemsMgt>> listCode(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
         if (q == null) {
             q = new HashMap<String,Object>();
         }
 
-        List<CenterItem> serItemList = centerItemService.getServiceItemList(q);
+        List<ServiceItemsMgt> serItemList = serviceItemsMgtService.getServiceItemList(q);
 
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(serItemList, headers, HttpStatus.OK);
@@ -86,13 +85,13 @@ public class CenterItemResource {
 		@ApiImplicitParam(name = "prooffiDiv", value = "prooffiDiv", required = true, dataType = "string", paramType = "query", defaultValue = ""),
 		@ApiImplicitParam(name = "psepDiv", value = "psepDiv", required = true, dataType = "string", paramType = "query", defaultValue = ""),
 	})
-	@PostMapping(value = "/insertService", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/add", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Integer> insertService(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
 		if (q == null) {
 			q = new HashMap<String,Object>();
 		}
 		
-		int serItemList = centerItemService.insertCenterItemService(q);
+		int serItemList = serviceItemsMgtService.insertCenterItemService(q);
 		
 		HttpHeaders headers = new HttpHeaders();
 		return new ResponseEntity<>(serItemList, headers, HttpStatus.OK);
