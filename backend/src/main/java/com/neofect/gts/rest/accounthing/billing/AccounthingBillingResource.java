@@ -1,4 +1,4 @@
-package com.neofect.gts.rest.adjustment.chargeStatus;
+package com.neofect.gts.rest.accounthing.billing;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -16,9 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.neofect.gts.services.adjustment.chargeStatus.domain.AdjustmentChargeStatus;
-import com.neofect.gts.services.adjustment.chargeStatus.service.AdjustmentChargeStatusService;
-import com.neofect.gts.services.common.domain.Comm;
+import com.neofect.gts.services.accounthing.billing.domain.AccounthingBilling;
+import com.neofect.gts.services.accounthing.billing.service.AccounthingBillingService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -27,12 +26,12 @@ import io.swagger.annotations.ApiOperation;
 
 @CrossOrigin(origins="*")
 @RestController
-@Api(value = "ChargeStatusResource")
-@RequestMapping("/api/chargeStatus")
-public class AdjustmentChargeStatusResource {
+@Api(value = "AccounthingBillingResource")
+@RequestMapping("/api/acct/billing")
+public class AccounthingBillingResource {
 
 	@Autowired 
-	AdjustmentChargeStatusService chargeStatusService;
+	AccounthingBillingService accounthingBillingService;
 	
 	/**
 	 * 고객 청구현황 목록
@@ -47,12 +46,12 @@ public class AdjustmentChargeStatusResource {
         @ApiImplicitParam(name = "yyyymm", value = "날짜", required = true, dataType = "string", paramType = "query", defaultValue = ""),
    })
 	@GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<AdjustmentChargeStatus>> listCode(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
+    public ResponseEntity<List<AccounthingBilling>> listCode(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
         if (q == null) {
             q = new HashMap<String,Object>();
         }
         
-        List<AdjustmentChargeStatus> list = chargeStatusService.GS01060_R01(q);
+        List<AccounthingBilling> list = accounthingBillingService.GS01060_R01(q);
 
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(list, headers, HttpStatus.OK);
@@ -71,13 +70,13 @@ public class AdjustmentChargeStatusResource {
 		@ApiImplicitParam(name = "yyyymm", value = "날짜", required = true, dataType = "string", paramType = "query", defaultValue = ""),
 		@ApiImplicitParam(name = "custId", value = "고객번호", required = true, dataType = "string", paramType = "query", defaultValue = ""),
 	})
-	@GetMapping(value = "/detail", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<AdjustmentChargeStatus>> serviceDetail(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
+	@GetMapping(value = "/svcList", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<AccounthingBilling>> serviceDetail(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
 		if (q == null) {
 			q = new HashMap<String,Object>();
 		}
 		
-		List<AdjustmentChargeStatus> list = chargeStatusService.GS01060_C02(q);
+		List<AccounthingBilling> list = accounthingBillingService.GS01060_C02(q);
 		
 		HttpHeaders headers = new HttpHeaders();
 		return new ResponseEntity<>(list, headers, HttpStatus.OK);
@@ -100,14 +99,14 @@ public class AdjustmentChargeStatusResource {
 		@ApiImplicitParam(name = "bathAmt", value = "목욕료", required = true, dataType = "string", paramType = "query", defaultValue = ""),
 		@ApiImplicitParam(name = "workAmt", value = "인력가산", required = true, dataType = "string", paramType = "query", defaultValue = ""),
 	})
-	@GetMapping(value = "/reqAmt", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/addMoney", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Integer> reqAmt(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
 		if (q == null) {
 			q = new HashMap<String,Object>();
 		}
 		
 //		reqAmt (전) 공단 청구금 세분화된 이용료, 이동료, 목욕료, 인력가산을 합한 값을 저장 시킬 예정
-		int reqAmt = chargeStatusService.updateAdditionRate(q);
+		int reqAmt = accounthingBillingService.updateAdditionRate(q);
 		
 		HttpHeaders headers = new HttpHeaders();
 		return new ResponseEntity<>(reqAmt, headers, HttpStatus.OK);

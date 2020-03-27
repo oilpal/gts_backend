@@ -3,8 +3,8 @@ package com.neofect.gts.services.ho.repository;
 import java.util.List;
 import java.util.Map;
 
-import com.neofect.gts.services.center.errorCheck.domain.ErrorCheck;
 import com.neofect.gts.services.ho.domain.HO02010;
+import com.neofect.gts.services.settings.errorEventMgt.domain.ErrorEventMgt;
 
 /**
  * 입퇴사자 관리 Repository
@@ -29,5 +29,5 @@ public interface HO02010Repository {
 	 * @param param
 	 * @return
 	 */
-	List<ErrorCheck> ho02010R02(Map<String, Object> param);
+	List<ErrorEventMgt> ho02010R02(Map<String, Object> param);
 }

@@ -1,4 +1,4 @@
-package com.neofect.gts.services.adjustment.chargeStatus.domain;
+package com.neofect.gts.services.accounthing.billing.domain;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -7,9 +7,9 @@ import org.apache.ibatis.type.Alias;
 
 import lombok.Data;
 
-@Alias("AdjustmentChargeStatus")
+@Alias("AccounthingBilling")
 @Data
-public class AdjustmentChargeStatus implements Serializable {
+public class AccounthingBilling implements Serializable {
 
 	private static final long serialVersionUID = -2305856416197091917L;
 	
