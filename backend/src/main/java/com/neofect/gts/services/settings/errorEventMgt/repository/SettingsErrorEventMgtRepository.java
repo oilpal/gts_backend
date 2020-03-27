@@ -1,16 +1,17 @@
-package com.neofect.gts.services.center.errorCheck.repository;
+package com.neofect.gts.services.settings.errorEventMgt.repository;
 
 import java.util.List;
 import java.util.Map;
 
-import com.neofect.gts.services.center.errorCheck.domain.ErrorCheck;
+import com.neofect.gts.services.settings.errorEventMgt.domain.ErrorEventMgt;
+
 
 /**
  * 오류 목록 체크 Repository
  * @author cm
  *
  */
-public interface CenterErrorCheckRepository {
+public interface SettingsErrorEventMgtRepository {
 
 
 	/**
@@ -20,7 +21,7 @@ public interface CenterErrorCheckRepository {
 	 * @param param
 	 * @return
 	 */
-	List<ErrorCheck> getErrorList(Map<String, Object> param);
+	List<ErrorEventMgt> getErrorList(Map<String, Object> param);
 
 	/**
 	 * 오류 목록 체크 상세
@@ -29,6 +30,6 @@ public interface CenterErrorCheckRepository {
 	 * @param param
 	 * @return
 	 */
-	List<ErrorCheck> getErrorDetail(Map<String, Object> param);
+	List<ErrorEventMgt> getErrorDetail(Map<String, Object> param);
 	
 }

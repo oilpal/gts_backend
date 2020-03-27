@@ -1,4 +1,4 @@
-package com.neofect.gts.rest.center.errorCheck;
+package com.neofect.gts.rest.settings.errorEventMgt;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.neofect.gts.services.center.errorCheck.domain.ErrorCheck;
-import com.neofect.gts.services.center.errorCheck.service.CenterErrorCheckService;
+import com.neofect.gts.services.settings.errorEventMgt.domain.ErrorEventMgt;
+import com.neofect.gts.services.settings.errorEventMgt.service.SettingsErrorEventMgtService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -28,12 +28,12 @@ import io.swagger.annotations.ApiOperation;
 
 @CrossOrigin(origins="*")
 @RestController
-@Api(value = "CenterErrorCheckResource")
-@RequestMapping("/api/errchk")
-public class CenterErrorCheckResource {
+@Api(value = "SettingsErrorEventMgtResource")
+@RequestMapping("/api/settings/errevt")
+public class SettingsErrorEventMgtResource {
 
 	@Autowired
-	CenterErrorCheckService centerErrorCheckService;
+	SettingsErrorEventMgtService centerErrorCheckService;
 	
 	/**
 	 * 오류 목록 체크 리스트
@@ -47,13 +47,13 @@ public class CenterErrorCheckResource {
         @ApiImplicitParam(name = "deptId", value = "회사코드번호 ex : 11005", required = true, dataType = "string", paramType = "query", defaultValue = ""),
         @ApiImplicitParam(name = "yyyymm", value = "집계년월 ex : 202002", required = true, dataType = "string", paramType = "query", defaultValue = ""),
     })
-	@PostMapping(value = "/errorItemsList", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ErrorCheck>> listCode(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
+	@PostMapping(value = "/itemList", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ErrorEventMgt>> listCode(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
         if (q == null) {
             q = new HashMap<String,Object>();
         }
 
-        List<ErrorCheck> errChkList = centerErrorCheckService.getErrorList(q);
+        List<ErrorEventMgt> errChkList = centerErrorCheckService.getErrorList(q);
 
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(errChkList, headers, HttpStatus.OK);
@@ -74,12 +74,12 @@ public class CenterErrorCheckResource {
         @ApiImplicitParam(name = "yyyymm", value = "집계년월 ex : 202002", required = true, dataType = "string", paramType = "query", defaultValue = ""),
     })
 	@GetMapping(value = "/errorList", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<ErrorCheck>> errorList(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
+	public ResponseEntity<List<ErrorEventMgt>> errorList(@RequestParam(required = false) Map<String, Object> q) throws URISyntaxException {
 		if (q == null) {
 			q = new HashMap<String,Object>();
 		}
 		
-		List<ErrorCheck> errChkList = centerErrorCheckService.getErrorDetail(q);
+		List<ErrorEventMgt> errChkList = centerErrorCheckService.getErrorDetail(q);
 		
 		HttpHeaders headers = new HttpHeaders();
 		return new ResponseEntity<>(errChkList, headers, HttpStatus.OK);

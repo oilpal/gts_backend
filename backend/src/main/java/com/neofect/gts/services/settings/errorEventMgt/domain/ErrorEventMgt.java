@@ -1,4 +1,4 @@
-package com.neofect.gts.services.center.errorCheck.domain;
+package com.neofect.gts.services.settings.errorEventMgt.domain;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -7,9 +7,9 @@ import org.apache.ibatis.type.Alias;
 
 import lombok.Data;
 
-@Alias("errorCheck")
+@Alias("errorEventMgt")
 @Data
-public class ErrorCheck implements Serializable{
+public class ErrorEventMgt implements Serializable{
 
 	private static final long serialVersionUID = 6472944538085360956L;
 	
