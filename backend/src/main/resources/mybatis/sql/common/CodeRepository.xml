@@ -73,4 +73,24 @@
         ORDER BY A.PRINT_SEQ, A.COMDIV_CODE
     ]]>
 	</select>
+	
+	<!-- CODE_DEPT_AUTHORITY_R01 사용자별지사코드 -->
+	<select id="selectCodeDeptAuthorityListR01" parameterType="java.util.HashMap" resultType="com.neofect.gts.services.common.domain.Code">
+	/* com.neofect.gts.services.common.repository.CodeRepository.selectCodeDeptAuthorityListR01 */
+	<![CDATA[
+		SELECT  
+				P.DEPT_ID   AS CODE
+      			, DECODE(USE_YN,'N','[미사용]'||P.DEPT_NAME,P.DEPT_NAME)   AS LABEL
+    	FROM  
+    			CODE_DEPT_AUTHORITY   T
+        INNER JOIN  CODE_DEPT P
+        ON  P.DEPT_ID = T.DEPT_ID
+    	WHERE 
+    			T.MEMBER_ID = #{userId}
+    	ORDER BY  
+    			P.USE_YN DESC, 
+    			P.DEPT_NAME
+    ]]>
+	</select>
+	
 </mapper>

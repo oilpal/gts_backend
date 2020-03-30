@@ -54,4 +54,11 @@ public interface CodeRepository {
 	 * @return
 	 */
 	List<Code> selectCodeComdivList(Map<String,Object> param);
+	
+	/**
+	 * 사용자별지사코드 CODE_DEPT_AUTHORITY_R01
+	 * @param param
+	 * @return
+	 */
+	List<Code> selectCodeDeptAuthorityListR01(Map<String,Object> param);
 }

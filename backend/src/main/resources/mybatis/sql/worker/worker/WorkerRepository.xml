@@ -132,7 +132,7 @@
 		    FROM 
 		    	CODE_LIINSURANCE A
 		    WHERE 
-		    	A.MEMBER_ID = #{id}
+		    	A.MEMBER_ID = #{userId}
 		 ORDER BY STARTDATE DESC   
 	</select>
 	

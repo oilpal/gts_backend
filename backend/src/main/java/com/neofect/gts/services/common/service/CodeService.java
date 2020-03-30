@@ -47,4 +47,13 @@ public class CodeService {
 	public List<Code> selectSmCommonCodeListByDvalue2(Map<String,Object> param){
 		return codeRepository.selectSmCommonCodeListByDvalue2(param);
 	}
+	
+	/**
+	 * 사용자별지사코드 CODE_DEPT_AUTHORITY_R01
+	 * @param param
+	 * @return
+	 */
+	public List<Code> selectCodeDeptAuthorityListR01(Map<String,Object> param){
+		return codeRepository.selectCodeDeptAuthorityListR01(param);
+	}
 }

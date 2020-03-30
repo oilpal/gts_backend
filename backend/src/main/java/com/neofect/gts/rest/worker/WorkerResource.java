@@ -6,11 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -71,6 +74,7 @@ public class WorkerResource {
 	
 	/**
 	 * 주민번호 중복체크
+	 * HO03010_R03
 	 * @param q
 	 * @param code
 	 * @return
@@ -97,6 +101,71 @@ public class WorkerResource {
     }
 	
 	/**
+	 * 사번 중복 체크 
+	 * MEMBER_DUP_CHK
+	 * @param q
+	 * @param code
+	 * @return
+	 * @throws URISyntaxException
+	 */
+	@ApiOperation(value = "사번 중복체크" ,notes = "사번으로 등록여부 체크 ")
+	@ApiImplicitParams({
+        @ApiImplicitParam(name = "memberId", value = "사번", required = true, dataType = "string", paramType = "query", defaultValue = "")
+   })
+	@GetMapping(value = "/memberIdDupCheck", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Integer> getWorkerMemberIdDuplicateCheck(@RequestBody(required = false) Map<String, Object> q) throws URISyntaxException {
+        if (q == null) {
+            q = new HashMap<String,Object>();
+        }
+        
+        int cnt = service.selectWorkerMemberIdDuplicateCheck(q);
+        
+        HttpHeaders headers = new HttpHeaders();
+        return new ResponseEntity<>(cnt, headers, HttpStatus.OK);
+    }
+	
+	/**
+	 * 사번으로 입퇴사 날짜 조회
+	 * HO03010_R04
+	 * @param q
+	 * @param request
+	 * @return
+	 * @throws URISyntaxException
+	 */
+	@ApiOperation(value = "입퇴사 일자 조회" ,notes = "사용자 아이디로 입퇴사 일자 조회")
+	@ApiImplicitParams({
+        @ApiImplicitParam(name = "memberId", value = "사번", required = true, dataType = "string", paramType = "query", defaultValue = "")
+   })
+	@GetMapping(value = "/workInOutDate", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Worker> getWorkerInOutDate(
+    		@RequestBody(required = false) Map<String, Object> q,
+    		HttpServletRequest request
+    ) throws URISyntaxException {
+        if (q == null) {
+            q = new HashMap<String,Object>();
+        }
+        HttpHeaders headers = new HttpHeaders();
+        
+      //사용자별 지사 코드 목록  userId 필요
+        String headerAuth = request.getHeader("Authorization");
+        String userId = "";
+        
+		if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+			
+			userId = headerAuth.substring(7, headerAuth.length());
+			q.put("userId", userId);
+			Worker data = service.selectWorkerMemberId(q);
+			
+			return new ResponseEntity<>(data, headers, HttpStatus.OK);
+			
+		}else {
+			
+			return new ResponseEntity<>(new Worker(), headers, HttpStatus.OK);
+		}
+        
+    }
+	
+	/**
 	 * 직원정보에 사용하는 코드 정보
 	 * @param q
 	 * @param code
@@ -105,7 +174,10 @@ public class WorkerResource {
 	 */
 	@ApiOperation(value = "직원정보 코드 정보" ,notes = "직원정보에 사용되는 코드 정보")
 	@GetMapping(value = "/code/info", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String,Object>> getWorkerCodeGroup(@RequestBody(required = false) Map<String, Object> q) throws URISyntaxException {
+    public ResponseEntity<Map<String,Object>> getWorkerCodeGroup(
+    		@RequestBody(required = false) Map<String, Object> q,
+    		HttpServletRequest request
+    ) throws URISyntaxException {
         if (q == null) {
             q = new HashMap<String,Object>();
         }
@@ -187,6 +259,16 @@ public class WorkerResource {
         q.put("hcode", "GOYONGTAG");
         List<Code> goyongtagList = codeService.selectSmCommonCodeListByDvalue2(q);
         result.put("goyongtagList", goyongtagList);
+        
+        //사용자별 지사 코드 목록  userId 필요
+        String headerAuth = request.getHeader("Authorization");
+        String userId = "";
+		if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+			userId = headerAuth.substring(7, headerAuth.length());
+			q.put("userId", userId);
+			List<Code> authorityList = codeService.selectCodeDeptAuthorityListR01(q);
+			result.put("authorityList", authorityList);
+		}
         
         HttpHeaders headers = new HttpHeaders();
         return new ResponseEntity<>(result, headers, HttpStatus.OK);

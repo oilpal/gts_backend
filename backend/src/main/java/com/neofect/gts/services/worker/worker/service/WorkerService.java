@@ -60,4 +60,14 @@ public class WorkerService {
 	public Worker selectWorkerCheckRegistNumber(Map<String,Object> param) {
 		return repository.selectWorkerCheckRegistNumber(param);
 	}
+	
+	/**
+	 * 사번 중복 체크 
+	 * MEMBER_DUP_CHK
+	 * @param param
+	 * @return
+	 */
+	public int selectWorkerMemberIdDuplicateCheck(Map<String,Object> param) {
+		return repository.selectWorkerMemberIdDuplicateCheck(param);
+	}
 }

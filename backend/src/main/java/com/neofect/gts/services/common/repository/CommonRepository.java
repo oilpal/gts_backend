@@ -67,6 +67,12 @@ public interface CommonRepository {
 
 	List<Common> XM_EXCEL_DATA_D01(Map<String,Object> param);
 
+	/**
+	 * [사용]
+	 * @param param
+	 * @return
+	 */
+	@Deprecated
 	List<Common> CODE_DEPT_AUTHORITY_R01(Map<String,Object> param);
 
 	List<Common> GET_DEPT_NAME(Map<String,Object> param);
